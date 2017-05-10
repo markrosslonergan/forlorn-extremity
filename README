@@ -1,0 +1,32 @@
+Needs ROOT and GSL
+
+
+So this uses successive runs to do each bit. I have split it into three
+sections so we dont have to keep reruning. Each section requires the previous
+one to be run first. Should give errors
+
+
+these three commands
+
+cd build
+cmake ..
+make
+
+should compile inflight into build/src
+
+
+
+To generate the events, 
+
+./inflight --mass Msterile --zprime Mzprime --number NumEvents --mode "gen"
+
+will create a root file with appropiate events,
+
+
+
+the analysis, going from RAW mc data to actual bined things
+./inflight --mass Msterile --zprime Mzprime --number NumEvents --mode "ana"
+
+
+and to do the stats and fot everything with bounds and such
+./inflight --mass Msterile --zprime Mzprime --number NumEvents --mode "stat"

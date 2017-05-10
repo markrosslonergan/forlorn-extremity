@@ -1,0 +1,11 @@
+# The extension is already found. Any number of sources could be listed here.
+
+
+
+add_library (inflightlib channel.cxx detector.cxx minInstance.cxx fourmomentum.cxx sterile_flux.cxx )
+target_include_directories (inflightlib PUBLIC ${CMAKE_SOURCE_DIR}/inc/)
+target_link_libraries(inflightlib ${ROOT_LIBRARIES})
+
+include_directories (${CMAKE_SOURCE_DIR}/inc/)
+
+add_executable(inflight inflight.cxx)

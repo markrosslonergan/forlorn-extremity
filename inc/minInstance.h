@@ -39,6 +39,9 @@ class minInstance {
 	double sigma_zeta_nu;
 	double sigma_zeta_nubar;
 
+	std::string f_minimizer_mode;
+	std::string f_minimizer_algo;
+
 	std::vector<double > sig_E_nu ;
 	std::vector<double > sig_C_nu  ;
 	std::vector<double > sig_E_nubar ;
@@ -79,7 +82,7 @@ class minInstance {
 
 
 	double Current_Chi;
-	ROOT::Math::Minimizer* min ; 
+	//ROOT::Math::Minimizer* min ; 
 	
    /* 
    min.SetMaxFunctionCalls(100000);

@@ -17,6 +17,10 @@ minInstance::minInstance(double normn, double normb, std::vector<double> sen, st
 		X_C_nubar=0;
 
 
+	f_minimizer_mode ="GSLMultiMin"; //"GSLSimAn"
+	f_minimizer_algo= "BFGS2";
+
+
 		 obs_E_nu = {204, 280, 214, 99, 83, 59, 51, 33, 37, 23, 19, 21, 12, 16, 4, 9, 4, 7, 3};
 		 bkg_E_nu = {151.5, 218.8, 155.6, 108.7, 72.5, 57.6, 45, 38.5, 31.4,22.2, 20.4, 17.2, 14.1, 10.2, 9.1, 8.2, 5.6, 5.7, 2.9};
 		 obs_E_nubar ={93,130,85,68,45,40,14,18,11,14,12,12,12,2,4,7,3,2,4};
@@ -54,7 +58,7 @@ return 1;
 }
 
 int minInstance::reset_minim(){
-	min->Clear();
+	//min->Clear();
 	//min->~Minimizer();
 return 1;
 
@@ -64,11 +68,11 @@ return 1;
 int minInstance::init_minim(){
 
 //	min = new ROOT::Math::GSLMinimizer(ROOT::Math::kConjugateFR);	
-	min = new ROOT::Math::GSLMinimizer(ROOT::Math::kVectorBFGS2);	
-   	min->SetMaxIterations(250);     // for GSL
-	min->SetTolerance(0.001); 	//times 4 for normal
-	min->SetPrintLevel(0);
-	min->SetPrecision(0.0001);	//times 4 for normal
+//	min = new ROOT::Math::GSLMinimizer(ROOT::Math::kVectorBFGS2);	
+  // 	min->SetMaxIterations(250);     // for GSL
+//	min->SetTolerance(0.001); 	//times 4 for normal
+//	min->SetPrintLevel(0);
+//	min->SetPrecision(0.0001);	//times 4 for normal
 
 return 1;
 }
@@ -107,6 +111,14 @@ double minInstance::minim_calc_chi(const double * x){
 
 
 double minInstance::minimize(){
+
+	ROOT::Math::Minimizer* min = ROOT::Math::Factory::CreateMinimizer(f_minimizer_mode, f_minimizer_algo);
+	min->SetMaxIterations(250);     // for GSL
+	min->SetTolerance(0.001); 	//times 4 for normal
+	min->SetPrintLevel(0);
+	min->SetPrecision(0.0001);	//times 4 for normal
+
+
 
 
         ROOT::Math::Functor f( this, &minInstance::minim_calc_chi,5); 
@@ -154,6 +166,7 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 	X_C_nu=0;
 	X_E_nubar=0;
 	X_C_nubar=0;
+
 
         for(int b=0;b<sig_E_nu.size();b++)
                         {

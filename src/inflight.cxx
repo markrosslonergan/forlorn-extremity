@@ -37,6 +37,13 @@
 #define required_argument 1
 #define optional_argument 2
 
+#include "TFile.h"
+#include "TTree.h"
+#include "TObject.h"
+#include "TH1.h"
+
+
+
 #include "fourmomentum.h" // Defines a class for fourmomenta; makes getting directions and 3-momenta (and
 			  // all that) easier.
 
@@ -60,13 +67,6 @@
 #define MKAON  0.49367
 #define MMU    0.10566
 #define	ME     0.00051
-
-
-
-#include "TFile.h"
-#include "TTree.h"
-#include "TObject.h"
-#include "TH1.h"
 
 
 
@@ -344,6 +344,7 @@ if(genMode){
 	
 			if(i%5000==0) std::cout<<"#: "<<i<<std::endl;
 			double  phiS = 2.0*M_PI*gsl_rng_uniform(r);
+		
 			std::vector<double> event = MCkin(mZ,mS,r,CSmax[1],POSNU); //Get Event
 			std::vector<double> eventBar = MCkin(mZ,mS,r,CSmax[1],NEGNU); //Get Event
 			
@@ -827,6 +828,11 @@ if(statMode){
 			minInstance statInstance(Norm_nu,Norm_nubar, vSignal_Evis_nu, vSignal_Cos_nu, vSignal_Evis_nubar, vSignal_Cos_nubar);
 
 			std::cout<<statInstance.sig_C_nubar[2]<<" "<<statInstance.bkg_C_nu[3]<<std::endl;
+
+			//Todo, get number correct using histogrammer from old LR.h file
+			//get bounds implemented..
+			//tweak minimizer!
+
 
 
 return 0;
