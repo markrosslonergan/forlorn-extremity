@@ -21,6 +21,9 @@ minInstance::minInstance(double normn, double normb, std::vector<double> sen, st
 	f_minimizer_algo= "BFGS2";
 
 
+		sigma_zeta_nu = 0.1;
+		sigma_zeta_nubar = 0.1;
+
 		 obs_E_nu = {204, 280, 214, 99, 83, 59, 51, 33, 37, 23, 19, 21, 12, 16, 4, 9, 4, 7, 3};
 		 bkg_E_nu = {151.5, 218.8, 155.6, 108.7, 72.5, 57.6, 45, 38.5, 31.4,22.2, 20.4, 17.2, 14.1, 10.2, 9.1, 8.2, 5.6, 5.7, 2.9};
 		 obs_E_nubar ={93,130,85,68,45,40,14,18,11,14,12,12,12,2,4,7,3,2,4};
@@ -90,7 +93,7 @@ double minInstance::minim_calc_chi(const double * x){
 
 
 	std::vector<double> vchi;
-	vchi = this->calc_chi(v_chi, v_ud, v_up, v_zeta_b_nu, v_zeta_b_nubar );	
+	vchi = this->calc_chi(v_chi, v_up, v_ud, v_zeta_b_nu, v_zeta_b_nubar );	
 
 	double chi = vchi[0]+vchi[1]+vchi[2]+vchi[3];
 	
@@ -113,11 +116,10 @@ double minInstance::minim_calc_chi(const double * x){
 double minInstance::minimize(){
 
 	ROOT::Math::Minimizer* min = ROOT::Math::Factory::CreateMinimizer(f_minimizer_mode, f_minimizer_algo);
-	min->SetMaxIterations(250);     // for GSL
+	min->SetMaxIterations(10000);     // for GSL
 	min->SetTolerance(0.001); 	//times 4 for normal
-	min->SetPrintLevel(0);
 	min->SetPrecision(0.0001);	//times 4 for normal
-
+	min->SetPrintLevel(4);
 
 
 
@@ -128,23 +130,23 @@ double minInstance::minimize(){
 	double variable[5] ={-4,-4,-4,0.01,0.01};
 
 
-	double step[5] = {0.01,0.01,0.01, 0.005,0.005};
-	double lower[5] = {-5,-5,-5,-4,4};
-	double upper[5] = {0,0,0,4,4 };	
+	double step[5] = {0.01,0.01,0.01, 0.001,0.001};
+	double lower[5] = {-5,-5,-5,-1,-1};
+	double upper[5] = {0,0,0,1,1 };	
 
 	
 	std::string name[5] ={"chi\0","Up\0","Ud\0","zeta_nu\0","zeta_nubar\0"};
-	int isfixed[15]={0,0,0,0,0};
+	int isfixed[5]={0,1,1,0,0};
 
 		
  	min->SetFunction(f);
 
    for(int i=0;i<5;i++){
 	if(isfixed[i]){
-	//	std::cout<<"Setting Fixed Variable: "<<i<<" "<<name[i]<<" value: "<<variable[i]<<std::endl;
+		std::cout<<"Setting Fixed Variable: "<<i<<" "<<name[i]<<" value: "<<variable[i]<<std::endl;
 	   	min->SetFixedVariable(i,name[i],variable[i]);
 	} else {
-	//	std::cout<<"Setting Variable: "<<i<<" "<<name[i]<<" value: "<<variable[i]<<" lower: "<<lower[i]<<" upper: "<<upper[i]<<" step: "<<step[i]<<std::endl;
+		std::cout<<"Setting Variable: "<<i<<" "<<name[i]<<" value: "<<variable[i]<<" lower: "<<lower[i]<<" upper: "<<upper[i]<<" step: "<<step[i]<<std::endl;
    		min->SetLimitedVariable(i,name[i],variable[i], step[i], lower[i],upper[i]);
 	}
 
@@ -167,10 +169,12 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 	X_E_nubar=0;
 	X_C_nubar=0;
 
+	//this is just guessork, have to actuall see what the scaling is
+	double UX=pow(pow(10,inchi),4.0);
 
         for(int b=0;b<sig_E_nu.size();b++)
                         {
-                                double temp_sig = sig_E_nu[b];
+                                double temp_sig = norm_nu*UX*sig_E_nu[b];
                                 double temp_bg = (1.0+zeta_b_nu)*bkg_E_nu[b];
                                 double lambda = temp_sig + temp_bg;
                                 X_E_nu+= 2.0*(lambda-obs_E_nu[b]) + 2.0*obs_E_nu[b]*log(obs_E_nu[b]/lambda);
@@ -180,7 +184,7 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 	
         for(int b=0;b<sig_C_nu.size();b++)
                         {
-                                double temp_sig = sig_C_nu[b];
+                                double temp_sig = norm_nu*UX*sig_C_nu[b];
                                 double temp_bg = (1.0+zeta_b_nu)*bkg_C_nu[b];
                                 double lambda = temp_sig + temp_bg;
                                 X_C_nu+= 2.0*(lambda-obs_C_nu[b]) + 2.0*obs_C_nu[b]*log(obs_C_nu[b]/lambda);
@@ -190,7 +194,7 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 
         for(int b=0;b<sig_E_nubar.size();b++)
                         {
-                                double temp_sig = sig_E_nubar[b];
+                                double temp_sig = norm_nubar*UX*sig_E_nubar[b];
                                 double temp_bg = (1.0+zeta_b_nubar)*bkg_E_nubar[b];
                                 double lambda = temp_sig + temp_bg;
                                 X_E_nubar+= 2.0*(lambda-obs_E_nubar[b]) + 2.0*obs_E_nubar[b]*log(obs_E_nubar[b]/lambda);
@@ -200,7 +204,7 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 
         for(int b=0;b<sig_C_nubar.size();b++)
                         {
-                                double temp_sig = sig_C_nubar[b];
+                                double temp_sig = norm_nubar*UX*sig_C_nubar[b];
                                 double temp_bg = (1.0+zeta_b_nu)*bkg_C_nubar[b];
                                 double lambda = temp_sig + temp_bg;
                                 X_C_nubar+= 2.0*(lambda-obs_C_nubar[b]) + 2.0*obs_C_nubar[b]*log(obs_C_nubar[b]/lambda);

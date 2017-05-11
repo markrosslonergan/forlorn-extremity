@@ -788,8 +788,7 @@ if(statMode){
 
 
 		//Ok from here on its going to be pure stats baby
-
-		//Enter the anaDir subdirectly
+		//Enter the anaDir subdirectory
 
 		TDirectory *anaDir = fstat->GetDirectory("anaDir");
 		if (anaDir) {
@@ -799,7 +798,7 @@ if(statMode){
 			exit(EXIT_FAILURE);
 		}
 
-
+			//create sum good signals
 			TH1D * hSignal_Evis_nu = (TH1D*)anaDir->Get("hSignalSignal_Evis_nu");	
 			TH1D * hSignal_Cos_nu = (TH1D*)anaDir->Get("hSignalSignal_Evis_nu");	
 			TH1D * hSignal_Evis_nubar = (TH1D*)anaDir->Get("hSignalSignal_Cos_nubar");	
@@ -826,8 +825,10 @@ if(statMode){
 			// Norm_nu and Norm_nubar
 			
 			minInstance statInstance(Norm_nu,Norm_nubar, vSignal_Evis_nu, vSignal_Cos_nu, vSignal_Evis_nubar, vSignal_Cos_nubar);
-
 			std::cout<<statInstance.sig_C_nubar[2]<<" "<<statInstance.bkg_C_nu[3]<<std::endl;
+			std::cout<<"Norm nu: "<<statInstance.norm_nu<<std::endl;
+			std::cout<<"Norm nu_bar: "<<statInstance.norm_nubar<<std::endl;
+			statInstance.minimize();
 
 			//Todo, get number correct using histogrammer from old LR.h file
 			//get bounds implemented..
