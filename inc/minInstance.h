@@ -13,6 +13,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TH1F.h"
+#include "TH1D.h"
 #include "TString.h"
 #include "TNtuple.h"
 #include "TChain.h"
@@ -39,8 +40,13 @@ class minInstance {
 	double sigma_zeta_nu;
 	double sigma_zeta_nubar;
 
+	bool use_bounds;
+
 	std::string f_minimizer_mode;
 	std::string f_minimizer_algo;
+	
+	std::vector<double> ebins;
+	std::vector<double> cbins;
 
 	std::vector<double > sig_E_nu ;
 	std::vector<double > sig_C_nu  ;
@@ -56,6 +62,28 @@ class minInstance {
 	std::vector<double > obs_C_nu;
 	std::vector<double > obs_E_nubar;
 	std::vector<double > obs_C_nubar;
+
+	TH1D * h_obs_E_nu;
+	TH1D * h_obs_C_nu;
+	TH1D * h_obs_E_nubar;
+	TH1D * h_obs_C_nubar;
+
+	TH1D * h_excess_E_nu;
+	TH1D * h_excess_C_nu;
+	TH1D * h_excess_E_nubar;
+	TH1D * h_excess_C_nubar;
+
+
+
+	TH1D * h_bf_E_nu;
+	TH1D * h_bf_C_nu;
+	TH1D * h_bf_E_nubar;
+	TH1D * h_bf_C_nubar;
+
+	TH1D * h_bkg_E_nu;
+	TH1D * h_bkg_C_nu;
+	TH1D * h_bkg_E_nubar;
+	TH1D * h_bkg_C_nubar;
 
 	double Nbkg_E_nu;
 	double Nobs_E_nu;

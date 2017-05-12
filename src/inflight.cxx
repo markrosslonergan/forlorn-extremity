@@ -41,7 +41,8 @@
 #include "TTree.h"
 #include "TObject.h"
 #include "TH1.h"
-
+#include "TCanvas.h"
+#include "THStack.h"
 
 
 #include "fourmomentum.h" // Defines a class for fourmomenta; makes getting directions and 3-momenta (and
@@ -800,8 +801,8 @@ if(statMode){
 
 			//create sum good signals
 			TH1D * hSignal_Evis_nu = (TH1D*)anaDir->Get("hSignalSignal_Evis_nu");	
-			TH1D * hSignal_Cos_nu = (TH1D*)anaDir->Get("hSignalSignal_Evis_nu");	
-			TH1D * hSignal_Evis_nubar = (TH1D*)anaDir->Get("hSignalSignal_Cos_nubar");	
+			TH1D * hSignal_Cos_nu = (TH1D*)anaDir->Get("hSignalSignal_Cos_nu");	
+			TH1D * hSignal_Evis_nubar = (TH1D*)anaDir->Get("hSignalSignal_Evis_nubar");	
 			TH1D * hSignal_Cos_nubar = (TH1D*)anaDir->Get("hSignalSignal_Cos_nubar");	
 
 
@@ -834,8 +835,250 @@ if(statMode){
 			//get bounds implemented..
 			//tweak minimizer!
 
+	fstat->cd("statDir");
+		statInstance.h_bkg_E_nu->Write();
+		statInstance.h_bkg_E_nubar->Write();
+		statInstance.h_bkg_C_nu->Write();
+		statInstance.h_bkg_C_nubar->Write();
+
+		statInstance.h_bf_E_nu->Write();
+		statInstance.h_bf_E_nubar->Write();
+		statInstance.h_bf_C_nu->Write();
+		statInstance.h_bf_C_nubar->Write();
+
+		statInstance.h_obs_E_nu->Write();
+		statInstance.h_obs_E_nubar->Write();
+		statInstance.h_obs_C_nu->Write();
+		statInstance.h_obs_C_nubar->Write();
 
 
+		double bkg_bf_zeta_nu = (statInstance.bf_zeta_b_nu);
+		double bkg_bf_zeta_nubar = (statInstance.bf_zeta_b_nubar);
+
+//###################################################################################
+//			Plot some useful things for checks
+//###################################################################################
+		TCanvas *c1 = new TCanvas("MiniBooNE","c1",1200,800);
+		c1->Divide(2,2);
+		c1->cd(1);
+			THStack * h1 	   = new THStack("Evis Neutrino Mode","Evis Neutrino Mode");	
+				statInstance.h_bkg_E_nu->SetMarkerColor(kBlue-7);
+				statInstance.h_bkg_E_nu->SetFillColor(kBlue-7);
+				statInstance.h_bkg_E_nu->SetLineColor(kBlack);
+				statInstance.h_bkg_E_nu->SetTitle("Evis Neutrino Mode");
+	
+				statInstance.h_bf_E_nu->SetMarkerColor(kOrange+6);
+				statInstance.h_bf_E_nu->SetFillColor(kOrange+6);
+				statInstance.h_bf_E_nu->SetLineColor(kBlack);
+		
+
+				h1->Add(statInstance.h_bkg_E_nu);
+				h1->Add(statInstance.h_bf_E_nu);
+		
+				h1->Draw();
+				statInstance.h_obs_E_nu->Scale(1);
+				statInstance.h_obs_E_nu->GetYaxis()->SetTitle("Events/GeV");
+				statInstance.h_obs_E_nu->GetXaxis()->SetTitle("E_{vis} (GeV)");
+				statInstance.h_obs_E_nu->SetMarkerColor(kBlack);
+				statInstance.h_obs_E_nu->Draw("same");			
+	
+			c1->cd(2);
+			THStack * h2 	   = new THStack("cos #theta Neutrino Mode","cos #theta Neutrino Mode");	
+				statInstance.h_bkg_C_nu->SetMarkerColor(kBlue-7);
+				statInstance.h_bkg_C_nu->SetFillColor(kBlue-7);
+				statInstance.h_bkg_C_nu->SetLineColor(kBlack);
+				statInstance.h_bkg_C_nu->SetTitle("cos #theta Neutrino Mode");
+	
+				statInstance.h_bf_C_nu->SetMarkerColor(kOrange+6);
+				statInstance.h_bf_C_nu->SetFillColor(kOrange+6);
+				statInstance.h_bf_C_nu->SetLineColor(kBlack);
+		
+
+				h2->Add(statInstance.h_bkg_C_nu);
+				h2->Add(statInstance.h_bf_C_nu);
+		
+				h2->Draw();
+			//	statInstance.h_obs_C_nu->Scale(1,"width");
+				statInstance.h_obs_C_nu->Scale(1);
+				statInstance.h_obs_C_nu->GetYaxis()->SetTitle("Events/GeV");
+				statInstance.h_obs_C_nu->GetXaxis()->SetTitle("cos #theta (GeV)");
+				statInstance.h_obs_C_nu->SetMarkerColor(kBlack);
+				statInstance.h_obs_C_nu->Draw("same");			
+			c1->cd(3);
+			THStack * h3 	   = new THStack("Evis Anti Neutrino Mode","Evis Anti Neutrino Mode");	
+				statInstance.h_bkg_E_nubar->SetMarkerColor(kBlue-7);
+				statInstance.h_bkg_E_nubar->SetFillColor(kBlue-7);
+				statInstance.h_bkg_E_nubar->SetLineColor(kBlack);
+				statInstance.h_bkg_E_nubar->SetTitle("Evis Anti Neutrino Mode");
+	
+				statInstance.h_bf_E_nubar->SetMarkerColor(kOrange+6);
+				statInstance.h_bf_E_nubar->SetFillColor(kOrange+6);
+				statInstance.h_bf_E_nubar->SetLineColor(kBlack);
+		
+
+				h3->Add(statInstance.h_bkg_E_nubar);
+				h3->Add(statInstance.h_bf_E_nubar);
+		
+				h3->Draw();
+				statInstance.h_obs_E_nubar->Scale(1);
+				statInstance.h_obs_E_nubar->GetYaxis()->SetTitle("Events/GeV");
+				statInstance.h_obs_E_nubar->GetXaxis()->SetTitle("E_{vis} (GeV)");
+				statInstance.h_obs_E_nubar->SetMarkerColor(kBlack);
+				statInstance.h_obs_E_nubar->Draw("same");			
+			c1->cd(4);
+			THStack * h4 	   = new THStack("cos #theta Anti Neutrino Mode","cos #theta Anti Neutrino Mode");	
+				statInstance.h_bkg_C_nubar->SetMarkerColor(kBlue-7);
+				statInstance.h_bkg_C_nubar->SetFillColor(kBlue-7);
+				statInstance.h_bkg_C_nubar->SetLineColor(kBlack);
+				statInstance.h_bkg_C_nubar->SetTitle("cos #theta Anti  Neutrino Mode");
+	
+				statInstance.h_bf_C_nubar->SetMarkerColor(kOrange+6);
+				statInstance.h_bf_C_nubar->SetFillColor(kOrange+6);
+				statInstance.h_bf_C_nubar->SetLineColor(kBlack);
+		
+
+				h4->Add(statInstance.h_bkg_C_nubar);
+				h4->Add(statInstance.h_bf_C_nubar);
+		
+				h4->Draw();
+				statInstance.h_obs_C_nubar->Scale(1);
+				statInstance.h_obs_C_nubar->GetYaxis()->SetTitle("Events/GeV");
+				statInstance.h_obs_C_nubar->GetXaxis()->SetTitle("cos #theta (GeV)");
+				statInstance.h_obs_C_nubar->SetMarkerColor(kBlack);
+				statInstance.h_obs_C_nubar->Draw("same");			
+	c1->Write();	
+	
+
+//###################################################################################
+//			Plot some useful things for checks
+//###################################################################################
+	
+		TCanvas *c2 = new TCanvas("MiniBooNE Excess","c2",1200,800);
+		c2->Divide(2,2);
+		c2->cd(1);
+			THStack * hh1 	   = new THStack("Evis Neutrino Mode","Evis Neutrino Mode");	
+				statInstance.h_excess_E_nu->Scale(1);
+				statInstance.h_excess_E_nu->Draw();	
+
+				statInstance.h_bkg_E_nu->Scale( bkg_bf_zeta_nu ,"nosw2");
+				statInstance.h_bkg_E_nu->SetMarkerColor(kBlue-7);
+				statInstance.h_bkg_E_nu->SetFillColor(kBlue-7);
+				statInstance.h_bkg_E_nu->SetLineColor(kBlack);
+				statInstance.h_bkg_E_nu->SetTitle("Evis Neutrino Mode");
+	
+				statInstance.h_bf_E_nu->SetMarkerColor(kOrange+6);
+				statInstance.h_bf_E_nu->SetFillColor(kOrange+6);
+				statInstance.h_bf_E_nu->SetLineColor(kBlack);
+		
+
+				hh1->Add(statInstance.h_bkg_E_nu);
+				hh1->Add(statInstance.h_bf_E_nu);
+		
+				hh1->Draw("same");
+				
+				statInstance.h_excess_E_nu->GetYaxis()->SetTitle("Events/GeV");
+				statInstance.h_excess_E_nu->GetXaxis()->SetTitle("E_{vis} (GeV)");
+				statInstance.h_excess_E_nu->SetMarkerColor(kBlack);
+				statInstance.h_excess_E_nu->SetMarkerStyle(20);	
+
+				statInstance.h_excess_E_nu->Draw("same");	
+
+	
+			c2->cd(2);
+			THStack * hh2 	   = new THStack("cos #theta Neutrino Mode","cos #theta Neutrino Mode");	
+				statInstance.h_excess_C_nu->Scale(1);
+				statInstance.h_excess_C_nu->GetYaxis()->SetTitle("Events/GeV");
+				statInstance.h_excess_C_nu->GetXaxis()->SetTitle("cos #theta (GeV)");
+				statInstance.h_excess_C_nu->Draw();
+
+				statInstance.h_bkg_C_nu->Scale( bkg_bf_zeta_nu ,"nosw2");
+				statInstance.h_bkg_C_nu->SetMarkerColor(kBlue-7);
+				statInstance.h_bkg_C_nu->SetFillColor(kBlue-7);
+				statInstance.h_bkg_C_nu->SetLineColor(kBlack);
+				statInstance.h_bkg_C_nu->SetTitle("cos #theta Neutrino Mode");
+	
+				statInstance.h_bf_C_nu->SetMarkerColor(kOrange+6);
+				statInstance.h_bf_C_nu->SetFillColor(kOrange+6);
+				statInstance.h_bf_C_nu->SetLineColor(kBlack);
+		
+
+				hh2->Add(statInstance.h_bkg_C_nu);
+				hh2->Add(statInstance.h_bf_C_nu);
+		
+				hh2->Draw("same");
+			//	statInstance.h_excess_C_nu->Scale(1,"width");
+	
+				statInstance.h_excess_C_nu->SetMarkerStyle(20);	
+				statInstance.h_excess_C_nu->SetMarkerColor(kBlack);
+				statInstance.h_excess_C_nu->Draw("same");
+
+	
+			c2->cd(3);
+			THStack * hh3 	   = new THStack("Evis Anti Neutrino Mode","Evis Anti Neutrino Mode");	
+				statInstance.h_excess_E_nubar->Scale(1);
+				statInstance.h_excess_E_nubar->GetYaxis()->SetTitle("Events/GeV");
+				statInstance.h_excess_E_nubar->GetXaxis()->SetTitle("E_{vis} (GeV)");
+				statInstance.h_excess_E_nubar->Draw();			
+		
+				statInstance.h_bkg_E_nubar->Scale( bkg_bf_zeta_nubar ,"nosw2");
+				statInstance.h_bkg_E_nubar->SetMarkerColor(kBlue-7);
+				statInstance.h_bkg_E_nubar->SetFillColor(kBlue-7);
+				statInstance.h_bkg_E_nubar->SetLineColor(kBlack);
+				statInstance.h_bkg_E_nubar->SetTitle("Evis Anti Neutrino Mode");
+	
+				statInstance.h_bf_E_nubar->SetMarkerColor(kOrange+6);
+				statInstance.h_bf_E_nubar->SetFillColor(kOrange+6);
+				statInstance.h_bf_E_nubar->SetLineColor(kBlack);
+		
+
+				hh3->Add(statInstance.h_bkg_E_nubar);
+				hh3->Add(statInstance.h_bf_E_nubar);
+		
+				hh3->Draw("same");
+				
+
+				statInstance.h_excess_E_nubar->SetMarkerColor(kBlack);
+				statInstance.h_excess_E_nubar->SetMarkerStyle(20);
+				statInstance.h_excess_E_nubar->Draw("same");			
+		
+
+
+			c2->cd(4);
+			THStack * hh4 	   = new THStack("cos #theta Anti Neutrino Mode","cos #theta Anti Neutrino Mode");	
+
+				statInstance.h_excess_C_nubar->Scale(1);
+				statInstance.h_excess_C_nubar->GetYaxis()->SetTitle("Events/GeV");
+				statInstance.h_excess_C_nubar->GetXaxis()->SetTitle("cos #theta (GeV)");
+				statInstance.h_excess_C_nubar->SetMarkerColor(kBlack);
+				statInstance.h_excess_C_nubar->Draw();			
+
+
+				statInstance.h_bkg_C_nubar->Scale( bkg_bf_zeta_nubar ,"nosw2");
+
+				statInstance.h_bkg_C_nubar->SetMarkerColor(kBlue-7);
+				statInstance.h_bkg_C_nubar->SetFillColor(kBlue-7);
+				statInstance.h_bkg_C_nubar->SetLineColor(kBlack);
+				statInstance.h_bkg_C_nubar->SetTitle("cos #theta Anti  Neutrino Mode");
+	
+				statInstance.h_bf_C_nubar->SetMarkerColor(kOrange+6);
+				statInstance.h_bf_C_nubar->SetFillColor(kOrange+6);
+				statInstance.h_bf_C_nubar->SetLineColor(kBlack);
+		
+
+				hh4->Add(statInstance.h_bkg_C_nubar);
+				hh4->Add(statInstance.h_bf_C_nubar);
+		
+				hh4->Draw("same");
+
+				statInstance.h_excess_C_nubar->SetMarkerStyle(20);
+				statInstance.h_excess_C_nubar->SetMarkerColor(kBlack);
+				statInstance.h_excess_C_nubar->Draw("same");			
+
+
+	c2->Write();	
+
+
+	fstat->Close();
 return 0;
 }
 }//end main

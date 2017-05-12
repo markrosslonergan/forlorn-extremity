@@ -21,18 +21,73 @@ minInstance::minInstance(double normn, double normb, std::vector<double> sen, st
 	f_minimizer_algo= "BFGS2";
 
 
-		sigma_zeta_nu = 0.1;
-		sigma_zeta_nubar = 0.1;
+		sigma_zeta_nu = 0.025;
+		sigma_zeta_nubar = 0.025;
+
+		 ebins=	{0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.};
+		 cbins={-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8,1}; 
+
 
 		 obs_E_nu = {204, 280, 214, 99, 83, 59, 51, 33, 37, 23, 19, 21, 12, 16, 4, 9, 4, 7, 3};
 		 bkg_E_nu = {151.5, 218.8, 155.6, 108.7, 72.5, 57.6, 45, 38.5, 31.4,22.2, 20.4, 17.2, 14.1, 10.2, 9.1, 8.2, 5.6, 5.7, 2.9};
 		 obs_E_nubar ={93,130,85,68,45,40,14,18,11,14,12,12,12,2,4,7,3,2,4};
 		 bkg_E_nubar ={ 74.2,107.5,73.5,49.3,36.7,27.8,25.1,20.4,18.6,13.9,13.5,9.8,8.9,7.8,5.3,5,3.9,3.8,1.9};
-			
+
+		 h_bkg_E_nu = new TH1D("Bkg_Evis_Nu","",19,&ebins[0]); 
+		 h_bkg_E_nubar = new TH1D("Bkg_Evis_Nubar","",19,&ebins[0]); 
+
+		 h_bkg_C_nu = new TH1D("Bkg_Cos_Nu","",10,&cbins[0]); 
+		 h_bkg_C_nubar = new TH1D("Bkg_Cos_Nubar","",10,&cbins[0]); 
+
+
+		 h_bf_E_nu = new TH1D("Bf_Evis_Nu","",19,&ebins[0]); 
+		 h_bf_E_nubar = new TH1D("Bf_Evis_Nubar","",19,&ebins[0]); 
+
+		 h_bf_C_nu = new TH1D("Bf_Cos_Nu","",10,&cbins[0]); 
+		 h_bf_C_nubar = new TH1D("Bf_Cos_Nubar","",10,&cbins[0]); 
+
+
+		 h_obs_E_nu = new TH1D("Obs_Evis_Nu","",19,&ebins[0]); 
+		 h_obs_E_nubar = new TH1D("Obs_Evis_Nubar","",19,&ebins[0]); 
+
+		 h_obs_C_nu = new TH1D("Obs_Cos_Nu","",10,&cbins[0]); 
+		 h_obs_C_nubar = new TH1D("Obs_Cos_Nubar","",10,&cbins[0]); 
+
+		h_excess_E_nu = new TH1D("Excess_Evis_Nu","",19,&ebins[0]); 
+		 h_excess_E_nubar = new TH1D("Excess_Evis_Nubar","",19,&ebins[0]); 
+
+		 h_excess_C_nu = new TH1D("Excess_Cos_Nu","",10,&cbins[0]); 
+		 h_excess_C_nubar = new TH1D("Excess_Cos_Nubar","",10,&cbins[0]); 
+
+
 		 obs_C_nu = {22,34,43,41,60,87,90,139,237,429};
 		 bkg_C_nu = {19.9,23.1,28.8,32.1,46.4,63.1,86.1,121,196.8,390};
 		 obs_C_nubar = {10,13,16,20,24,36,41,70,94,263};
 		 bkg_C_nubar = {9.2,11.2,13.5,16,18.7,24.2,36,52.1,94.9,237.1};
+
+		for(int i=1; i<=19; i++){
+			h_bkg_E_nu->SetBinContent(i,bkg_E_nu[i-1]);
+			h_bkg_E_nubar->SetBinContent(i,bkg_E_nubar[i-1]);
+			h_obs_E_nu->SetBinContent(i,obs_E_nu[i-1]);
+			h_obs_E_nubar->SetBinContent(i,obs_E_nubar[i-1]);
+		
+			h_excess_E_nu->SetBinContent(i,obs_E_nu[i-1]- bkg_E_nu[i-1]  );
+			h_excess_E_nubar->SetBinContent(i,obs_E_nubar[i-1]-bkg_E_nubar[i-1]);
+
+		}
+
+		for(int i=1; i<=10; i++){
+			h_bkg_C_nu->SetBinContent(i,bkg_C_nu[i-1]);
+			h_bkg_C_nubar->SetBinContent(i,bkg_C_nubar[i-1]);
+			h_obs_C_nu->SetBinContent(i,obs_C_nu[i-1]);
+			h_obs_C_nubar->SetBinContent(i,obs_C_nubar[i-1]);
+	
+			h_excess_C_nu->SetBinContent(i,obs_C_nu[i-1]- bkg_C_nu[i-1]  );
+			h_excess_C_nubar->SetBinContent(i,obs_C_nubar[i-1]-bkg_C_nubar[i-1]);
+
+
+		}
+
 
 
 		 Nbkg_E_nu= std::accumulate(bkg_E_nu.begin(), bkg_E_nu.end(), 0);
@@ -117,9 +172,9 @@ double minInstance::minimize(){
 
 	ROOT::Math::Minimizer* min = ROOT::Math::Factory::CreateMinimizer(f_minimizer_mode, f_minimizer_algo);
 	min->SetMaxIterations(10000);     // for GSL
-	min->SetTolerance(0.001); 	//times 4 for normal
+	min->SetTolerance(0.0001); 	//times 4 for normal
 	min->SetPrecision(0.0001);	//times 4 for normal
-	min->SetPrintLevel(4);
+	min->SetPrintLevel(2);
 
 
 
@@ -130,7 +185,7 @@ double minInstance::minimize(){
 	double variable[5] ={-4,-4,-4,0.01,0.01};
 
 
-	double step[5] = {0.01,0.01,0.01, 0.001,0.001};
+	double step[5] = {0.005,0.005,0.005, 0.001,0.001};
 	double lower[5] = {-5,-5,-5,-1,-1};
 	double upper[5] = {0,0,0,1,1 };	
 
@@ -151,13 +206,41 @@ double minInstance::minimize(){
 	}
 
    }
+
+
   min->Minimize(); 
    
   const double *xs = min->X();
 
+	 bf_chi = xs[0];
+	 bf_up = xs[1];
+	 bf_ud = xs[2];
+         bf_zeta_b_nu=xs[3];
+	 bf_zeta_b_nubar=xs[4];
+
+
+
+  double sc = pow(pow(10,*xs),4);
+
+  for(int i=1; i<=19; i++){
+	h_bf_E_nu->SetBinContent(i, sig_E_nu[i-1]*norm_nu*sc );
+	h_bf_E_nubar->SetBinContent(i,sig_E_nubar[i-1]*norm_nubar*sc );
+
+  }  
+  for(int i=1; i<=11; i++){
+	h_bf_C_nu->SetBinContent(i,sig_C_nu[i-1]*norm_nu*sc );
+	h_bf_C_nubar->SetBinContent(i,sig_C_nubar[i-1]*norm_nubar*sc );
+  } 
+
+
   double valAns = minim_calc_chi(xs);
   
   return valAns;
+
+
+
+
+
 
 }
 
@@ -212,6 +295,20 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
                         }
         X_C_nubar+= pow((zeta_b_nu/sigma_zeta_nu),2.0);
 
+
+	if(use_bounds){
+
+		double penalty = 0 ;
+
+		X_E_nu += penalty;
+		X_C_nu += penalty ;
+		X_E_nubar += penalty;
+		X_C_nubar += penalty;
+
+
+	}
+
+	
 	std::vector<double> ans = {X_E_nu,X_C_nu,X_E_nubar, X_C_nubar};
 
 return ans;
