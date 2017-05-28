@@ -61,6 +61,7 @@
 
 
 #include "minInstance.h"
+#include "bounds.h"
 
 
 #define MPION  0.13957
@@ -170,7 +171,18 @@ while(iarg != -1)
 
 	std::string filename = "zmass_" + std::to_string(mZ) + "_smass_" + std::to_string(mS)+"_sim.root";
 
-	
+if(false){//testing
+
+bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,100);
+
+
+bound_ps191.setTypicalEnergy(5.0);
+
+bound_ps191.ps191(0.1, 91, 0.01, 1);
+
+
+return 0;
+}
 /************************************************************************
  *
  *
@@ -820,15 +832,32 @@ if(statMode){
 				vSignal_Cos_nubar.push_back( hSignal_Cos_nubar->GetBinContent(i));				
 			}
 
-		
+			
+			
+			bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
+			bound_ps191.setTypicalEnergy(5.0);
+
+			bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
+
+bound bound_babar("/home/mark/projects/miniboone2.0/data/bounds/b1_babar2014.csv",0.00,128);
+
+
+
 
 			//Right so returning to statDir, we basicall have all ingredients, 4 vSignal vectors, 4 Observed Vectors and 4 Expected background vector and 2 norms
 			// Norm_nu and Norm_nubar
 			
-			minInstance statInstance(Norm_nu,Norm_nubar, vSignal_Evis_nu, vSignal_Cos_nu, vSignal_Evis_nubar, vSignal_Cos_nubar);
+			minInstance statInstance(Norm_nu, Norm_nubar, vSignal_Evis_nu, vSignal_Cos_nu, vSignal_Evis_nubar, vSignal_Cos_nubar);
 			std::cout<<statInstance.sig_C_nubar[2]<<" "<<statInstance.bkg_C_nu[3]<<std::endl;
-			std::cout<<"Norm nu: "<<statInstance.norm_nu<<std::endl;
-			std::cout<<"Norm nu_bar: "<<statInstance.norm_nubar<<std::endl;
+
+
+			statInstance.setMass(mZ,mS);
+			statInstance.bound_vector.push_back(bound_ps191);
+			statInstance.bound_vector.push_back(bound_peak);
+			statInstance.bound_vector.push_back(bound_babar);
+
+			std::cout<<"Norm nu: "<< statInstance.norm_nu<<std::endl;
+			std::cout<<"Norm nu_bar: "<< statInstance.norm_nubar<<std::endl;
 			statInstance.minimize();
 
 			//Todo, get number correct using histogrammer from old LR.h file

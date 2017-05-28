@@ -22,8 +22,8 @@
 
 #include "channel.h"
 
-twoIP_channel::twoIP_channel(gsl_rng * g, std::vector<double> input_params)
-{
+twoIP_channel::twoIP_channel(gsl_rng * g, std::vector<double> input_params){
+
 	std::vector<double> p;
 	p.push_back(0.0);	
 	p.push_back(0.0);	

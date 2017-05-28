@@ -17,8 +17,11 @@ minInstance::minInstance(double normn, double normb, std::vector<double> sen, st
 		X_C_nubar=0;
 
 
-	f_minimizer_mode ="GSLMultiMin"; //"GSLSimAn"
-	f_minimizer_algo= "BFGS2";
+//	f_minimizer_mode ="GSLMultiMin"; //"GSLSimAn"
+//	f_minimizer_algo= "BFGS2";
+	f_minimizer_mode ="GSLSimAn";
+	f_minimizer_algo= "";
+
 
 
 		sigma_zeta_nu = 0.025;
@@ -109,6 +112,14 @@ minInstance::minInstance(double normn, double normb, std::vector<double> sen, st
 
 }//end minInstance constructor;
 
+int minInstance::setMass(double mz, double ms){
+
+	mass_z = mz;
+	mass_s=ms;
+
+	return 0;
+}
+
 
 int minInstance::clear_all(){
 
@@ -171,9 +182,9 @@ double minInstance::minim_calc_chi(const double * x){
 double minInstance::minimize(){
 
 	ROOT::Math::Minimizer* min = ROOT::Math::Factory::CreateMinimizer(f_minimizer_mode, f_minimizer_algo);
-	min->SetMaxIterations(10000);     // for GSL
-	min->SetTolerance(0.0001); 	//times 4 for normal
-	min->SetPrecision(0.0001);	//times 4 for normal
+	min->SetMaxIterations(500000);     // for GSL
+	min->SetTolerance(0.000001); 	//times 4 for normal
+	min->SetPrecision(0.000001);	//times 4 for normal
 	min->SetPrintLevel(2);
 
 
@@ -182,16 +193,16 @@ double minInstance::minimize(){
 	TRandom3 *rangen    = new TRandom3(0);
 
 
-	double variable[5] ={-4,-4,-4,0.01,0.01};
+	double variable[5] ={-3,-4,-4,0.01,0.01};
 
 
 	double step[5] = {0.005,0.005,0.005, 0.001,0.001};
-	double lower[5] = {-5,-5,-5,-1,-1};
+	double lower[5] = {-10,-10,-10,-1,-1};
 	double upper[5] = {0,0,0,1,1 };	
 
 	
 	std::string name[5] ={"chi\0","Up\0","Ud\0","zeta_nu\0","zeta_nubar\0"};
-	int isfixed[5]={0,1,1,0,0};
+	int isfixed[5]={0,0,1,0,0};
 
 		
  	min->SetFunction(f);
@@ -217,10 +228,11 @@ double minInstance::minimize(){
 	 bf_ud = xs[2];
          bf_zeta_b_nu=xs[3];
 	 bf_zeta_b_nubar=xs[4];
+	 double diam_miniboone = 10;
+ 
+	 double sc =  pow(pow(10,bf_up),2)* pow(pow(10,bf_chi),4)*100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0)*diam_miniboone*bound_vector[0].myRate(mass_s, mass_z); 
+;
 
-
-
-  double sc = pow(pow(10,*xs),4);
 
   for(int i=1; i<=19; i++){
 	h_bf_E_nu->SetBinContent(i, sig_E_nu[i-1]*norm_nu*sc );
@@ -253,7 +265,15 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 	X_C_nubar=0;
 
 	//this is just guessork, have to actuall see what the scaling is
-	double UX=pow(pow(10,inchi),4.0);
+	double ch2 = pow(pow(10,inchi),2.0);
+	double u2 = pow(pow(10,inUp),2.0);
+
+	double diam_miniboone =10;
+	double pdec = 100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0)*diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2*ch2; 
+
+	//std::cout<<"PDEC: "<<pdec<<std::endl;
+	double UX=pdec*u2;
+
 
         for(int b=0;b<sig_E_nu.size();b++)
                         {
@@ -299,6 +319,23 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 	if(use_bounds){
 
 		double penalty = 0 ;
+		
+			bool is_ok = bound_vector.at(0).ps191(mass_s,mass_z,ch2,u2);
+			if(!is_ok){
+				penalty=1e10;
+			}
+			is_ok = bound_vector.at(1).asIs(mass_s,u2);
+			if(!is_ok){
+				penalty=1e10;
+			}
+			is_ok = bound_vector.at(2).asIs(mass_z,ch2);
+			if(!is_ok){
+				penalty=1e10;
+			}
+
+
+
+
 
 		X_E_nu += penalty;
 		X_C_nu += penalty ;

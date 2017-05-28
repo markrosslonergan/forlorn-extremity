@@ -29,7 +29,7 @@
 #include "Math/Functor.h"
 
 #include "minInstance.h"
-
+#include "bounds.h"
 
 class minInstance {
 	
@@ -41,6 +41,13 @@ class minInstance {
 	double sigma_zeta_nubar;
 
 	bool use_bounds;
+	std::vector<bound> bound_vector;
+
+
+	double mass_z;
+	double mass_s;
+
+	int setMass(double,double);
 
 	std::string f_minimizer_mode;
 	std::string f_minimizer_algo;
