@@ -56,7 +56,7 @@ minInstance::minInstance(double normn, double normb, std::vector<double> sen, st
 		 h_obs_C_nu = new TH1D("Obs_Cos_Nu","",10,&cbins[0]); 
 		 h_obs_C_nubar = new TH1D("Obs_Cos_Nubar","",10,&cbins[0]); 
 
-		h_excess_E_nu = new TH1D("Excess_Evis_Nu","",19,&ebins[0]); 
+		 h_excess_E_nu = new TH1D("Excess_Evis_Nu","",19,&ebins[0]); 
 		 h_excess_E_nubar = new TH1D("Excess_Evis_Nubar","",19,&ebins[0]); 
 
 		 h_excess_C_nu = new TH1D("Excess_Cos_Nu","",10,&cbins[0]); 
@@ -347,6 +347,7 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 
 	
 	std::vector<double> ans = {X_E_nu,X_C_nu,X_E_nubar, X_C_nubar};
+
 
 return ans;
 }

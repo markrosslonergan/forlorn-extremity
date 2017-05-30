@@ -133,8 +133,8 @@ if(filename != "none"){
 			fluxlist.push_back(iflux);
 
 			if(ien < mass && iflux != 0.0  ){
-				std::cout<<"#ERROR: flux file containts events with energy less than the sterile rest mass! mass "<<mass<<" E "<<ien<<" flux "<<iflux<<std::endl;
-				exit(EXIT_FAILURE);
+			//	std::cout<<"#ERROR: flux file containts events with energy less than the sterile rest mass! mass "<<mass<<" E "<<ien<<" flux "<<iflux<<std::endl;
+			//	exit(EXIT_FAILURE);
 			}
 
 			if(iflux > fmax){
