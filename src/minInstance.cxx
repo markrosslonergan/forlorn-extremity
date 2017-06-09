@@ -230,9 +230,9 @@ double minInstance::minimize(){
 	 bf_zeta_b_nubar=xs[4];
 	 double diam_miniboone = 10;
  
-	 double sc =  pow(pow(10,bf_up),2)* pow(pow(10,bf_chi),4)*100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0)*diam_miniboone*bound_vector[0].myRate(mass_s, mass_z); 
-;
-
+	 double pdec =100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0)*diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*pow(pow(10,bf_chi),2); 
+	if(pdec>1){pdec=1;}
+	 double sc =  pow(pow(10,bf_up),2)* pow(pow(10,bf_chi),2)*pdec;
 
   for(int i=1; i<=19; i++){
 	h_bf_E_nu->SetBinContent(i, sig_E_nu[i-1]*norm_nu*sc );
@@ -269,10 +269,19 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 	double u2 = pow(pow(10,inUp),2.0);
 
 	double diam_miniboone =10;
-	double pdec = 100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0)*diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2*ch2; 
+	double pdec = 100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0)*diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
 
-	//std::cout<<"PDEC: "<<pdec<<std::endl;
-	double UX=pdec*u2;
+
+
+//std::cout<<"XX: pdec: "<<pdec<<" norm_nu: "<<norm_nu<<" scaled norm nu: "<<norm_nu*u2*ch2<<" other small Gamma*L : "<<100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0)*diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)<<" max: "<<norm_nu*u2*ch2<<std::endl;
+
+
+	if(pdec>=1){pdec=1;}
+
+	if(pdec>1){std::cout<<"BUGGER, probdec is >1"<<std::endl;exit(EXIT_FAILURE);}
+	
+	// so the scaling is prob_decay * u^2 chi^2 from scattering
+	double UX=pdec*u2*ch2;
 
 
         for(int b=0;b<sig_E_nu.size();b++)
@@ -332,8 +341,14 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 			if(!is_ok){
 				penalty=1e10;
 			}
-
-
+			is_ok = bound_vector.at(3).asIs(mass_z,ch2);//gm2
+			if(!is_ok){
+				penalty=1e10;
+			}
+			is_ok = bound_vector.at(4).ps191(mass_s,mass_z,ch2,u2);//nutev
+			if(!is_ok){
+				penalty=1e10;
+			}
 
 
 

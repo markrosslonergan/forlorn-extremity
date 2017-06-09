@@ -825,23 +825,31 @@ int main(int argc, char* argv[])
 		std::vector<double> vSignal_Evis_nubar;
 		std::vector<double> vSignal_Cos_nubar;
 
+		//Think i should normalize this to unit 
+		double norm_evis_nu = hSignal_Evis_nu->GetSumOfWeights();
+		double norm_evis_nubar = hSignal_Evis_nubar->GetSumOfWeights();
+		double norm_cos_nu = hSignal_Cos_nu->GetSumOfWeights();
+		double norm_cos_nubar = hSignal_Cos_nubar->GetSumOfWeights();
+
 		for(int i=1;i<=EBINS;i++){ //Dont forget, root hists count from 1 as 0 is underflow.
-			vSignal_Evis_nu.push_back( hSignal_Evis_nu->GetBinContent(i));				
-			vSignal_Evis_nubar.push_back( hSignal_Evis_nubar->GetBinContent(i));				
+			vSignal_Evis_nu.push_back( hSignal_Evis_nu->GetBinContent(i)/norm_evis_nu );				
+			vSignal_Evis_nubar.push_back( hSignal_Evis_nubar->GetBinContent(i)/norm_evis_nubar);				
 		}
 		for(int i=1;i<=COSBINS;i++){
-			vSignal_Cos_nu.push_back( hSignal_Cos_nu->GetBinContent(i));				
-			vSignal_Cos_nubar.push_back( hSignal_Cos_nubar->GetBinContent(i));				
+			vSignal_Cos_nu.push_back( hSignal_Cos_nu->GetBinContent(i)/norm_cos_nu);				
+			vSignal_Cos_nubar.push_back( hSignal_Cos_nubar->GetBinContent(i)/norm_cos_nubar);				
 		}
-
 
 
 		bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-
 		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
-
 		bound bound_babar("/home/mark/projects/miniboone2.0/data/bounds/b1_babar2014.csv",0.00,128);
+		
+		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_nutev("/home/mark/projects/miniboone2.0/data/bounds/nutev_muon.dat",0.213,1450);
+		bound_nutev.setTypicalEnergy(100);
+
 
 
 
@@ -852,11 +860,12 @@ int main(int argc, char* argv[])
 		minInstance statInstance(Norm_nu, Norm_nubar, vSignal_Evis_nu, vSignal_Cos_nu, vSignal_Evis_nubar, vSignal_Cos_nubar);
 		std::cout<<statInstance.sig_C_nubar[2]<<" "<<statInstance.bkg_C_nu[3]<<std::endl;
 
-
 		statInstance.setMass(mZ,mS);
 		statInstance.bound_vector.push_back(bound_ps191);
 		statInstance.bound_vector.push_back(bound_peak);
 		statInstance.bound_vector.push_back(bound_babar);
+		statInstance.bound_vector.push_back(bound_gm2);
+		statInstance.bound_vector.push_back(bound_nutev);
 
 		std::cout<<"Norm nu: "<< statInstance.norm_nu<<std::endl;
 		std::cout<<"Norm nu_bar: "<< statInstance.norm_nubar<<std::endl;
@@ -865,6 +874,20 @@ int main(int argc, char* argv[])
 		//Todo, get number correct using histogrammer from old LR.h file
 		//get bounds implemented..
 		//tweak minimizer!
+
+		std::cout<<"*********************************************************"<<std::endl;
+		std::cout<<"#: mZ = "<<mZ<<std::endl;
+		std::cout<<"#: mS = "<<mS<<std::endl;
+		std::cout<<"#: Um4^2 = "<<2*(statInstance.bf_up)<<std::endl;
+		std::cout<<"#: chi^2 = "<<2*(statInstance.bf_chi)<<std::endl;
+		double thisrate =bound_ps191.myRate( mS,mZ)*pow(pow(10,statInstance.bf_chi),2.0);
+		std::cout<<"#: DecayRate = "<<thisrate<<std::endl;
+		std::cout<<"#: DecayLength = "<<bound_ps191.gev2meters(1.0/thisrate)<<std::endl;
+		std::cout<<"#: NumScatters (neutrino mode) = "<<statInstance.norm_nu*pow(pow(10,statInstance.bf_chi),2.0)*pow(pow(10,statInstance.bf_up),2.0)<<std::endl;
+		std::cout<<"#: NumScatters (antineutrino mode) = "<<statInstance.norm_nubar*pow(pow(10,statInstance.bf_chi),2.0)*pow(pow(10,statInstance.bf_up),2.0)<<std::endl;
+
+
+
 
 		fstat->cd("statDir");
 		statInstance.h_bkg_E_nu->Write();
@@ -1118,18 +1141,78 @@ int main(int argc, char* argv[])
 		bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
 		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
-		bound bound_babar("/home/mark/projects/miniboone2.0/data/bounds/b1_babar2014.csv",0.00,128);
+		bound bound_babar("/home/mark/projects/thesisnotes/sterileBounds/verrified_bounds/babar/babar_data.dat",0.00,128);
 		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
 		bound bound_nutev("/home/mark/projects/thesisnotes/sterileBounds/verrified_bounds/nutev/nutev_muon.dat",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
-
-			for(double mZ = 0.5; mZ<=2; mZ=mZ+0.025){
+		if(false){ 
+		for(double ims=log10(0.3); ims<log10(0.5); ims+=0.01){
+			double ms= pow(10,ims);
+		//	std::cout<<ms<<" "<<bound_ps191.bound_file.getFlux(ms)<<" "<<bound_nutev.bound_file.getFlux(ms)<<" "<<bound_peak.bound_file.getFlux(ms)<<std::endl;
+		}
+			
+			double mZ=1.0;
 			double bf_ms_um4=-20;
 			double bf_ms_chi2=-20;
 			double bf_ms_mz=0;
 	
-			for(double imS = log10(0.0101); imS<log10(0.5); imS+=0.066){
+			for(double imS = log10(0.0101); imS<log10(0.5); imS+=0.05){
+			double mS=pow(10,imS);
+
+		
+				double bf_ch2=-10;
+				double bf_um2=-10;
+
+				double cm = std::max( 0.5*log10(bound_babar.bound_file.getFlux(mZ)), log10(bound_gm2.bound_file.getFlux(mZ)) );
+				for(double ich2=cm; ich2>-10; ich2-=0.05){
+					for(double im2 = 0.5*log10(bound_peak.bound_file.getFlux(mS)); im2 >-10   ; im2-=0.05){
+
+						bool isPS191 = bound_ps191.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
+						bool isNUTEV = bound_nutev.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
+						
+						bool isPEAK = bound_peak.asIs(mS, pow(pow(10,im2),2)   );
+						bool isBABAR = bound_babar.asIs(mZ, pow(pow(10,ich2),2) );
+						bool isMGMIN2 = bound_gm2.asIs(mZ, pow(10,ich2));//not on square for now
+
+						if(isPS191 && isPEAK && isBABAR && isNUTEV && isMGMIN2){
+							if( pow(10,ich2)*pow(10,im2) >  pow(10, bf_ch2)*pow(10,bf_um2)){
+
+								bf_ch2 = ich2;
+								bf_um2  = im2;
+							}
+
+							if( im2 > bf_ms_um4){
+
+								bf_ms_um4 = im2;
+								bf_ms_mz = mZ;
+								bf_ms_chi2 = ich2;
+							}
+
+						}
+
+					}
+				}
+
+
+			std::cout<<mS<<" "<<mZ<<" "<<bf_ch2<<" "<<bf_um2<<" "<<pow(pow(10, bf_ch2)*pow(10,bf_um2),2.0)<<std::endl;
+			}//end mz
+
+
+
+		
+
+		return 0;
+		}
+
+
+		if(false){
+			for(double mZ = 0.5; mZ<=2; mZ=mZ+0.02){
+			double bf_ms_um4=-20;
+			double bf_ms_chi2=-20;
+			double bf_ms_mz=0;
+	
+			for(double imS = log10(0.0101); imS<log10(0.5); imS+=0.05){
 			double mS=pow(10,imS);
 
 		
@@ -1175,28 +1258,29 @@ int main(int argc, char* argv[])
 		}//end mS
 
 
-
+		
 
 
 		return 0;
-		for(double imS = log10(0.0101); imS<log10(0.5); imS+=0.033){
+		}
+
+		for(double imS = log10(0.5); imS > log10(0.0101); imS-=0.05){
 			double mS=pow(10,imS);
 
 			double bf_ms_um4=-20;
 			double bf_ms_chi2=-20;
 			double bf_ms_mz=0;
 			
-			for(double mZ = 0.5; mZ<=2; mZ=mZ+0.05){
+			for(double mZ = 0.6; mZ<=2; mZ=mZ+0.05){
 				double bf_ch2=-10;
 				double bf_um2=-10;
 
 				double cm = std::max( 0.5*log10(bound_babar.bound_file.getFlux(mZ)), log10(bound_gm2.bound_file.getFlux(mZ)) );
-				for(double ich2=cm; ich2>-10; ich2-=0.01){
-					for(double im2 = 0.5*log10(bound_peak.bound_file.getFlux(mS)); im2 >-10   ; im2-=0.01){
+				for(double ich2=cm; ich2>-10; ich2-=0.033){
+					for(double im2 = 0.5*log10(bound_peak.bound_file.getFlux(mS)); im2 >-10   ; im2-=0.033){
 
 						bool isPS191 = bound_ps191.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
 						bool isNUTEV = bound_nutev.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
-						
 						bool isPEAK = bound_peak.asIs(mS, pow(pow(10,im2),2)   );
 						bool isBABAR = bound_babar.asIs(mZ, pow(pow(10,ich2),2) );
 						bool isMGMIN2 = bound_gm2.asIs(mZ, pow(10,ich2));//not on square for now
