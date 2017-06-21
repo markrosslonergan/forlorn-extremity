@@ -120,7 +120,7 @@ if(filename != "none"){
 	std::ifstream myfile (filename);
 	if (!myfile.is_open())
 	{
-		std::cout<<"#ERROR: flux::flux @flux.c, passed flux file does not exist"<<std::endl;
+		std::cout<<"#ERROR: flux::flux @flux.c, passed flux file does not exist: "<<name<<std::endl;
 		exit(EXIT_FAILURE);
 	}
 		while(!myfile.eof()){

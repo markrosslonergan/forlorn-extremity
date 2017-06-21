@@ -43,6 +43,8 @@ class minInstance {
 	bool use_bounds;
 	std::vector<bound> bound_vector;
 
+	double N_bf;
+	double N_bf_bar;
 
 	double mass_z;
 	double mass_s;
