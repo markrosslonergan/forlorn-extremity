@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
 
 	if(false){//testing
 
-		bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,100);
+		bound bound_ps191("../../data/bounds/PS191_UM4_EE_BOTH.dat",0.01,100);
 
 
 		bound_ps191.setTypicalEnergy(5.0);
@@ -841,13 +841,13 @@ int main(int argc, char* argv[])
 		}
 
 
-		bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
+		bound bound_ps191("../../data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
-		bound bound_babar("/home/mark/projects/miniboone2.0/data/bounds/b1_babar2014.csv",0.00,128);
+		bound bound_peak("../../data/bounds/peak_um4.dat",0.00,128);
+		bound bound_babar("../../data/bounds/b1_babar2014.csv",0.00,128);
 		
-		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
-		bound bound_nutev("/home/mark/projects/miniboone2.0/data/bounds/nutev_muon.dat",0.213,1450);
+		bound bound_gm2("../../data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_nutev("../../data/bounds/nutev_muon.dat",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
 
@@ -1138,11 +1138,11 @@ int main(int argc, char* argv[])
 
 
 	if(boundMode){
-		bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
+		bound bound_ps191("../../data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
+		bound bound_peak("../../data/bounds/peak_um4.dat",0.00,128);
 		bound bound_babar("/home/mark/projects/thesisnotes/sterileBounds/verrified_bounds/babar/babar_data.dat",0.00,128);
-		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_gm2("../../data/bounds/b1_mg2.csv",0.00,128);
 		bound bound_nutev("/home/mark/projects/thesisnotes/sterileBounds/verrified_bounds/nutev/nutev_muon.dat",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
