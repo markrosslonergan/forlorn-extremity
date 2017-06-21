@@ -674,8 +674,8 @@ int main(int argc, char* argv[])
 
 
 
-			double weight_nu = mS/sqrt(sEn*sEn-mS*mS);  
-			double weight_nubar = mS/sqrt(sEn_B*sEn_B-mS*mS);  
+			double weight_nu = 1;//mS/sqrt(sEn*sEn-mS*mS);  
+			double weight_nubar = 1;//mS/sqrt(sEn_B*sEn_B-mS*mS);  
 			if(weight_nu != weight_nu || weight_nubar != weight_nubar){std::cout<<"ERROR:Infinite weight, mS: "<<mS<<" En_nu "<<sEn<<" En_nubar " <<sEn_B<<" , run "<<j<<std::endl;}
 
 
@@ -843,11 +843,11 @@ int main(int argc, char* argv[])
 
 		bound bound_ps191("../../data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-		bound bound_peak("../../data/bounds/peak_um4.dat",0.00,128);
-		bound bound_babar("../../data/bounds/b1_babar2014.csv",0.00,128);
-		
-		bound bound_gm2("../../data/bounds/b1_mg2.csv",0.00,128);
-		bound bound_nutev("../../data/bounds/nutev_muon.dat",0.213,1450);
+		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
+		bound bound_babar("/home/mark/projects/miniboone2.0/data/bounds/b1_babar2014.csv",0.00,128);
+
+		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_nutev("/home/mark/projects/miniboone2.0/data/bounds/nutev_muon.csv",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
 
@@ -885,7 +885,8 @@ int main(int argc, char* argv[])
 		std::cout<<"#: DecayLength = "<<bound_ps191.gev2meters(1.0/thisrate)<<std::endl;
 		std::cout<<"#: NumScatters (neutrino mode) = "<<statInstance.norm_nu*pow(pow(10,statInstance.bf_chi),2.0)*pow(pow(10,statInstance.bf_up),2.0)<<std::endl;
 		std::cout<<"#: NumScatters (antineutrino mode) = "<<statInstance.norm_nubar*pow(pow(10,statInstance.bf_chi),2.0)*pow(pow(10,statInstance.bf_up),2.0)<<std::endl;
-
+		std::cout<<"#: NumDecays (neutrino mode) = "<<statInstance.N_bf<<std::endl;
+		std::cout<<"#: NumDecays (antineutrino mode) = "<<statInstance.N_bf_bar<<std::endl;
 
 
 
@@ -1140,27 +1141,27 @@ int main(int argc, char* argv[])
 	if(boundMode){
 		bound bound_ps191("../../data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-		bound bound_peak("../../data/bounds/peak_um4.dat",0.00,128);
-		bound bound_babar("/home/mark/projects/thesisnotes/sterileBounds/verrified_bounds/babar/babar_data.dat",0.00,128);
-		bound bound_gm2("../../data/bounds/b1_mg2.csv",0.00,128);
-		bound bound_nutev("/home/mark/projects/thesisnotes/sterileBounds/verrified_bounds/nutev/nutev_muon.dat",0.213,1450);
+		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
+		bound bound_babar("/home/mark/projects/miniboone2.0/data/babar_data.dat",0.00,128);
+		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_nutev("/home/mark/projects/miniboone2.0/data/bounds/nutev_muon.csv",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
 		if(false){ 
-		for(double ims=log10(0.3); ims<log10(0.5); ims+=0.01){
-			double ms= pow(10,ims);
-		//	std::cout<<ms<<" "<<bound_ps191.bound_file.getFlux(ms)<<" "<<bound_nutev.bound_file.getFlux(ms)<<" "<<bound_peak.bound_file.getFlux(ms)<<std::endl;
-		}
-			
+			for(double ims=log10(0.3); ims<log10(0.5); ims+=0.01){
+				double ms= pow(10,ims);
+				//	std::cout<<ms<<" "<<bound_ps191.bound_file.getFlux(ms)<<" "<<bound_nutev.bound_file.getFlux(ms)<<" "<<bound_peak.bound_file.getFlux(ms)<<std::endl;
+			}
+
 			double mZ=1.0;
 			double bf_ms_um4=-20;
 			double bf_ms_chi2=-20;
 			double bf_ms_mz=0;
-	
-			for(double imS = log10(0.0101); imS<log10(0.5); imS+=0.05){
-			double mS=pow(10,imS);
 
-		
+			for(double imS = log10(0.0101); imS<log10(0.5); imS+=0.05){
+				double mS=pow(10,imS);
+
+
 				double bf_ch2=-10;
 				double bf_um2=-10;
 
@@ -1170,7 +1171,7 @@ int main(int argc, char* argv[])
 
 						bool isPS191 = bound_ps191.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
 						bool isNUTEV = bound_nutev.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
-						
+
 						bool isPEAK = bound_peak.asIs(mS, pow(pow(10,im2),2)   );
 						bool isBABAR = bound_babar.asIs(mZ, pow(pow(10,ich2),2) );
 						bool isMGMIN2 = bound_gm2.asIs(mZ, pow(10,ich2));//not on square for now
@@ -1195,73 +1196,73 @@ int main(int argc, char* argv[])
 				}
 
 
-			std::cout<<mS<<" "<<mZ<<" "<<bf_ch2<<" "<<bf_um2<<" "<<pow(pow(10, bf_ch2)*pow(10,bf_um2),2.0)<<std::endl;
+				std::cout<<mS<<" "<<mZ<<" "<<bf_ch2<<" "<<bf_um2<<" "<<pow(pow(10, bf_ch2)*pow(10,bf_um2),2.0)<<std::endl;
 			}//end mz
 
 
 
-		
 
-		return 0;
+
+			return 0;
 		}
 
 
 		if(false){
 			for(double mZ = 0.5; mZ<=2; mZ=mZ+0.02){
-			double bf_ms_um4=-20;
-			double bf_ms_chi2=-20;
-			double bf_ms_mz=0;
-	
-			for(double imS = log10(0.0101); imS<log10(0.5); imS+=0.05){
-			double mS=pow(10,imS);
+				double bf_ms_um4=-20;
+				double bf_ms_chi2=-20;
+				double bf_ms_mz=0;
 
-		
-				double bf_ch2=-10;
-				double bf_um2=-10;
+				for(double imS = log10(0.0101); imS<log10(0.5); imS+=0.05){
+					double mS=pow(10,imS);
 
-				double cm = std::max( 0.5*log10(bound_babar.bound_file.getFlux(mZ)), log10(bound_gm2.bound_file.getFlux(mZ)) );
-				for(double ich2=cm; ich2>-10; ich2-=0.025){
-					for(double im2 = 0.5*log10(bound_peak.bound_file.getFlux(mS)); im2 >-10   ; im2-=0.025){
 
-						bool isPS191 = bound_ps191.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
-						bool isNUTEV = bound_nutev.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
-						
-						bool isPEAK = bound_peak.asIs(mS, pow(pow(10,im2),2)   );
-						bool isBABAR = bound_babar.asIs(mZ, pow(pow(10,ich2),2) );
-						bool isMGMIN2 = bound_gm2.asIs(mZ, pow(10,ich2));//not on square for now
+					double bf_ch2=-10;
+					double bf_um2=-10;
 
-						if(isPS191 && isPEAK && isBABAR && isNUTEV && isMGMIN2){
-							if( pow(10,ich2)*pow(10,im2) >  pow(10, bf_ch2)*pow(10,bf_um2)){
+					double cm = std::max( 0.5*log10(bound_babar.bound_file.getFlux(mZ)), log10(bound_gm2.bound_file.getFlux(mZ)) );
+					for(double ich2=cm; ich2>-10; ich2-=0.025){
+						for(double im2 = 0.5*log10(bound_peak.bound_file.getFlux(mS)); im2 >-10   ; im2-=0.025){
 
-								bf_ch2 = ich2;
-								bf_um2  = im2;
-							}
+							bool isPS191 = bound_ps191.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
+							bool isNUTEV = bound_nutev.ps191(mS,mZ, pow(pow(10,im2),2), pow(pow(10,ich2),2));
 
-							if( im2 > bf_ms_um4){
+							bool isPEAK = bound_peak.asIs(mS, pow(pow(10,im2),2)   );
+							bool isBABAR = bound_babar.asIs(mZ, pow(pow(10,ich2),2) );
+							bool isMGMIN2 = bound_gm2.asIs(mZ, pow(10,ich2));//not on square for now
 
-								bf_ms_um4 = im2;
-								bf_ms_mz = mZ;
-								bf_ms_chi2 = ich2;
+							if(isPS191 && isPEAK && isBABAR && isNUTEV && isMGMIN2){
+								if( pow(10,ich2)*pow(10,im2) >  pow(10, bf_ch2)*pow(10,bf_um2)){
+
+									bf_ch2 = ich2;
+									bf_um2  = im2;
+								}
+
+								if( im2 > bf_ms_um4){
+
+									bf_ms_um4 = im2;
+									bf_ms_mz = mZ;
+									bf_ms_chi2 = ich2;
+								}
+
 							}
 
 						}
-
 					}
-				}
 
 
-			std::cout<<mS<<" "<<mZ<<" "<<bf_ch2<<" "<<bf_um2<<" "<<pow(pow(10, bf_ch2)*pow(10,bf_um2),2.0)<<std::endl;
-			}//end mz
-			
-			
-			std::cout<<"#mz: "<<mZ<<" "<<bf_ms_um4<<" "<<bf_ms_mz<<" "<<bf_ms_chi2 <<" "<<pow(pow(10,bf_ms_chi2),2.0)<<std::endl;
-		}//end mS
+					std::cout<<mS<<" "<<mZ<<" "<<bf_ch2<<" "<<bf_um2<<" "<<pow(pow(10, bf_ch2)*pow(10,bf_um2),2.0)<<std::endl;
+				}//end mz
 
 
-		
+				std::cout<<"#mz: "<<mZ<<" "<<bf_ms_um4<<" "<<bf_ms_mz<<" "<<bf_ms_chi2 <<" "<<pow(pow(10,bf_ms_chi2),2.0)<<std::endl;
+			}//end mS
 
 
-		return 0;
+
+
+
+			return 0;
 		}
 
 		for(double imS = log10(0.5); imS > log10(0.0101); imS-=0.05){
@@ -1270,7 +1271,7 @@ int main(int argc, char* argv[])
 			double bf_ms_um4=-20;
 			double bf_ms_chi2=-20;
 			double bf_ms_mz=0;
-			
+
 			for(double mZ = 0.6; mZ<=2; mZ=mZ+0.05){
 				double bf_ch2=-10;
 				double bf_um2=-10;
@@ -1305,12 +1306,13 @@ int main(int argc, char* argv[])
 				}
 
 
-			std::cout<<mS<<" "<<mZ<<" "<<bf_ch2<<" "<<bf_um2<<" "<<pow(pow(10, bf_ch2)*pow(10,bf_um2),2.0)<<std::endl;
+				std::cout<<mS<<" "<<mZ<<" "<<bf_ch2<<" "<<bf_um2<<" "<<pow(pow(10, bf_ch2)*pow(10,bf_um2),2.0)<<std::endl;
 			}//end mz
-			
-			
+
+
 			std::cout<<"#ms: "<<mS<<" "<<bf_ms_um4<<" "<<bf_ms_mz<<" "<<bf_ms_chi2 <<" "<<pow(pow(10,bf_ms_um4),2.0)<<std::endl;
 		}//end mS
+
 
 
 
