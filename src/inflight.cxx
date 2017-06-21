@@ -843,11 +843,11 @@ int main(int argc, char* argv[])
 
 		bound bound_ps191("../../data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
-		bound bound_babar("/home/mark/projects/miniboone2.0/data/bounds/b1_babar2014.csv",0.00,128);
+		bound bound_peak("../../data/bounds/peak_um4.dat",0.00,128);
+		bound bound_babar("../../data/bounds/b1_babar2014.csv",0.00,128);
 
-		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
-		bound bound_nutev("/home/mark/projects/miniboone2.0/data/bounds/nutev_muon.csv",0.213,1450);
+		bound bound_gm2("../../data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_nutev("../../data/bounds/nutev_muon.csv",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
 
@@ -1141,10 +1141,10 @@ int main(int argc, char* argv[])
 	if(boundMode){
 		bound bound_ps191("../../data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
-		bound bound_babar("/home/mark/projects/miniboone2.0/data/babar_data.dat",0.00,128);
-		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
-		bound bound_nutev("/home/mark/projects/miniboone2.0/data/bounds/nutev_muon.csv",0.213,1450);
+		bound bound_peak("../../data/bounds/peak_um4.dat",0.00,128);
+		bound bound_babar("../../data/babar_data.dat",0.00,128);
+		bound bound_gm2("../../data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_nutev("../../data/bounds/nutev_muon.csv",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
 		if(false){ 
