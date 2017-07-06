@@ -481,11 +481,17 @@ int threebody::drawRestFrameDistMassive(gsl_rng * r, double mS, double m0, doubl
 	p1[0] = sqrt(m1*m1+absP1*absP1);
 	double E2 = sqrt(m2*m2+absP2*absP2);
 
-	std::vector<double > p2 = {E2,absP2*d2[0],absP2*d2[1],absP2*d2[2]};
+	std::vector<double > vp2 = {E2,absP2*d2[0],absP2*d2[1],absP2*d2[2]};
 
-	p1[1] = -(tp0[1]+p2[1]);
-	p1[2] = -(tp0[2]+p2[2]);
-	p1[3] = -(tp0[3]+p2[3]);
+//	p2[0]=vp2[0];
+//	p2[1]=vp2[1];
+///	p2[2]=vp2[2];
+//	p2[3]=vp2[3];
+
+
+	p1[1] = -(tp0[1]+vp2[1]);
+	p1[2] = -(tp0[2]+vp2[2]);
+	p1[3] = -(tp0[3]+vp2[3]);
 return 0;
 }
 
