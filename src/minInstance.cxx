@@ -294,7 +294,7 @@ double minInstance::minim_calc_chi(const double * x){
 	std::vector<double> vchi;
 	vchi = this->calc_chi(v_chi, v_up, v_ud, v_zeta_b_nu, v_zeta_b_nubar );	
 
-	double chi = vchi[0]+vchi[1]+vchi[2]+vchi[3];
+	double chi = vchi[0]+vchi[1];//+vchi[2]+vchi[3];
 
 
 

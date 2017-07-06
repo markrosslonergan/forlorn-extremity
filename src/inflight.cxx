@@ -889,7 +889,6 @@ int main(int argc, char* argv[])
 		std::cout<<"Going to initilize statInatance now"<<std::endl;
 		minInstance statInstance(Norm_nu, Norm_nubar, tAna_nu, tAna_nubar  ,10000);
 		std::cout<<"Done. initilized statInatance"<<std::endl;
-	//	std::cout<<statInstance.sig_C_nubar[2]<<" "<<statInstance.bkg_C_nu[3]<<std::endl;
 
 		statInstance.setMass(mZ,mS);
 		statInstance.bound_vector.push_back(bound_ps191);
