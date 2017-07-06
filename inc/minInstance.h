@@ -37,8 +37,16 @@ class minInstance {
 	double norm_nu;
 	double norm_nubar;
 
+	double n_gen_entries;
+
 	double sigma_zeta_nu;
 	double sigma_zeta_nubar;
+
+	double evis_nu, evis_nubar, cos_nu, cos_nubar, en_nu, en_nubar;
+
+	TTree * tnu;
+	TTree * tnubar;
+
 
 	bool use_bounds;
 	std::vector<bound> bound_vector;
@@ -94,6 +102,12 @@ class minInstance {
 	TH1D * h_bkg_E_nubar;
 	TH1D * h_bkg_C_nubar;
 
+	TH1D * h_sig_E_nu;
+	TH1D * h_sig_C_nu;
+	TH1D * h_sig_E_nubar;
+	TH1D * h_sig_C_nubar;
+
+
 	double Nbkg_E_nu;
 	double Nobs_E_nu;
 	double Nbkg_E_nubar;
@@ -146,7 +160,9 @@ class minInstance {
 */
 
 	minInstance(double,double,std::vector<double>,std::vector<double>,std::vector<double>,std::vector<double>);
+	minInstance(double,double,TTree *, TTree*, double);
 
+	int fill_signal_vecs(double inchi, double inUp, double inUd);
 
 	std::vector<double> calc_chi(double,double,double,double,double);// returns a vector of 4 chis Enu Cnu Enubar Cnubar
 

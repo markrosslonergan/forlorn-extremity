@@ -567,6 +567,21 @@ int main(int argc, char* argv[])
 			anaDir = fana->mkdir("anaDir");	
 		}
 
+		//make new TTree's for neutrino and antineutrino mode
+		TTree *t_nu = new TTree("anatree_nu","anatree_nu");
+		TTree *t_nubar = new TTree("anatree_nubar","anatree_nubar");
+		//and their associated things
+		double evis_nu, evis_nubar;
+		double enu_nu, enu_nubar;
+		double cos_nu, cos_nubar;
+
+		t_nu->Branch("Es",&enu_nu);
+		t_nu->Branch("Evis",&evis_nu);
+		t_nu->Branch("Cos",&cos_nu);
+		t_nubar->Branch("Es",&enu_nubar);
+		t_nubar->Branch("Evis",&evis_nubar);
+		t_nubar->Branch("Cos",&cos_nubar);
+
 
 		TH1D  *hType1_Evis_nu = new TH1D("hType1Signal_Evis_nu","Type1Signal Visible En Nu",EBINS,EMIN,EMAX);
 		TH1D  *hType1_Evis_nubar = new TH1D("hType1Signal_Evis_nubar","Type1Signal Visible En NuBar",EBINS,EMIN,EMAX);
@@ -657,6 +672,9 @@ int main(int argc, char* argv[])
 			tnu->GetEntry(j);
 			tnubar->GetEntry(j);
 
+			bool is_this_an_event_nu = false;
+			bool is_this_an_event_nubar = false;
+
 			double e1En_smr = e1En;
 			double e2En_smr = e2En;
 			double e1Cos_smr = e1Cos;
@@ -688,6 +706,10 @@ int main(int argc, char* argv[])
 				hSignal_Cos_nu->Fill(e2Cos_smr, weight_nu);	
 
 				hType1_Ester_nu->Fill(sEn);
+				is_this_an_event_nu = true;
+				enu_nu = sEn;
+				evis_nu = e2En_smr;
+				cos_nu = e2Cos_smr;
 
 			}else if(fabs(dAngSep_smr) < type2_ang_thresh) // So called Type 2 event
 			{
@@ -696,8 +718,11 @@ int main(int argc, char* argv[])
 				hSignal_Evis_nu->Fill(e2En_smr+e1En_smr, weight_nu);	
 				hSignal_Cos_nu->Fill(cos(dThSum_smr*M_PI/180.0), weight_nu);	
 
-
 				hType2_Ester_nu->Fill(sEn);
+				is_this_an_event_nu = true;
+				enu_nu = sEn;
+				evis_nu =e2En_smr+e1En_smr;
+				cos_nu = cos(dThSum_smr*M_PI/180.0);
 			}
 
 
@@ -710,6 +735,10 @@ int main(int argc, char* argv[])
 				hSignal_Cos_nubar->Fill(e2Cos_B_smr, weight_nubar);
 
 				hType1_Ester_nubar->Fill(sEn_B);
+				is_this_an_event_nubar = true;
+				enu_nubar = sEn_B;
+				evis_nubar = e2En_B_smr;
+				cos_nubar = e2Cos_B_smr;
 
 			}else if(fabs(dAngSep_B_smr) < type2_ang_thresh) // So called Type 2 event
 			{
@@ -719,8 +748,20 @@ int main(int argc, char* argv[])
 				hSignal_Cos_nubar->Fill(cos(dThSum_B_smr*M_PI/180.0), weight_nubar);	
 
 				hType2_Ester_nubar->Fill(sEn_B);
+				is_this_an_event_nubar = true;
+				enu_nubar = sEn_B;
+				evis_nubar =e2En_B_smr+e1En_B_smr;
+				cos_nubar = cos(dThSum_B_smr*M_PI/180.0);
+
 			}
 
+			if(is_this_an_event_nu){
+				t_nu->Fill();
+			}
+
+			if(is_this_an_event_nubar){
+				t_nubar->Fill();
+			}
 
 
 
@@ -746,6 +787,10 @@ int main(int argc, char* argv[])
 		hType2_Ester_nu->Write();
 		hType1_Ester_nubar->Write();
 		hType2_Ester_nubar->Write();
+
+		t_nu->Write();
+		t_nubar->Write();
+		
 
 		fana->Close();
 
@@ -788,7 +833,6 @@ int main(int argc, char* argv[])
 			if(i>0) std::cout<<"ERROR: statMode, more that 1 entry in summery tree"<<std::endl;
 		}
 
-
 		//And creating a new ana subdirectory, and histograms that will go in said directory
 		//If directory already exists, then simpley wipe it and work from there!
 		TDirectory *statDir = fstat->GetDirectory("statDir");
@@ -813,34 +857,22 @@ int main(int argc, char* argv[])
 			exit(EXIT_FAILURE);
 		}
 
+		//Load up the ana_tree
+		std::cout<<"Accessing ana_nuTree and ana_nubarTree"<<std::endl;
+		fstat->ls();
+		TTree *tAna_nu = (TTree *)anaDir->Get("anatree_nu");
+		TTree *tAna_nubar = (TTree *)anaDir->Get("anatree_nubar");
+		std::cout<<"Done. Gotten pointers to TTrees of interest"<<std::endl;
+		tAna_nu->Print();
+		tAna_nubar->Print();
+
+
 		//create sum good signals
 		TH1D * hSignal_Evis_nu = (TH1D*)anaDir->Get("hSignalSignal_Evis_nu");	
 		TH1D * hSignal_Cos_nu = (TH1D*)anaDir->Get("hSignalSignal_Cos_nu");	
 		TH1D * hSignal_Evis_nubar = (TH1D*)anaDir->Get("hSignalSignal_Evis_nubar");	
 		TH1D * hSignal_Cos_nubar = (TH1D*)anaDir->Get("hSignalSignal_Cos_nubar");	
-
-
-		std::vector<double> vSignal_Evis_nu;
-		std::vector<double> vSignal_Cos_nu;
-		std::vector<double> vSignal_Evis_nubar;
-		std::vector<double> vSignal_Cos_nubar;
-
-		//Think i should normalize this to unit 
-		double norm_evis_nu = hSignal_Evis_nu->GetSumOfWeights();
-		double norm_evis_nubar = hSignal_Evis_nubar->GetSumOfWeights();
-		double norm_cos_nu = hSignal_Cos_nu->GetSumOfWeights();
-		double norm_cos_nubar = hSignal_Cos_nubar->GetSumOfWeights();
-
-		for(int i=1;i<=EBINS;i++){ //Dont forget, root hists count from 1 as 0 is underflow.
-			vSignal_Evis_nu.push_back( hSignal_Evis_nu->GetBinContent(i)/norm_evis_nu );				
-			vSignal_Evis_nubar.push_back( hSignal_Evis_nubar->GetBinContent(i)/norm_evis_nubar);				
-		}
-		for(int i=1;i<=COSBINS;i++){
-			vSignal_Cos_nu.push_back( hSignal_Cos_nu->GetBinContent(i)/norm_cos_nu);				
-			vSignal_Cos_nubar.push_back( hSignal_Cos_nubar->GetBinContent(i)/norm_cos_nubar);				
-		}
-
-
+	
 		bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
 		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
@@ -852,13 +884,12 @@ int main(int argc, char* argv[])
 
 
 
-
-
 		//Right so returning to statDir, we basicall have all ingredients, 4 vSignal vectors, 4 Observed Vectors and 4 Expected background vector and 2 norms
 		// Norm_nu and Norm_nubar
-
-		minInstance statInstance(Norm_nu, Norm_nubar, vSignal_Evis_nu, vSignal_Cos_nu, vSignal_Evis_nubar, vSignal_Cos_nubar);
-		std::cout<<statInstance.sig_C_nubar[2]<<" "<<statInstance.bkg_C_nu[3]<<std::endl;
+		std::cout<<"Going to initilize statInatance now"<<std::endl;
+		minInstance statInstance(Norm_nu, Norm_nubar, tAna_nu, tAna_nubar  ,10000);
+		std::cout<<"Done. initilized statInatance"<<std::endl;
+	//	std::cout<<statInstance.sig_C_nubar[2]<<" "<<statInstance.bkg_C_nu[3]<<std::endl;
 
 		statInstance.setMass(mZ,mS);
 		statInstance.bound_vector.push_back(bound_ps191);
