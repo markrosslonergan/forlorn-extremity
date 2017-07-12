@@ -73,7 +73,6 @@ int twoIP_channel::observables(OBSERVABLES * output, gsl_rng *g)
 //			std::cout<<Obs.Th_low<<" "<<acos(Obs.P_low[2]/( pow(Obs.P_low[0],2)+pow(Obs.P_low[1],2)+pow(Obs.P_low[2],2) ) )*180/3.14145<<std::endl;
 
 
-
 	std::vector<double> sum_p;
 	sum_p.push_back(IP1.p.at(0) + IP2.p.at(0));
 	sum_p.push_back(IP1.p.at(1) + IP2.p.at(1));

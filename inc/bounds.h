@@ -34,6 +34,7 @@
 
 #include <gsl/gsl_sf_lambert.h>
 #include "sterile_flux.h"
+#include "decayrates.h"
 
 class bound {
 
@@ -53,8 +54,10 @@ public:
 	double gev2meters(double gev);
 
 	double assumedRate(double mS);
+	double old_assumedRate(double mS);
 	bool ps191(double mS, double mZ, double Um, double chi);
-	double myRate(double mS, double mZprime);
+	double myRate(double chi, double mS, double mZprime);
+	double old_myRate(double chi, double mS, double mZprime);
 	bool asIs(double mass, double Us);
 
 

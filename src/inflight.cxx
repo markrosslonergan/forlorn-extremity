@@ -880,7 +880,9 @@ int main(int argc, char* argv[])
 		std::cout<<"#: mS = "<<mS<<std::endl;
 		std::cout<<"#: Um4^2 = "<<2*(statInstance.bf_up)<<std::endl;
 		std::cout<<"#: chi^2 = "<<2*(statInstance.bf_chi)<<std::endl;
-		double thisrate =bound_ps191.myRate( mS,mZ)*pow(pow(10,statInstance.bf_chi),2.0);
+//Peter changed ths 11/July
+//		double thisrate =bound_ps191.myRate( mS,mZ)*pow(pow(10,statInstance.bf_chi),2.0);
+		double thisrate =bound_ps191.myRate(pow(10,statInstance.bf_chi),mS,mZ);
 		std::cout<<"#: DecayRate = "<<thisrate<<std::endl;
 		std::cout<<"#: DecayLength = "<<bound_ps191.gev2meters(1.0/thisrate)<<std::endl;
 		std::cout<<"#: NumScatters (neutrino mode) = "<<statInstance.norm_nu*pow(pow(10,statInstance.bf_chi),2.0)*pow(pow(10,statInstance.bf_up),2.0)<<std::endl;
