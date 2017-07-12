@@ -234,7 +234,10 @@ double minInstance::minimize(){
 
 	double diam_miniboone =10;
 	double m2GEV= 100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0);
-	double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*pow(pow(10,bf_chi),2.0); 
+
+//Peter changed this 11/July
+//	double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*pow(pow(10,bf_chi),2.0); 
+	double pdec = diam_miniboone*bound_vector[0].myRate(pow(10,bf_chi),mass_s, mass_z); 
 
 	std::vector<double> prob_decay;
 	for(int i=0; i<19; i++){
@@ -292,7 +295,10 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 
 	double diam_miniboone =10;
 	double m2GEV= 100*pow(1.973,-1)*pow(10.0,5.0)*pow(10.0,9.0);
-	double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
+
+//Peter changed this 11/July
+//	double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
+	double pdec = diam_miniboone*bound_vector[0].myRate(sqrt(ch2),mass_s, mass_z); 
 
 	std::vector<double> prob_decay;
 	for(int i=0; i<19; i++){
