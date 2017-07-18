@@ -67,14 +67,6 @@ std::vector<double> bound::lambertBounds(double A, double B, double mass, double
 
 }
 
-
-double bound::assumedRate(double mS){
-	double gf = 0.00001166;
-	return gf*gf*pow(mS,5.0)/(96.0*pow(3.14159,3.0) )*(0.126469);
-
-	
-}
-
 double bound::probDecay(double mass, double gam_c, double gam_t, double lambda){
 
 	double gamma = typical_E/mass;
@@ -86,30 +78,25 @@ double bound::probDecay(double mass, double gam_c, double gam_t, double lambda){
 
 }
 
-
-
 bool bound::ps191(double mS, double mZ, double Um, double chi){
 	double UtildeSq = 1;
 	if(mS > mymin){
 		UtildeSq = bound_file.getFlux(mS);	
 	}
 
-//	std::vector<double> ans;
-//	double B = Um*Um*chi*chi*myRate(mS,mZ)/(UtildeSq*assumedRate(mS));
-//	double A = B;
+//	double mr = myRate(chi,mS,mZ) + Um*Um*assumedRate(mS);
+//	double tr = UtildeSq*assumedRate(mS);
+	double my_rate = Gamma_ZP_EE(chi,mS,mZ,1/sqrt(3),1/sqrt(3),1/sqrt(3)) + Gamma_EE(mS,0.0,Um,0.0);
+	double their_rate = UtildeSq*Gamma_EE(mS,1/sqrt(3),1/sqrt(3),1/sqrt(3)); 
+	double my_fullrate = Gamma_total(chi,mZ,mS,0.0,Um,0.0);
+	double their_fullrate = Gamma_total(chi,-1.0,mS,0.0,sqrt(UtildeSq),0.0);
 
-	double mr = chi*chi*myRate(mS,mZ) + Um*Um*assumedRate(mS);
-	double tr = UtildeSq*assumedRate(mS);
-
-	//ans = this->lambertBounds(A,B,mS,assumedRate(mS));
-	double my_flux_folded_prob = Um*Um*probDecay(mS, mr, mr,16);
-	double their_flux_folded_prob = UtildeSq*probDecay(mS,tr, tr ,16);
+	//Going to multiply by U^2 each side as I think we lost "flux folded bit"
+	double my_flux_folded_prob = Um*Um*probDecay(mS, my_rate, my_fullrate,16);
+	double their_flux_folded_prob = UtildeSq*probDecay(mS, their_rate, their_fullrate ,16);
 
 	bool ans = false;
 
-//	std::cout<<"FluxFold: Their: "<<their_flux_folded_prob<<" Mine: "<<my_flux_folded_prob<<std::endl;
-//	std::cout<<"RATE: Their: "<<tr<<" Mine: "<<mr<<" ratio m/t: "<<mr/tr<<std::endl;
-//	std::cout<<"Dist: their: "<<gev2meters(1/tr)<<" mine: "<<gev2meters(1/mr)<<std::endl;
 	if(my_flux_folded_prob < their_flux_folded_prob){
 		ans = true;		
 	}
@@ -132,10 +119,35 @@ bool bound::asIs(double mass, double Us){
 }
 
 
-
-
-double bound::myRate(double mS, double mZprime)
+double bound::myRate(double chi, double mS, double mZprime)
 {
+//This should be the Zprime decay into e e.
+
+	double ret = Gamma_ZP_EE(chi, mZprime, mS, 1/sqrt(3),  1/sqrt(3),  1/sqrt(3)); 
+
+return ret; 
+}
+
+double bound::assumedRate(double mS)
+{
+//This should be the total decay rate of the particle.
+
+	return Gamma_total(1.0, -1.0, mS, 1/sqrt(3), 1/sqrt(3), 1/sqrt(3));
+}
+
+double bound::old_assumedRate(double mS)
+{
+//This should be the total decay rate of the particle.
+
+	double gf = 0.00001166;
+	return gf*gf*pow(mS,5.0)/(96.0*pow(3.14159,3.0) )*(0.126469);	
+
+}
+
+double bound::old_myRate(double chi, double mS, double mZprime)
+{
+//This should be the Zprime decay into e e.
+
 	double mu_s  = mS/mZprime;
 	double alpha = mu_s*mu_s/(1.0-mu_s*mu_s);
 	double g1 =0.0874287 ;
@@ -155,10 +167,9 @@ double bound::myRate(double mS, double mZprime)
 		invnorm = (3.0/(2.0*pow(alpha,3.0)))*(2+alpha-3*pow(alpha,2.0))/(1.0+alpha) + (4.0*alpha*alpha-3.0)*(log(1+alpha)/log(exp(1.0)))/pow(alpha,4.0);
 	}
 
-
-		double ret = pow(fine_struct,2.0)*pow(mS,5.0)*invnorm/(96*pow(3.14159,3.0)*g1*g1*pow(mZprime*mZprime-mS*mS,2.0));
-
-
+		double ret = chi*chi*pow(fine_struct,2.0)*pow(mS,5.0)*invnorm/(96*pow(3.14159,3.0)*g1*g1*pow(mZprime*mZprime-mS*mS,2.0));
 
 return ret; 
 }
+
+

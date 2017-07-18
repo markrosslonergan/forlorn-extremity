@@ -362,7 +362,6 @@ double minInstance::minimize(){
 	bf_zeta_b_nubar=xs[4];
 
 	this->fill_signal_vecs(bf_chi, bf_up, bf_ud);
-
 	double sc =  pow(pow(10,bf_up),2)* pow(pow(10,bf_chi),2);
 
 	for(int i=1; i<=19; i++){
@@ -416,18 +415,32 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 	sig_E_nubar.clear();
 	sig_C_nubar.clear();
 
+//Peter changed this 11/July
+//	double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
+
+		//Mark changed this 15th/july, think we do need gamma_total correctly
+		double GT = Gamma_total(sqrt(ch2), mass_z, mass_s, 0.0, sqrt(u2) , 0.0);
+		double GZEE = Gamma_ZP_EE( sqrt(ch2), mass_z, mass_s, 0.0, sqrt(u2), 0.0); 
+	        double BR = GZEE/GT;
+		
+
+
 	for(int i=0; i<tnu->GetEntries(); i++){
 		tnu->GetEntry(i);
-		double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
-		double wei = 1.0-exp(-pdec*m2GEV*mass_s/sqrt(en_nu*en_nu-mass_s*mass_s));
+		double wei = (1.0-exp(-diam_miniboone*GT*m2GEV*mass_s/sqrt(en_nu*en_nu-mass_s*mass_s)))*BR;
+		
+		if(wei>=1 || wei <0 ){
+			std::cout<<"minInstance::fill_signal_vecs || WARNING, probability to decay to our channel inside miniboone is >1. prob: "<<wei<<" Total Gamma: "<<GT<<" myrate: "<<GZEE<<" BR: "<<BR<<" norm_nu: "<<norm_nu<<" normnubar: "<<norm_nubar<<" ngen: "<<n_gen_entries<<" total weight: "<<wei*norm_nu/n_gen_entries<<std::endl;
+		}
+
+
 		h_sig_E_nu->Fill(evis_nu, wei*norm_nu/n_gen_entries);
 		h_sig_C_nu->Fill(cos_nu,  wei*norm_nu/n_gen_entries);
 
 	}
 	for(int i=0; i<tnubar->GetEntries(); i++){
 		tnubar->GetEntry(i);
-		double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
-		double wei = 1.0-exp(-pdec*m2GEV*mass_s/sqrt(en_nubar*en_nu-mass_s*mass_s));
+		double wei = (1.0-exp(-diam_miniboone*GT*m2GEV*mass_s/sqrt(en_nubar*en_nu-mass_s*mass_s))) *BR  ;
 		h_sig_E_nubar->Fill(evis_nubar, wei*norm_nubar/n_gen_entries);
 		h_sig_C_nubar->Fill(cos_nubar, wei*norm_nubar/n_gen_entries);
 	}
@@ -457,7 +470,7 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 	
 	double u2 = pow(pow(10,inUp),2.0);
 	double ch2 = pow(pow(10,inchi),2.0);
-	// so the scaling is prob_decay * u^2 chi^2 from scattering
+	// so the scaling is prob_decay * u^2 chi^2 from scattering, and prob_decay is already taken care of.
 	double UX= u2*ch2;
 
 	for(int b=0;b<sig_E_nu.size();b++)
