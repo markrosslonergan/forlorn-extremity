@@ -55,7 +55,6 @@ std::vector<double> bound::lambertBounds(double A, double B, double mass, double
 
 	double upp = UtildeSq/(B*kap)*gsl_sf_lambert_W0(exp(kap)*B/sqrt(A)*kap  );
 	double low = UtildeSq/(B*kap)*gsl_sf_lambert_Wm1(exp(kap)*B/sqrt(A)*kap );
-
 	double simple = UtildeSq/sqrt(B);
 
 	std::vector<double> temp;

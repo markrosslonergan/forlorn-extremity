@@ -488,7 +488,6 @@ int threebody::drawRestFrameDistMassive(gsl_rng * r, double mS, double m0, doubl
 ///	p2[2]=vp2[2];
 //	p2[3]=vp2[3];
 
-
 	p1[1] = -(tp0[1]+vp2[1]);
 	p1[2] = -(tp0[2]+vp2[2]);
 	p1[3] = -(tp0[3]+vp2[3]);

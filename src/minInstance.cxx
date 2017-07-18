@@ -202,6 +202,7 @@ minInstance::minInstance(double normn, double normb, std::vector<double> sen, st
 	bkg_C_nubar = {9.2,11.2,13.5,16,18.7,24.2,36,52.1,94.9,237.1};
 
 	for(int i=1; i<=19; i++){
+
 		h_bkg_E_nu->SetBinContent(i,bkg_E_nu[i-1]);
 		h_bkg_E_nubar->SetBinContent(i,bkg_E_nubar[i-1]);
 		h_obs_E_nu->SetBinContent(i,obs_E_nu[i-1]);
@@ -223,8 +224,6 @@ minInstance::minInstance(double normn, double normb, std::vector<double> sen, st
 
 
 	}
-
-
 
 	Nbkg_E_nu= std::accumulate(bkg_E_nu.begin(), bkg_E_nu.end(), 0);
 	Nobs_E_nu= std::accumulate(obs_E_nu.begin(), obs_E_nu.end(), 0);
@@ -422,7 +421,7 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 		double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
 		double wei = 1.0-exp(-pdec*m2GEV*mass_s/sqrt(en_nu*en_nu-mass_s*mass_s));
 		h_sig_E_nu->Fill(evis_nu, wei*norm_nu/n_gen_entries);
-		h_sig_C_nu->Fill(cos_nu, wei*norm_nu/n_gen_entries);
+		h_sig_C_nu->Fill(cos_nu,  wei*norm_nu/n_gen_entries);
 
 	}
 	for(int i=0; i<tnubar->GetEntries(); i++){
