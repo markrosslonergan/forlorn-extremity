@@ -96,6 +96,7 @@ public:
 	int observables(OBSERVABLES * output, gsl_rng *g);
 	virtual int decayfunction(initial_sterile nuS);	
 	virtual int decayfunctionMassive(initial_sterile nuS, double m0, double m1, double m2);
+	virtual int decayfunction_new(initial_sterile nuS, double m0, double m1, double m2);
 
 };
 
@@ -117,6 +118,7 @@ public:
 	threebody(gsl_rng * g, std::vector<double> input);
 	int decayfunction(initial_sterile nuS);
 	int decayfunctionMassive(initial_sterile nuS,double m0, double m1, double m2);
+	int decayfunction_new(initial_sterile nuS,double m0, double m1, double m2);
 
 	struct PDF_CHOICE { 
 		double Enu; 
@@ -129,6 +131,7 @@ private:
 	int computeLabFrameVariablesMassive(initial_sterile nuS, double p0[4], double p1[4]);
 	int computeLabFrameVariables(double mS, double Es, double costhS, double phiS, double restFrameParams[3]);
 	double pdf_function(double x, double y, double mS, double mZprime, void * pointer);
+	double pdf_function_new(double x, double y, double mS, double mZprime, void * pointer);
 //	struct PDF_CHOICE choose_from_pdf(gsl_rng * r, double mS, double mZprime, threebody_pdf_function pdf);
 	int rotor(double theta, double phi, double vector[3]);
 	std::vector<double > generic_boost(double Ep, double px, double py, double pz, double Er, double rx, double ry, double rz);
@@ -137,6 +140,7 @@ private:
 	
 	int drawRestFrameDist(gsl_rng * r, double mS, double mZprime, double output[3]);
 	int drawRestFrameDistMassive(gsl_rng * r, double mS, double m0, double m1, double m2, double out0[4], double out1[4]);
+	int drawRestFrameDist_new(gsl_rng * r, double mS, double mZprime, double m0, double m1, double m2, double out0[4], double out1[4]);
 
 }; 
 

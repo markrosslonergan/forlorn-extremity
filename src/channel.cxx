@@ -42,7 +42,12 @@ int twoIP_channel::decayfunction(initial_sterile nuS)
 	std::cout<<"You've somehow managed to call the decayfunction of the parent class (twoIP_channel). Don't do that."<<std::endl;
 return 0;
 }
-int twoIP_channel::decayfunctionMassive(initial_sterile nuS,double m0, double m1, double m2)
+int twoIP_channel::decayfunction_new(initial_sterile nuS, double m0, double m1, double m2)
+{
+	std::cout<<"You've somehow managed to call the decayfunction of the parent class (twoIP_channel). Don't do that."<<std::endl;
+return 0;
+}
+int twoIP_channel::decayfunctionMassive(initial_sterile nuS, double m0, double m1, double m2)
 {
 	std::cout<<"You've somehow managed to call the decayfunction of the parent class (twoIP_channel). Don't do that."<<std::endl;
 return 0;
@@ -240,6 +245,16 @@ int threebody::decayfunctionMassive(initial_sterile nuS,double m0, double m1, do
 return 0;
 }
 
+int threebody::decayfunction_new(initial_sterile nuS,double m0, double m1, double m2)
+{
+	double mZprime = model_params.at(0);
+	double p0[] = {0.0,0.0,0.0,0.0};
+	double p1[] = {0.0,0.0,0.0,0.0};
+	drawRestFrameDist_new(r,nuS.mass,mZprime,m0,m1,m2,p0,p1); //this will populate the doubles.
+	computeLabFrameVariablesMassive(nuS,p0,p1);
+return 0;
+}
+
 int threebody::computeLabFrameVariablesMassive(initial_sterile nuS, double p0[4], double p1[4])
 {
 	double mS = nuS.mass;
@@ -362,6 +377,38 @@ double threebody::pdf_function(double x, double y, double mS, double mZprime, vo
 return ret; 
 }
 
+double threebody::pdf_function_new(double x, double y, double mS, double mZprime, void * pointer)
+{
+	double mu_s  = mS/mZprime;
+	double alpha = mu_s*mu_s/(1.0-mu_s*mu_s);
+	double gV=1.0;//This is an approx.
+	double gA=0.0;//This one too.
+	double z = 2.0-x-y;
+
+	double N=1.0;
+
+	if(alpha<0.01)
+	{  
+		N = -1.0 - alpha/(1+alpha);
+		int n=0;	
+		for(n=0;n<11;n++)
+		{
+			N += 6.0*(1+alpha)*pow(-alpha, (double)n)/((double)n+4.0);
+		}
+	}
+	else
+	{
+		N = (6.0*alpha + 9*alpha*alpha + 2.0*pow(alpha,3.0) - 6.0*pow((1+alpha),2.0)*log(1+alpha)/log(exp(1.0)))/(pow(alpha,4.0)*(1+alpha)) ;
+	} 
+
+
+	double ret =(1.0/(gV*gV+gA*gA))*(3.0/N)*((gV+gA)*(gV+gA)*y*(1-y) + (gV-gA)*(gV-gA)*z*(1-z) )/((1.0+alpha*x)*(1.0+alpha*x));
+
+	if(ret<0){ ret = 0.0; }
+
+return ret; 
+}
+
 
 int threebody::rotor(double theta, double phi, double vector[3])
 {
@@ -403,7 +450,56 @@ std::vector<double > threebody::generic_boost(double Ep, double px, double py, d
 }
 
 
+int threebody::drawRestFrameDist_new(gsl_rng * r, double mS, double mZprime, double m0, double m1, double m2, double p0[4], double p1[4])
+{
+//This samples the decay including the ME. Another option is to pass the ME as a weight to the event. But that would take more thought. 21/07/2017
 
+	double mu_s  = mS/mZprime;
+	double alpha = mu_s*mu_s/(1-mu_s*mu_s);
+
+	double PDF_MAX = 1.0; //pdf_function_new. This should be true. But... y'know. Worth a preventative debug?
+
+	double x = gsl_rng_uniform(r);
+	double y = gsl_rng_uniform(r);
+	double phi = 2*M_PI*gsl_rng_uniform(r);
+	double z = (PDF_MAX+0.01)*gsl_rng_uniform(r);
+
+	while(threebody::pdf_function_new(x,y,mS,mZprime,NULL)<=z)
+	{
+//		printf("I tried!\n");
+		x = gsl_rng_uniform(r);
+		y = gsl_rng_uniform(r);
+		z = (PDF_MAX+0.01)*gsl_rng_uniform(r);
+	}
+
+//	printf("I succeeded!\n");
+
+	double Ef = (mS/2.0)*y;
+	double Efbar = mS/2.0*(2.0-y-x);
+	double Enu = (mS/2.0)*x;
+  	double pf_z = Ef + (mS/2.0)*Efbar - mS*mS/(2.0*Enu); 
+	double pfbar_z = -Enu - pf_z;
+	double pf_y=0.0;
+	double pfbar_y=0.0;
+	double pf_x = sqrt(Ef*Ef - pf_z*pf_z);	
+	double pfbar_x = -pf_x;	
+
+//Now we rotate the electron system around the z-axis randomly.
+	pf_y=sin(phi)*pf_x + cos(phi)*pf_y;
+	pfbar_y=sin(phi)*pfbar_x + cos(phi)*pfbar_y;
+
+//Then update the final observables.
+	p0[0]=Ef;
+	p0[1]=pf_x;
+	p0[2]=pf_y;
+	p0[3]=pf_z;
+	p1[0]=Efbar;
+	p1[1]=pfbar_x;
+	p1[2]=pfbar_y;
+	p1[3]=pfbar_z;
+
+return 0;
+}
 
 int threebody::drawRestFrameDistMassive(gsl_rng * r, double mS, double m0, double m1, double m2, double p0[4], double p1[4])
 {
@@ -484,7 +580,7 @@ int threebody::drawRestFrameDistMassive(gsl_rng * r, double mS, double m0, doubl
 
 //	p2[0]=vp2[0];
 //	p2[1]=vp2[1];
-///	p2[2]=vp2[2];
+//	p2[2]=vp2[2];
 //	p2[3]=vp2[3];
 
 	p1[1] = -(tp0[1]+vp2[1]);
@@ -492,7 +588,6 @@ int threebody::drawRestFrameDistMassive(gsl_rng * r, double mS, double m0, doubl
 	p1[3] = -(tp0[3]+vp2[3]);
 return 0;
 }
-
 
 int threebody::drawRestFrameDist(gsl_rng * r, double mS, double mZprime, double output[3])
 {

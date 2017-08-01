@@ -418,12 +418,18 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 //Peter changed this 11/July
 //	double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
 
-		//Mark changed this 15th/july, think we do need gamma_total correctly
-		double GT = Gamma_total(sqrt(ch2), mass_z, mass_s, 0.0, sqrt(u2) , 0.0);
-		double GZEE = Gamma_ZP_EE( sqrt(ch2), mass_z, mass_s, 0.0, sqrt(u2), 0.0); 
-	        double BR = GZEE/GT;
+		//I made this "better" by adding more arbitrary structures.
+		decay_params params;
+		params.mS=mass_s;
+		params.mZprime=mass_z;
+		params.chi=sqrt(ch2);
+		params.Ue4=0.0;
+		params.Um4=sqrt(u2);
+		params.Ut4=0.0;
 		
-
+		double GT = Gamma_total(&params);
+		double GZEE = Gamma_EE(&params); 
+	        double BR = GZEE/GT;
 
 	for(int i=0; i<tnu->GetEntries(); i++){
 		tnu->GetEntry(i);

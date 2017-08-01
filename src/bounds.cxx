@@ -84,12 +84,27 @@ bool bound::ps191(double mS, double mZ, double Um, double chi){
 		UtildeSq = bound_file.getFlux(mS);	
 	}
 
-//	double mr = myRate(chi,mS,mZ) + Um*Um*assumedRate(mS);
-//	double tr = UtildeSq*assumedRate(mS);
-	double my_rate = Gamma_ZP_EE(chi,mS,mZ,1/sqrt(3),1/sqrt(3),1/sqrt(3)) + Gamma_EE(mS,0.0,Um,0.0);
-	double their_rate = UtildeSq*Gamma_EE(mS,1/sqrt(3),1/sqrt(3),1/sqrt(3)); 
-	double my_fullrate = Gamma_total(chi,mZ,mS,0.0,Um,0.0);
-	double their_fullrate = Gamma_total(chi,-1.0,mS,0.0,sqrt(UtildeSq),0.0);
+// THIS NEEDS TO BE CHECK FOR CONSISTENCY. WHEN FIXING THE DECAY RATES (1 Aug), I TRIED TO UPDATE IT BUT DID SO WITHOUT REALLY WORKING ON THIS PART OF THE CODE.
+	decay_params our_params;
+	our_params.mS=mS;
+	our_params.mZprime=mZ;
+	our_params.chi=chi;
+	our_params.Ue4=0.0;
+	our_params.Um4=Um;
+	our_params.Ut4=0.0;
+
+	decay_params their_params;
+	their_params.mS=mS;
+	their_params.mZprime=80.0; //Set mass to anything if chi=0. Shouldn't matter. But bigger turns off effect too.
+	their_params.chi=0.0;
+	their_params.Ue4=0.0;
+	their_params.Um4=sqrt(UtildeSq);
+	their_params.Ut4=0.0;
+
+	double my_rate = Gamma_EE(&our_params);
+	double their_rate = Gamma_EE(&their_params); 
+	double my_fullrate = Gamma_total(&our_params);
+	double their_fullrate = Gamma_total(&their_params);
 
 	//Going to multiply by U^2 each side as I think we lost "flux folded bit"
 	double my_flux_folded_prob = Um*Um*probDecay(mS, my_rate, my_fullrate,16);
@@ -118,21 +133,38 @@ bool bound::asIs(double mass, double Us){
 	return ans;
 }
 
-
+//Is this function even used anymore?
 double bound::myRate(double chi, double mS, double mZprime)
 {
 //This should be the Zprime decay into e e.
 
-	double ret = Gamma_ZP_EE(chi, mZprime, mS, 1/sqrt(3),  1/sqrt(3),  1/sqrt(3)); 
+	decay_params params;
+	params.mS=mS;
+	params.mZprime=mZprime;
+	params.chi=chi;
+	params.Ue4=1.0/sqrt(3);
+	params.Um4=1.0/sqrt(3);
+	params.Ut4=1.0/sqrt(3);
+
+	double ret = Gamma_EE(&params); 
 
 return ret; 
 }
 
+//Is this function even used anymore?
 double bound::assumedRate(double mS)
 {
 //This should be the total decay rate of the particle.
 
-	return Gamma_total(1.0, -1.0, mS, 1/sqrt(3), 1/sqrt(3), 1/sqrt(3));
+	decay_params params;
+	params.mS=mS;
+	params.mZprime=80.0;
+	params.chi=0.0;
+	params.Ue4=1.0/sqrt(3);
+	params.Um4=1.0/sqrt(3);
+	params.Ut4=1.0/sqrt(3);
+
+	return Gamma_total(&params);
 }
 
 double bound::old_assumedRate(double mS)
