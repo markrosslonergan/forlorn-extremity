@@ -46,14 +46,6 @@ double I1_C5(double,double);
 double I2_C7(double);
 double I1_C6(double);
 
-double threebody_I(double alpha, double beta, double gamma);
-double c0(double alpha, double beta);
-double c1(double alpha, double beta);
-double c2(double alpha, double beta);
-double c3(double alpha, double beta);
-double c4(double alpha, double beta);
-double c5(double alpha, double beta);
-
 //Old integral approximations
 double I1_3arg_e(double);
 double I1_3arg_mue(double);
@@ -61,11 +53,11 @@ double I1_3arg_mu(double);
 double I2_3arg_e(double);
 double I2_3arg_mu(double);
 
-//Here are some nasty mathematic expressions
+//Here are some nasty mathematica expressions
 double sbeta_mathematica(double, double);
 double cbeta_mathematica(double, double);
 
-double branch_plotter(double, double, double, double, double);
+double branch_plotter(decay_params*);
 
 
 #define GF  1.16636e-5 /* Fermi's constant in GeV^-2 */
@@ -78,6 +70,8 @@ double branch_plotter(double, double, double, double, double);
 #define pi0_mass   0.135
 #define mu_mass   0.105
 #define xW  0.231 /* sin^2\theta_W -- the Weinberg angle */
+#define v_vev 254.0 // Higgs vev.
+
 
 //Tedious variables for the integration algorithm
 #define NDIM 		2

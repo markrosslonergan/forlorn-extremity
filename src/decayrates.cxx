@@ -7,8 +7,6 @@ double Gamma_EE(decay_params * params)
 
   	double function = 1;
 
-//  	double input_params[] = {p.mS, p.mZprime, p.chi, Ue4, Um4, Ut4};
-
   	Vegas(NDIM, NCOMP, Integrand_ee, params, NVEC,
     		EPSREL, EPSABS, VERBOSE, SEED,
     		MINEVAL, MAXEVAL, NSTART, NINCREASE, NBATCH,
@@ -62,7 +60,6 @@ double s = mS*mS + 2.0*e_mass*e_mass - t - u;
 double jacobian = fabs((u_max-u_min)*(t_max-t_min));
 
 	double sW = sqrt(xW); //I can't pretend the letter s doesn't exist.
-	double v_vev = 254.0;
 
 	double tanchi = chi + pow(chi,3.0)/3.0 + (2.0/15.0)*pow(chi,5.0) + (17.0/315.0)*pow(chi,7.0) + + (62.0/2835.0)*pow(chi,9.0); //Just the tan(chi) but chi is small... works fine up to \chi=1.	
 	double coschi = 1 - 0.5*pow(chi,2.0) + (1.0/24.0)*pow(chi,4.0) - (1.0/720.0)*pow(chi,6.0) + (1.0/40320.0)*pow(chi,8.0) - (1.0/3628800.0)*pow(chi,10.0); 	
@@ -108,8 +105,9 @@ double jacobian = fabs((u_max-u_min)*(t_max-t_min));
 	f = (1-Ue4*Ue4-Um4*Um4-Ut4*Ut4)*(Ue4*Ue4*(f1+f3)+Um4*Um4*f1+Ut4*Ut4*f1) + (1-Ue4*Ue4)*Ue4*Ue4*f2;
 	f *= 1e21*jacobian/(32.0*pow(2*M_PI*mS,3.0));
 
-	ff[0] = f;
 }
+
+	ff[0] = f;
 
 return 0;
 }
@@ -127,16 +125,15 @@ double Gamma_NUPI0(decay_params * params)
 
 	if(mS>pi0_mass+1e-8)
 	{ 
-		double v_vev = 254.0;
 		double Us4_sq = 1.0 - Ue4*Ue4 - Um4*Um4 - Ut4*Ut4;
 		double tanchi = chi + pow(chi,3.0)/3.0 + (2.0/15.0)*pow(chi,5.0) + (17.0/315.0)*pow(chi,7.0) + + (62.0/2835.0)*pow(chi,9.0); //Just the tan(chi) but chi is small... works fine up to \chi=1.	
 		double coschi = 1 - 0.5*pow(chi,2.0) + (1.0/24.0)*pow(chi,4.0) - (1.0/720.0)*pow(chi,6.0) + (1.0/40320.0)*pow(chi,8.0) - (1.0/3628800.0)*pow(chi,10.0); 	
-		double sinbeta = sbeta_mathematica(mZprime/v_vev,chi)   ;	
+		double sinbeta = sbeta_mathematica(mZprime/v_vev,chi);	
 		double cosbeta = cbeta_mathematica(mZprime/v_vev,chi);	
 		double QX=1.0; //This is an assumption.
 		double gX=1.0; //See QX.
 		double sW = sqrt(xW); //Renamed for my own sanity. This is sin(thetaW).
-	
+
 		//what follows are the coupling constants for the Zprime and then the Z (_std).
 
 		double cq_Z = sqrt(sqrt(2)*Z_mass*Z_mass*GF)*(cosbeta-sW*sinbeta*tanchi);
@@ -157,8 +154,6 @@ return G_nu_pi0;
 double Gamma_NUMUMU(decay_params * params)
 {
 	double mS = (*params).mS;
-	double mZprime = (*params).mZprime;
-	double chi = (*params).chi;
 	double Ue4 = (*params).Ue4;
 	double Um4 = (*params).Um4;
 	double Ut4 = (*params).Ut4;
@@ -185,11 +180,8 @@ double Gamma_NUMUE(decay_params * params)
 //This channel is the sum of mu^+e^- and mu^-e^+
 
 	double mS = (*params).mS;
-	double mZprime = (*params).mZprime;
-	double chi = (*params).chi;
 	double Ue4 = (*params).Ue4;
 	double Um4 = (*params).Um4;
-	double Ut4 = (*params).Ut4;
 
 	double G = 0.0;
 
@@ -204,11 +196,7 @@ return G;
 double Gamma_EPI(decay_params * params)
 {
 	double mS = (*params).mS;
-	double mZprime = (*params).mZprime;
-	double chi = (*params).chi;
 	double Ue4 = (*params).Ue4;
-	double Um4 = (*params).Um4;
-	double Ut4 = (*params).Ut4;
 
 	double G_e_pi = 0.0; 
 
@@ -223,11 +211,7 @@ return G_e_pi;
 double Gamma_MUPI(decay_params * params)
 {
 	double mS = (*params).mS;
-	double mZprime = (*params).mZprime;
-	double chi = (*params).chi;
-	double Ue4 = (*params).Ue4;
 	double Um4 = (*params).Um4;
-	double Ut4 = (*params).Ut4;
 
 	double G_mu_pi = 0.0; 
 
@@ -243,8 +227,6 @@ return G_mu_pi;
 double Gamma_NUGAMMA(decay_params * params)
 {
 	double mS = (*params).mS;
-	double mZprime = (*params).mZprime;
-	double chi = (*params).chi;
 	double Ue4 = (*params).Ue4;
 	double Um4 = (*params).Um4;
 	double Ut4 = (*params).Ut4;
@@ -259,8 +241,6 @@ return G_nu_gamma;
 double Gamma_NUNUNU(decay_params * params)
 {
 	double mS = (*params).mS;
-	double mZprime = (*params).mZprime;
-	double chi = (*params).chi;
 	double Ue4 = (*params).Ue4;
 	double Um4 = (*params).Um4;
 	double Ut4 = (*params).Ut4;
@@ -321,16 +301,8 @@ return Gamma;
 
 
 //This can plot the branching ratios
-double branch_plotter(double chi, double mZ, double Ue4, double Um4, double Ut4)
+double branch_plotter(decay_params * params)
 {
-	decay_params params;
-	params.mZprime=mZ;		
-	params.mS=1.0;
-	params.chi=chi;
-	params.Ue4=1.0/sqrt(3);
-	params.Um4=1.0/sqrt(3);
-	params.Ut4=1.0/sqrt(3);
-
 	double GT = 0.0;
 	double G1 = 0.0;
 	double G2 = 0.0;
@@ -343,21 +315,21 @@ double branch_plotter(double chi, double mZ, double Ue4, double Um4, double Ut4)
 
 	double log_mS = 0.0;
 
-	for(log_mS=-5.0; log_mS<=log(0.490)/log(10)+1e-5; log_mS+=0.001)
+	for(log_mS=-5.0; log_mS<=log(0.490)/log(10)+1e-5; log_mS+=0.01)
 	{
-		params.mS=pow(10.0,log_mS);
+		params->mS=pow(10.0,log_mS);
 
-		GT = Gamma_total(&params);
-		G1 = Gamma_NUNUNU(&params); 
-		G2 = Gamma_NUGAMMA(&params);
-		G3 = Gamma_EE(&params);
-		G4 = Gamma_NUMUE(&params);
-		G5 = Gamma_NUPI0(&params);
-		G6 = Gamma_EPI(&params);
-		G7 = Gamma_NUMUMU(&params);
-		G8 = Gamma_MUPI(&params);
+		GT = Gamma_total(params);
+		G1 = Gamma_NUNUNU(params); 
+		G2 = Gamma_NUGAMMA(params);
+		G3 = Gamma_EE(params);
+		G4 = Gamma_NUMUE(params);
+		G5 = Gamma_NUPI0(params);
+		G6 = Gamma_EPI(params);
+		G7 = Gamma_NUMUMU(params);
+		G8 = Gamma_MUPI(params);
 
-		std::cout<<params.mS<<" "<<GT<<" "<<G1/GT<<" "<<G2/GT<<" "<<G3/GT<<" "<<G4/GT<<" "<<G5/GT<<" "<<G6/GT<<" "<<G7/GT<<" "<<G8/GT<<" "<<std::endl;
+		std::cout<<params->mS<<" "<<GT<<" "<<G1/GT<<" "<<G2/GT<<" "<<G3/GT<<" "<<G4/GT<<" "<<G5/GT<<" "<<G6/GT<<" "<<G7/GT<<" "<<G8/GT<<" "<<std::endl;
 	}
  
 return 0;
@@ -636,20 +608,22 @@ double sbeta_mathematica(double mu, double chi)
 if(mu>0.9){ std::cout<<"ERROR: sin(beta) function assumes Zprime mass below EW scale. Take more care."<<std::endl; return 1; }
 if(chi>0.9){ std::cout<<"ERROR: sin(beta) function works perturbatively with chi (chi<<1). Take more care."<<std::endl; return 1; }
 
-double X = pow(chi,9)*(-0.07705977726373278 - 0.5555429290052434*pow(mu,2) - 
-      1.919982323225093*pow(mu,4) - 4.533147018464647*pow(mu,6) - 
-      8.384273721015495*pow(mu,8) - 12.892135107956593*pow(mu,10)) + 
-   pow(chi,7)*(-0.10092592904333923 - 0.6014363002828582*pow(mu,2) - 
-      1.744315960766308*pow(mu,4) - 3.614361867827966*pow(mu,6) - 
-      6.151350233131595*pow(mu,8) - 9.165526790764725*pow(mu,10)) + 
-   pow(chi,5)*(-0.12516182698466563 - 0.5662431833043466*pow(mu,2) - 
-      1.283554937941228*pow(mu,4) - 2.209156735509329*pow(mu,6) - 
-      3.277656996254506*pow(mu,8) - 4.426212916054446*pow(mu,10)) + 
-   pow(chi,3)*(-0.1529060225 - 0.4413224585*pow(mu,2) - 
-      0.7112493080000001*pow(mu,4) - 0.9626865709999999*pow(mu,6) - 
-      1.1956342474999997*pow(mu,8) - 1.4100923375*pow(mu,10)) + 
-   chi*(-0.231 - 0.231*pow(mu,2) - 0.231*pow(mu,4) - 0.231*pow(mu,6) - 
-      0.231*pow(mu,8) - 0.231*pow(mu,10));
+double X = (-0.48062459362791665 - 7.4496961006249086e-6*pow(mu,2) - 
+      1.1547052050072706e-10*pow(mu,4) - 1.789796647354564e-15*pow(mu,6) - 
+      2.7741903517802774e-20*pow(mu,8) - 4.30000364526672e-25*pow(mu,10))*chi + 
+   (-0.10469605731194782 - 5.630728636055658e-6*pow(mu,2) - 
+      1.0938907308768873e-10*pow(mu,4) - 1.4181155435872652e-15*pow(mu,6) - 
+      8.06827027309427e-21*pow(mu,8) + 2.3958186976877815e-25*pow(mu,10))*pow(chi,3) + 
+   (-0.01818861693908181 - 1.5777540649311225e-6*pow(mu,2) + 
+      4.777640898433737e-13*pow(mu,4) + 1.901589210319837e-15*pow(mu,6) + 
+      8.902204607878581e-20*pow(mu,8) + 2.787498612228834e-24*pow(mu,10))*pow(chi,5) + 
+   (0.0005926669430206078 + 4.249705485402503e-7*pow(mu,2) + 
+      7.534085182368923e-11*pow(mu,4) + 4.383911746670846e-15*pow(mu,6) + 
+      1.594296315536986e-19*pow(mu,8) + 4.331358350173816e-24*pow(mu,10))*pow(chi,7) + 
+   (0.0021838128835075226 + 6.873627996750816e-7*pow(mu,2) + 
+      7.450230375918738e-11*pow(mu,4) + 3.81925568196591e-15*pow(mu,6) + 
+      1.1715526294257591e-19*pow(mu,8) + 2.014105090559639e-24*pow(mu,10))*pow(chi,9);
+
 
 return X;
 }
@@ -660,21 +634,21 @@ double cbeta_mathematica(double mu, double chi)
 if(mu>0.9){ std::cout<<"ERROR: sin(beta) function assumes Zprime mass below EW scale. Take more care."<<std::endl; return 1; }
 if(chi>0.9){ std::cout<<"ERROR: sin(beta) function works perturbatively with chi (chi<<1). Take more care."<<std::endl; return 1; }
 
-double X = 1 + pow(chi,10)*(-0.043727475807767556 - 0.37840408886083987*pow(mu,2) - 
-      1.6350823810090083*pow(mu,4) - 4.899026019354672*pow(mu,6) - 
-      11.65884220818534*pow(mu,8) - 23.65388866897464*pow(mu,10)) + 
-   pow(chi,8)*(-0.04419701060848131 - 0.3174410748404108*pow(mu,2) - 
-      1.1547778014994647*pow(mu,4) - 2.9875454720476946*pow(mu,6) - 
-      6.289005646058018*pow(mu,8) - 11.524811327530113*pow(mu,10)) + 
-   pow(chi,6)*(-0.04155439384633073 - 0.23279952233373588*pow(mu,2) - 
-      0.6807500046241757*pow(mu,4) - 1.4729811791306302*pow(mu,6) - 
-      2.678284344400904*pow(mu,8) - 4.3473220000014265*pow(mu,10)) + 
-   pow(chi,4)*(-0.03567721573762501 - 0.13869047727150002*pow(mu,2) - 
-      0.30512461466025004*pow(mu,4) - 0.5310644579625001*pow(mu,6) - 
-      0.8125948372368751*pow(mu,8) - 1.1458005825420001*pow(mu,10)) + 
-   pow(chi,2)*(-0.026680500000000003 - 0.053361000000000006*pow(mu,2) - 
-      0.08004150000000002*pow(mu,4) - 0.10672200000000001*pow(mu,6) - 
-      0.1334025*pow(mu,8) - 0.16008300000000003*pow(mu,10));
+double X = 1 + (-0.1155 - 3.580507161014322e-6*pow(mu,2) - 8.324695798749895e-11*pow(mu,4) - 
+      1.72044057262279e-15*pow(mu,6) - 3.333360276177208e-20*pow(mu,8) - 
+      6.200062513814633e-25*pow(mu,10))*pow(chi,2) + 
+   (-0.056989625 - 3.899769049538098e-6*pow(mu,2) - 1.2263664360858385e-10*pow(mu,4) - 
+      2.830841592203082e-15*pow(mu,6) - 5.3530988235175776e-20*pow(mu,8) - 
+      8.399018018714214e-25*pow(mu,10))*pow(chi,4) + 
+   (-0.02080483052083337 - 2.1377972486153324e-6*pow(mu,2) - 
+      7.380146561367667e-11*pow(mu,4) - 1.2503943203549604e-15*pow(mu,6) + 
+      3.729648108917351e-21*pow(mu,8) + 1.0956438232376082e-24*pow(mu,10))*pow(chi,6)\
+    + (-0.005646292776809762 - 6.025871130433287e-7*pow(mu,2) - 
+      3.882039773693532e-12*pow(mu,4) + 1.459802013048614e-15*pow(mu,6) + 
+      1.0028529146242935e-19*pow(mu,8) + 4.136868620168733e-24*pow(mu,10))*pow(chi,8)\
+    + (-0.0008915751264421084 + 7.298323096629548e-8*pow(mu,2) + 
+      3.2119852891006114e-11*pow(mu,4) + 2.8544914693644827e-15*pow(mu,6) + 
+      1.4387988532822444e-19*pow(mu,8) + 5.077218790410028e-24*pow(mu,10))*pow(chi,10); 
 
 return X;
 }
@@ -802,373 +776,3 @@ return 5200.0*(ms/0.04)*((ms - 0.001022)/(0.5-0.001022))*exp( -230.0*pow((ms-0.0
 }
 
 
-//##########################################################
-//######    Crazy functions for threebody rate        ######
-//##########################################################
-
-double threebody_I(double alpha, double beta, double gamma)
-{
-
-double res = c0(alpha,beta) + gamma*c1(alpha,beta) + gamma*gamma*c2(alpha,beta) + gamma*gamma*gamma*c3(alpha,beta) + gamma*gamma*gamma*gamma*c4(alpha,beta) + gamma*gamma*gamma*gamma*gamma*c5(alpha,beta);
-
-return res;
-}
-
-double c0(double alpha, double beta)
-{
-
-double X=0.08333333333333333 - (7*alpha)/120. + (2*pow(alpha,2))/45. - pow(alpha,3)/28. + 
-   (5*pow(alpha,4))/168. - (11*pow(alpha,5))/432. + pow(alpha,6)/45. - 
-   (13*pow(alpha,7))/660. + (7*pow(alpha,8))/396. - (5*pow(alpha,9))/312. + 
-   (4*pow(alpha,10))/273. + (-0.058333333333333334 + (2*alpha)/45. - 
-      pow(alpha,2)/28. + (5*pow(alpha,3))/168. - (11*pow(alpha,4))/432. + 
-      pow(alpha,5)/45. - (13*pow(alpha,6))/660. + (7*pow(alpha,7))/396. - 
-      (5*pow(alpha,8))/312. + (4*pow(alpha,9))/273. - (17*pow(alpha,10))/1260.)*
-    beta + (0.044444444444444446 - alpha/28. + (5*pow(alpha,2))/168. - 
-      (11*pow(alpha,3))/432. + pow(alpha,4)/45. - (13*pow(alpha,5))/660. + 
-      (7*pow(alpha,6))/396. - (5*pow(alpha,7))/312. + (4*pow(alpha,8))/273. - 
-      (17*pow(alpha,9))/1260. + pow(alpha,10)/80.)*pow(beta,2) + 
-   (-0.03571428571428571 + (5*alpha)/168. - (11*pow(alpha,2))/432. + 
-      pow(alpha,3)/45. - (13*pow(alpha,4))/660. + (7*pow(alpha,5))/396. - 
-      (5*pow(alpha,6))/312. + (4*pow(alpha,7))/273. - (17*pow(alpha,8))/1260. + 
-      pow(alpha,9)/80. - (19*pow(alpha,10))/1632.)*pow(beta,3) + 
-   (0.02976190476190476 - (11*alpha)/432. + pow(alpha,2)/45. - 
-      (13*pow(alpha,3))/660. + (7*pow(alpha,4))/396. - (5*pow(alpha,5))/312. + 
-      (4*pow(alpha,6))/273. - (17*pow(alpha,7))/1260. + pow(alpha,8)/80. - 
-      (19*pow(alpha,9))/1632. + (5*pow(alpha,10))/459.)*pow(beta,4) + 
-   (-0.02546296296296296 + alpha/45. - (13*pow(alpha,2))/660. + 
-      (7*pow(alpha,3))/396. - (5*pow(alpha,4))/312. + (4*pow(alpha,5))/273. - 
-      (17*pow(alpha,6))/1260. + pow(alpha,7)/80. - (19*pow(alpha,8))/1632. + 
-      (5*pow(alpha,9))/459. - (7*pow(alpha,10))/684.)*pow(beta,5) + 
-   (0.022222222222222223 - (13*alpha)/660. + (7*pow(alpha,2))/396. - 
-      (5*pow(alpha,3))/312. + (4*pow(alpha,4))/273. - (17*pow(alpha,5))/1260. + 
-      pow(alpha,6)/80. - (19*pow(alpha,7))/1632. + (5*pow(alpha,8))/459. - 
-      (7*pow(alpha,9))/684. + (11*pow(alpha,10))/1140.)*pow(beta,6) + 
-   (-0.019696969696969695 + (7*alpha)/396. - (5*pow(alpha,2))/312. + 
-      (4*pow(alpha,3))/273. - (17*pow(alpha,4))/1260. + pow(alpha,5)/80. - 
-      (19*pow(alpha,6))/1632. + (5*pow(alpha,7))/459. - (7*pow(alpha,8))/684. + 
-      (11*pow(alpha,9))/1140. - (23*pow(alpha,10))/2520.)*pow(beta,7) + 
-   (0.017676767676767676 - (5*alpha)/312. + (4*pow(alpha,2))/273. - 
-      (17*pow(alpha,3))/1260. + pow(alpha,4)/80. - (19*pow(alpha,5))/1632. + 
-      (5*pow(alpha,6))/459. - (7*pow(alpha,7))/684. + (11*pow(alpha,8))/1140. - 
-      (23*pow(alpha,9))/2520. + (2*pow(alpha,10))/231.)*pow(beta,8) + 
-   (-0.016025641025641024 + (4*alpha)/273. - (17*pow(alpha,2))/1260. + 
-      pow(alpha,3)/80. - (19*pow(alpha,4))/1632. + (5*pow(alpha,5))/459. - 
-      (7*pow(alpha,6))/684. + (11*pow(alpha,7))/1140. - (23*pow(alpha,8))/2520. + 
-      (2*pow(alpha,9))/231. - (25*pow(alpha,10))/3036.)*pow(beta,9) + 
-   (0.014652014652014652 - (17*alpha)/1260. + pow(alpha,2)/80. - 
-      (19*pow(alpha,3))/1632. + (5*pow(alpha,4))/459. - (7*pow(alpha,5))/684. + 
-      (11*pow(alpha,6))/1140. - (23*pow(alpha,7))/2520. + (2*pow(alpha,8))/231. - 
-      (25*pow(alpha,9))/3036. + (13*pow(alpha,10))/1656.)*pow(beta,10);
-
-return X;
-}
-
-double c1(double alpha, double beta)
-{
-double X= -0.058333333333333334 + (7*alpha)/180. - pow(alpha,2)/35. + (5*pow(alpha,3))/224. - 
-   (55*pow(alpha,4))/3024. + (11*pow(alpha,5))/720. - (13*pow(alpha,6))/990. + 
-   (91*pow(alpha,7))/7920. - (35*pow(alpha,8))/3432. + (5*pow(alpha,9))/546. - 
-   (34*pow(alpha,10))/4095. + (0.03888888888888889 - alpha/35. + 
-      (5*pow(alpha,2))/224. - (55*pow(alpha,3))/3024. + (11*pow(alpha,4))/720. - 
-      (13*pow(alpha,5))/990. + (91*pow(alpha,6))/7920. - (35*pow(alpha,7))/3432. + 
-      (5*pow(alpha,8))/546. - (34*pow(alpha,9))/4095. + (17*pow(alpha,10))/2240.)*
-    beta + (-0.02857142857142857 + (5*alpha)/224. - (55*pow(alpha,2))/3024. + 
-      (11*pow(alpha,3))/720. - (13*pow(alpha,4))/990. + (91*pow(alpha,5))/7920. - 
-      (35*pow(alpha,6))/3432. + (5*pow(alpha,7))/546. - (34*pow(alpha,8))/4095. + 
-      (17*pow(alpha,9))/2240. - (19*pow(alpha,10))/2720.)*pow(beta,2) + 
-   (0.022321428571428572 - (55*alpha)/3024. + (11*pow(alpha,2))/720. - 
-      (13*pow(alpha,3))/990. + (91*pow(alpha,4))/7920. - (35*pow(alpha,5))/3432. + 
-      (5*pow(alpha,6))/546. - (34*pow(alpha,7))/4095. + (17*pow(alpha,8))/2240. - 
-      (19*pow(alpha,9))/2720. + (95*pow(alpha,10))/14688.)*pow(beta,3) + 
-   (-0.018187830687830687 + (11*alpha)/720. - (13*pow(alpha,2))/990. + 
-      (91*pow(alpha,3))/7920. - (35*pow(alpha,4))/3432. + (5*pow(alpha,5))/546. - 
-      (34*pow(alpha,6))/4095. + (17*pow(alpha,7))/2240. - 
-      (19*pow(alpha,8))/2720. + (95*pow(alpha,9))/14688. - (35*pow(alpha,10))/5814.
-      )*pow(beta,4) + (0.015277777777777777 - (13*alpha)/990. + 
-      (91*pow(alpha,2))/7920. - (35*pow(alpha,3))/3432. + (5*pow(alpha,4))/546. - 
-      (34*pow(alpha,5))/4095. + (17*pow(alpha,6))/2240. - 
-      (19*pow(alpha,7))/2720. + (95*pow(alpha,8))/14688. - 
-      (35*pow(alpha,9))/5814. + (77*pow(alpha,10))/13680.)*pow(beta,5) + 
-   (-0.013131313131313131 + (91*alpha)/7920. - (35*pow(alpha,2))/3432. + 
-      (5*pow(alpha,3))/546. - (34*pow(alpha,4))/4095. + (17*pow(alpha,5))/2240. - 
-      (19*pow(alpha,6))/2720. + (95*pow(alpha,7))/14688. - 
-      (35*pow(alpha,8))/5814. + (77*pow(alpha,9))/13680. - 
-      (253*pow(alpha,10))/47880.)*pow(beta,6) + 
-   (0.01148989898989899 - (35*alpha)/3432. + (5*pow(alpha,2))/546. - 
-      (34*pow(alpha,3))/4095. + (17*pow(alpha,4))/2240. - 
-      (19*pow(alpha,5))/2720. + (95*pow(alpha,6))/14688. - 
-      (35*pow(alpha,7))/5814. + (77*pow(alpha,8))/13680. - 
-      (253*pow(alpha,9))/47880. + (23*pow(alpha,10))/4620.)*pow(beta,7) + 
-   (-0.010198135198135198 + (5*alpha)/546. - (34*pow(alpha,2))/4095. + 
-      (17*pow(alpha,3))/2240. - (19*pow(alpha,4))/2720. + 
-      (95*pow(alpha,5))/14688. - (35*pow(alpha,6))/5814. + 
-      (77*pow(alpha,7))/13680. - (253*pow(alpha,8))/47880. + 
-      (23*pow(alpha,9))/4620. - (25*pow(alpha,10))/5313.)*pow(beta,8) + 
-   (0.009157509157509158 - (34*alpha)/4095. + (17*pow(alpha,2))/2240. - 
-      (19*pow(alpha,3))/2720. + (95*pow(alpha,4))/14688. - 
-      (35*pow(alpha,5))/5814. + (77*pow(alpha,6))/13680. - 
-      (253*pow(alpha,7))/47880. + (23*pow(alpha,8))/4620. - 
-      (25*pow(alpha,9))/5313. + (325*pow(alpha,10))/72864.)*pow(beta,9) + 
-   (-0.008302808302808303 + (17*alpha)/2240. - (19*pow(alpha,2))/2720. + 
-      (95*pow(alpha,3))/14688. - (35*pow(alpha,4))/5814. + 
-      (77*pow(alpha,5))/13680. - (253*pow(alpha,6))/47880. + 
-      (23*pow(alpha,7))/4620. - (25*pow(alpha,8))/5313. + 
-      (325*pow(alpha,9))/72864. - (39*pow(alpha,10))/9200.)*pow(beta,10);
-
-return X;
-}
-
-double c2(double alpha, double beta)
-{
-
-double X= 0.044444444444444446 - alpha/35. + (103*pow(alpha,2))/5040. - 
-   (473*pow(alpha,3))/30240. + (79*pow(alpha,4))/6300. - 
-   (247*pow(alpha,5))/23760. + (7*pow(alpha,6))/792. - (263*pow(alpha,7))/34320. + 
-   (304*pow(alpha,8))/45045. - (493*pow(alpha,9))/81900. + 
-   (79*pow(alpha,10))/14560. + (-0.02857142857142857 + (103*alpha)/5040. - 
-      (473*pow(alpha,2))/30240. + (79*pow(alpha,3))/6300. - 
-      (247*pow(alpha,4))/23760. + (7*pow(alpha,5))/792. - 
-      (263*pow(alpha,6))/34320. + (304*pow(alpha,7))/45045. - 
-      (493*pow(alpha,8))/81900. + (79*pow(alpha,9))/14560. - 
-      (1691*pow(alpha,10))/342720.)*beta + 
-   (0.020436507936507937 - (473*alpha)/30240. + (79*pow(alpha,2))/6300. - 
-      (247*pow(alpha,3))/23760. + (7*pow(alpha,4))/792. - 
-      (263*pow(alpha,5))/34320. + (304*pow(alpha,6))/45045. - 
-      (493*pow(alpha,7))/81900. + (79*pow(alpha,8))/14560. - 
-      (1691*pow(alpha,9))/342720. + (83*pow(alpha,10))/18360.)*pow(beta,2) + 
-   (-0.01564153439153439 + (79*alpha)/6300. - (247*pow(alpha,2))/23760. + 
-      (7*pow(alpha,3))/792. - (263*pow(alpha,4))/34320. + 
-      (304*pow(alpha,5))/45045. - (493*pow(alpha,6))/81900. + 
-      (79*pow(alpha,7))/14560. - (1691*pow(alpha,8))/342720. + 
-      (83*pow(alpha,9))/18360. - (1939*pow(alpha,10))/465120.)*pow(beta,3) + 
-   (0.01253968253968254 - (247*alpha)/23760. + (7*pow(alpha,2))/792. - 
-      (263*pow(alpha,3))/34320. + (304*pow(alpha,4))/45045. - 
-      (493*pow(alpha,5))/81900. + (79*pow(alpha,6))/14560. - 
-      (1691*pow(alpha,7))/342720. + (83*pow(alpha,8))/18360. - 
-      (1939*pow(alpha,9))/465120. + (6743*pow(alpha,10))/1.7442e6)*pow(beta,4) + 
-   (-0.010395622895622895 + (7*alpha)/792. - (263*pow(alpha,2))/34320. + 
-      (304*pow(alpha,3))/45045. - (493*pow(alpha,4))/81900. + 
-      (79*pow(alpha,5))/14560. - (1691*pow(alpha,6))/342720. + 
-      (83*pow(alpha,7))/18360. - (1939*pow(alpha,8))/465120. + 
-      (6743*pow(alpha,9))/1.7442e6 - (23*pow(alpha,10))/6384.)*pow(beta,5) + 
-   (0.008838383838383838 - (263*alpha)/34320. + (304*pow(alpha,2))/45045. - 
-      (493*pow(alpha,3))/81900. + (79*pow(alpha,4))/14560. - 
-      (1691*pow(alpha,5))/342720. + (83*pow(alpha,6))/18360. - 
-      (1939*pow(alpha,7))/465120. + (6743*pow(alpha,8))/1.7442e6 - 
-      (23*pow(alpha,9))/6384. + (74*pow(alpha,10))/21945.)*pow(beta,6) + 
-   (-0.0076631701631701635 + (304*alpha)/45045. - (493*pow(alpha,2))/81900. + 
-      (79*pow(alpha,3))/14560. - (1691*pow(alpha,4))/342720. + 
-      (83*pow(alpha,5))/18360. - (1939*pow(alpha,6))/465120. + 
-      (6743*pow(alpha,7))/1.7442e6 - (23*pow(alpha,8))/6384. + 
-      (74*pow(alpha,9))/21945. - (101*pow(alpha,10))/31878.)*pow(beta,7) + 
-   (0.006748806748806749 - (493*alpha)/81900. + (79*pow(alpha,2))/14560. - 
-      (1691*pow(alpha,3))/342720. + (83*pow(alpha,4))/18360. - 
-      (1939*pow(alpha,5))/465120. + (6743*pow(alpha,6))/1.7442e6 - 
-      (23*pow(alpha,7))/6384. + (74*pow(alpha,8))/21945. - 
-      (101*pow(alpha,9))/31878. + (3809*pow(alpha,10))/1.27512e6)*pow(beta,8) + 
-   (-0.006019536019536019 + (79*alpha)/14560. - (1691*pow(alpha,2))/342720. + 
-      (83*pow(alpha,3))/18360. - (1939*pow(alpha,4))/465120. + 
-      (6743*pow(alpha,5))/1.7442e6 - (23*pow(alpha,6))/6384. + 
-      (74*pow(alpha,7))/21945. - (101*pow(alpha,8))/31878. + 
-      (3809*pow(alpha,9))/1.27512e6 - (2859*pow(alpha,10))/1.012e6)*pow(beta,9) + 
-   (0.005425824175824176 - (1691*alpha)/342720. + (83*pow(alpha,2))/18360. - 
-      (1939*pow(alpha,3))/465120. + (6743*pow(alpha,4))/1.7442e6 - 
-      (23*pow(alpha,5))/6384. + (74*pow(alpha,6))/21945. - 
-      (101*pow(alpha,7))/31878. + (3809*pow(alpha,8))/1.27512e6 - 
-      (2859*pow(alpha,9))/1.012e6 + (721*pow(alpha,10))/269100.)*pow(beta,10);
-
-return X;
-}
-
-
-double c3(double alpha, double beta)
-{
-double X = -0.03571428571428571 + (5*alpha)/224. - (473*pow(alpha,2))/30240. + 
-   (33*pow(alpha,3))/2800. - (2587*pow(alpha,4))/277200. + 
-   (91*pow(alpha,5))/11880. - (133*pow(alpha,6))/20592. + 
-   (167*pow(alpha,7))/30030. - (731*pow(alpha,8))/150150. + 
-   (629*pow(alpha,9))/145600. - (1919*pow(alpha,10))/495040. + 
-   (0.022321428571428572 - (473*alpha)/30240. + (33*pow(alpha,2))/2800. - 
-      (2587*pow(alpha,3))/277200. + (91*pow(alpha,4))/11880. - 
-      (133*pow(alpha,5))/20592. + (167*pow(alpha,6))/30030. - 
-      (731*pow(alpha,7))/150150. + (629*pow(alpha,8))/145600. - 
-      (1919*pow(alpha,9))/495040. + (361*pow(alpha,10))/102816.)*beta + 
-   (-0.01564153439153439 + (33*alpha)/2800. - (2587*pow(alpha,2))/277200. + 
-      (91*pow(alpha,3))/11880. - (133*pow(alpha,4))/20592. + 
-      (167*pow(alpha,5))/30030. - (731*pow(alpha,6))/150150. + 
-      (629*pow(alpha,7))/145600. - (1919*pow(alpha,8))/495040. + 
-      (361*pow(alpha,9))/102816. - (497*pow(alpha,10))/155040.)*pow(beta,2) + 
-   (0.011785714285714287 - (2587*alpha)/277200. + (91*pow(alpha,2))/11880. - 
-      (133*pow(alpha,3))/20592. + (167*pow(alpha,4))/30030. - 
-      (731*pow(alpha,5))/150150. + (629*pow(alpha,6))/145600. - 
-      (1919*pow(alpha,7))/495040. + (361*pow(alpha,8))/102816. - 
-      (497*pow(alpha,9))/155040. + (6853*pow(alpha,10))/2.3256e6)*pow(beta,3) + 
-   (-0.009332611832611833 + (91*alpha)/11880. - (133*pow(alpha,2))/20592. + 
-      (167*pow(alpha,3))/30030. - (731*pow(alpha,4))/150150. + 
-      (629*pow(alpha,5))/145600. - (1919*pow(alpha,6))/495040. + 
-      (361*pow(alpha,7))/102816. - (497*pow(alpha,8))/155040. + 
-      (6853*pow(alpha,9))/2.3256e6 - (66539*pow(alpha,10))/2.44188e7)*pow(beta,4)\
-    + (0.00765993265993266 - (133*alpha)/20592. + (167*pow(alpha,2))/30030. - 
-      (731*pow(alpha,3))/150150. + (629*pow(alpha,4))/145600. - 
-      (1919*pow(alpha,5))/495040. + (361*pow(alpha,6))/102816. - 
-      (497*pow(alpha,7))/155040. + (6853*pow(alpha,8))/2.3256e6 - 
-      (66539*pow(alpha,9))/2.44188e7 + (667*pow(alpha,10))/263340.)*pow(beta,5) + 
-   (-0.006458818958818959 + (167*alpha)/30030. - (731*pow(alpha,2))/150150. + 
-      (629*pow(alpha,3))/145600. - (1919*pow(alpha,4))/495040. + 
-      (361*pow(alpha,5))/102816. - (497*pow(alpha,6))/155040. + 
-      (6853*pow(alpha,7))/2.3256e6 - (66539*pow(alpha,8))/2.44188e7 + 
-      (667*pow(alpha,9))/263340. - (955*pow(alpha,10))/403788.)*pow(beta,6) + 
-   (0.0055611055611055615 - (731*alpha)/150150. + (629*pow(alpha,2))/145600. - 
-      (1919*pow(alpha,3))/495040. + (361*pow(alpha,4))/102816. - 
-      (497*pow(alpha,5))/155040. + (6853*pow(alpha,6))/2.3256e6 - 
-      (66539*pow(alpha,7))/2.44188e7 + (667*pow(alpha,8))/263340. - 
-      (955*pow(alpha,9))/403788. + (377*pow(alpha,10))/170016.)*pow(beta,7) + 
-   (-0.004868464868464869 + (629*alpha)/145600. - (1919*pow(alpha,2))/495040. + 
-      (361*pow(alpha,3))/102816. - (497*pow(alpha,4))/155040. + 
-      (6853*pow(alpha,5))/2.3256e6 - (66539*pow(alpha,6))/2.44188e7 + 
-      (667*pow(alpha,7))/263340. - (955*pow(alpha,8))/403788. + 
-      (377*pow(alpha,9))/170016. - (14781*pow(alpha,10))/7.084e6)*pow(beta,8) + 
-   (0.004320054945054945 - (1919*alpha)/495040. + (361*pow(alpha,2))/102816. - 
-      (497*pow(alpha,3))/155040. + (6853*pow(alpha,4))/2.3256e6 - 
-      (66539*pow(alpha,5))/2.44188e7 + (667*pow(alpha,6))/263340. - 
-      (955*pow(alpha,7))/403788. + (377*pow(alpha,8))/170016. - 
-      (14781*pow(alpha,9))/7.084e6 + (12957*pow(alpha,10))/6.578e6)*pow(beta,9) + 
-   (-0.0038764544279250163 + (361*alpha)/102816. - (497*pow(alpha,2))/155040. + 
-      (6853*pow(alpha,3))/2.3256e6 - (66539*pow(alpha,4))/2.44188e7 + 
-      (667*pow(alpha,5))/263340. - (955*pow(alpha,6))/403788. + 
-      (377*pow(alpha,7))/170016. - (14781*pow(alpha,8))/7.084e6 + 
-      (12957*pow(alpha,9))/6.578e6 - (18067*pow(alpha,10))/9.6876e6)*pow(beta,10);
-
-return X;
-}
-
-double c4(double alpha, double beta)
-{
-double X = 0.02976190476190476 - (55*alpha)/3024. + (79*pow(alpha,2))/6300. - 
-   (2587*pow(alpha,3))/277200. + (3043*pow(alpha,4))/415800. - 
-   (859*pow(alpha,5))/144144. + (1574*pow(alpha,6))/315315. - 
-   (2567*pow(alpha,7))/600600. + (213*pow(alpha,8))/57200. - 
-   (12217*pow(alpha,9))/3.7128e6 + (983*pow(alpha,10))/334152. + 
-   (-0.018187830687830687 + (79*alpha)/6300. - (2587*pow(alpha,2))/277200. + 
-      (3043*pow(alpha,3))/415800. - (859*pow(alpha,4))/144144. + 
-      (1574*pow(alpha,5))/315315. - (2567*pow(alpha,6))/600600. + 
-      (213*pow(alpha,7))/57200. - (12217*pow(alpha,8))/3.7128e6 + 
-      (983*pow(alpha,9))/334152. - (8647*pow(alpha,10))/3.25584e6)*beta + 
-   (0.01253968253968254 - (2587*alpha)/277200. + (3043*pow(alpha,2))/415800. - 
-      (859*pow(alpha,3))/144144. + (1574*pow(alpha,4))/315315. - 
-      (2567*pow(alpha,5))/600600. + (213*pow(alpha,6))/57200. - 
-      (12217*pow(alpha,7))/3.7128e6 + (983*pow(alpha,8))/334152. - 
-      (8647*pow(alpha,9))/3.25584e6 + (19679*pow(alpha,10))/8.1396e6)*pow(beta,2)\
-    + (-0.009332611832611833 + (3043*alpha)/415800. - (859*pow(alpha,2))/144144. + 
-      (1574*pow(alpha,3))/315315. - (2567*pow(alpha,4))/600600. + 
-      (213*pow(alpha,5))/57200. - (12217*pow(alpha,6))/3.7128e6 + 
-      (983*pow(alpha,7))/334152. - (8647*pow(alpha,8))/3.25584e6 + 
-      (19679*pow(alpha,9))/8.1396e6 - (757781*pow(alpha,10))/3.418632e8)*
-    pow(beta,3) + (0.007318422318422319 - (859*alpha)/144144. + 
-      (1574*pow(alpha,2))/315315. - (2567*pow(alpha,3))/600600. + 
-      (213*pow(alpha,4))/57200. - (12217*pow(alpha,5))/3.7128e6 + 
-      (983*pow(alpha,6))/334152. - (8647*pow(alpha,7))/3.25584e6 + 
-      (19679*pow(alpha,8))/8.1396e6 - (757781*pow(alpha,9))/3.418632e8 + 
-      (11443*pow(alpha,10))/5.595975e6)*pow(beta,4) + 
-   (-0.005959318459318459 + (1574*alpha)/315315. - (2567*pow(alpha,2))/600600. + 
-      (213*pow(alpha,3))/57200. - (12217*pow(alpha,4))/3.7128e6 + 
-      (983*pow(alpha,5))/334152. - (8647*pow(alpha,6))/3.25584e6 + 
-      (19679*pow(alpha,7))/8.1396e6 - (757781*pow(alpha,8))/3.418632e8 + 
-      (11443*pow(alpha,9))/5.595975e6 - (4595*pow(alpha,10))/2.422728e6)*
-    pow(beta,5) + (0.004991833563262135 - (2567*alpha)/600600. + 
-      (213*pow(alpha,2))/57200. - (12217*pow(alpha,3))/3.7128e6 + 
-      (983*pow(alpha,4))/334152. - (8647*pow(alpha,5))/3.25584e6 + 
-      (19679*pow(alpha,6))/8.1396e6 - (757781*pow(alpha,7))/3.418632e8 + 
-      (11443*pow(alpha,8))/5.595975e6 - (4595*pow(alpha,9))/2.422728e6 + 
-      (2379*pow(alpha,10))/1.34596e6)*pow(beta,6) + 
-   (-0.004274059274059274 + (213*alpha)/57200. - (12217*pow(alpha,2))/3.7128e6 + 
-      (983*pow(alpha,3))/334152. - (8647*pow(alpha,4))/3.25584e6 + 
-      (19679*pow(alpha,5))/8.1396e6 - (757781*pow(alpha,6))/3.418632e8 + 
-      (11443*pow(alpha,7))/5.595975e6 - (4595*pow(alpha,8))/2.422728e6 + 
-      (2379*pow(alpha,9))/1.34596e6 - (837*pow(alpha,10))/506000.)*pow(beta,7) + 
-   (0.003723776223776224 - (12217*alpha)/3.7128e6 + (983*pow(alpha,2))/334152. - 
-      (8647*pow(alpha,3))/3.25584e6 + (19679*pow(alpha,4))/8.1396e6 - 
-      (757781*pow(alpha,5))/3.418632e8 + (11443*pow(alpha,6))/5.595975e6 - 
-      (4595*pow(alpha,7))/2.422728e6 + (2379*pow(alpha,8))/1.34596e6 - 
-      (837*pow(alpha,9))/506000. + (53663*pow(alpha,10))/3.45345e7)*pow(beta,8) + 
-   (-0.0032905085110967462 + (983*alpha)/334152. - (8647*pow(alpha,2))/3.25584e6 + 
-      (19679*pow(alpha,3))/8.1396e6 - (757781*pow(alpha,4))/3.418632e8 + 
-      (11443*pow(alpha,5))/5.595975e6 - (4595*pow(alpha,6))/2.422728e6 + 
-      (2379*pow(alpha,7))/1.34596e6 - (837*pow(alpha,8))/506000. + 
-      (53663*pow(alpha,9))/3.45345e7 - (5462759*pow(alpha,10))/3.729726e9)*
-    pow(beta,9) + (0.00294177500059853 - (8647*alpha)/3.25584e6 + 
-      (19679*pow(alpha,2))/8.1396e6 - (757781*pow(alpha,3))/3.418632e8 + 
-      (11443*pow(alpha,4))/5.595975e6 - (4595*pow(alpha,5))/2.422728e6 + 
-      (2379*pow(alpha,6))/1.34596e6 - (837*pow(alpha,7))/506000. + 
-      (53663*pow(alpha,8))/3.45345e7 - (5462759*pow(alpha,9))/3.729726e9 + 
-      (21911*pow(alpha,10))/1.582308e7)*pow(beta,10);
-
-return X;
-}
-
-double c5(double alpha, double beta)
-{
-double X = -0.02546296296296296 + (11*alpha)/720. - (247*pow(alpha,2))/23760. + 
-   (91*pow(alpha,3))/11880. - (859*pow(alpha,4))/144144. + 
-   (7297*pow(alpha,5))/1.513512e6 - (2533*pow(alpha,6))/630630. + 
-   (2193*pow(alpha,7))/640640. - (24263*pow(alpha,8))/8.16816e6 + 
-   (437*pow(alpha,9))/167076. - (2819*pow(alpha,10))/1.209312e6 + 
-   (0.015277777777777777 - (247*alpha)/23760. + (91*pow(alpha,2))/11880. - 
-      (859*pow(alpha,3))/144144. + (7297*pow(alpha,4))/1.513512e6 - 
-      (2533*pow(alpha,5))/630630. + (2193*pow(alpha,6))/640640. - 
-      (24263*pow(alpha,7))/8.16816e6 + (437*pow(alpha,8))/167076. - 
-      (2819*pow(alpha,9))/1.209312e6 + (40997*pow(alpha,10))/1.953504e7)*beta + 
-   (-0.010395622895622895 + (91*alpha)/11880. - (859*pow(alpha,2))/144144. + 
-      (7297*pow(alpha,3))/1.513512e6 - (2533*pow(alpha,4))/630630. + 
-      (2193*pow(alpha,5))/640640. - (24263*pow(alpha,6))/8.16816e6 + 
-      (437*pow(alpha,7))/167076. - (2819*pow(alpha,8))/1.209312e6 + 
-      (40997*pow(alpha,9))/1.953504e7 - (26059*pow(alpha,10))/1.3674528e7)*
-    pow(beta,2) + (0.00765993265993266 - (859*alpha)/144144. + 
-      (7297*pow(alpha,2))/1.513512e6 - (2533*pow(alpha,3))/630630. + 
-      (2193*pow(alpha,4))/640640. - (24263*pow(alpha,5))/8.16816e6 + 
-      (437*pow(alpha,6))/167076. - (2819*pow(alpha,7))/1.209312e6 + 
-      (40997*pow(alpha,8))/1.953504e7 - (26059*pow(alpha,9))/1.3674528e7 + 
-      (437023*pow(alpha,10))/2.5069968e8)*pow(beta,3) + 
-   (-0.005959318459318459 + (7297*alpha)/1.513512e6 - (2533*pow(alpha,2))/630630. + 
-      (2193*pow(alpha,3))/640640. - (24263*pow(alpha,4))/8.16816e6 + 
-      (437*pow(alpha,5))/167076. - (2819*pow(alpha,6))/1.209312e6 + 
-      (40997*pow(alpha,7))/1.953504e7 - (26059*pow(alpha,8))/1.3674528e7 + 
-      (437023*pow(alpha,9))/2.5069968e8 - (99145*pow(alpha,10))/6.1779564e7)*
-    pow(beta,4) + (0.004821236964094107 - (2533*alpha)/630630. + 
-      (2193*pow(alpha,2))/640640. - (24263*pow(alpha,3))/8.16816e6 + 
-      (437*pow(alpha,4))/167076. - (2819*pow(alpha,5))/1.209312e6 + 
-      (40997*pow(alpha,6))/1.953504e7 - (26059*pow(alpha,7))/1.3674528e7 + 
-      (437023*pow(alpha,8))/2.5069968e8 - (99145*pow(alpha,9))/6.1779564e7 + 
-      (28795*pow(alpha,10))/1.9381824e7)*pow(beta,5) + 
-   (-0.004016618302332588 + (2193*alpha)/640640. - (24263*pow(alpha,2))/8.16816e6 + 
-      (437*pow(alpha,3))/167076. - (2819*pow(alpha,4))/1.209312e6 + 
-      (40997*pow(alpha,5))/1.953504e7 - (26059*pow(alpha,6))/1.3674528e7 + 
-      (437023*pow(alpha,7))/2.5069968e8 - (99145*pow(alpha,8))/6.1779564e7 + 
-      (28795*pow(alpha,9))/1.9381824e7 - (18603*pow(alpha,10))/1.34596e7)*
-    pow(beta,6) + (0.0034231393606393608 - (24263*alpha)/8.16816e6 + 
-      (437*pow(alpha,2))/167076. - (2819*pow(alpha,3))/1.209312e6 + 
-      (40997*pow(alpha,4))/1.953504e7 - (26059*pow(alpha,5))/1.3674528e7 + 
-      (437023*pow(alpha,6))/2.5069968e8 - (99145*pow(alpha,7))/6.1779564e7 + 
-      (28795*pow(alpha,8))/1.9381824e7 - (18603*pow(alpha,9))/1.34596e7 + 
-      (1699*pow(alpha,10))/1.3156e6)*pow(beta,7) + 
-   (-0.0029704364263187792 + (437*alpha)/167076. - (2819*pow(alpha,2))/1.209312e6 + 
-      (40997*pow(alpha,3))/1.953504e7 - (26059*pow(alpha,4))/1.3674528e7 + 
-      (437023*pow(alpha,5))/2.5069968e8 - (99145*pow(alpha,6))/6.1779564e7 + 
-      (28795*pow(alpha,7))/1.9381824e7 - (18603*pow(alpha,8))/1.34596e7 + 
-      (1699*pow(alpha,9))/1.3156e6 - (903611*pow(alpha,10))/7.459452e8)*pow(beta,8)
-     + (0.00261557614498791 - (2819*alpha)/1.209312e6 + 
-      (40997*pow(alpha,2))/1.953504e7 - (26059*pow(alpha,3))/1.3674528e7 + 
-      (437023*pow(alpha,4))/2.5069968e8 - (99145*pow(alpha,5))/6.1779564e7 + 
-      (28795*pow(alpha,6))/1.9381824e7 - (18603*pow(alpha,7))/1.34596e7 + 
-      (1699*pow(alpha,8))/1.3156e6 - (903611*pow(alpha,9))/7.459452e8 + 
-      (396923*pow(alpha,10))/3.4810776e8)*pow(beta,9) + 
-   (-0.0023310775052261122 + (40997*alpha)/1.953504e7 - 
-      (26059*pow(alpha,2))/1.3674528e7 + (437023*pow(alpha,3))/2.5069968e8 - 
-      (99145*pow(alpha,4))/6.1779564e7 + (28795*pow(alpha,5))/1.9381824e7 - 
-      (18603*pow(alpha,6))/1.34596e7 + (1699*pow(alpha,7))/1.3156e6 - 
-      (903611*pow(alpha,8))/7.459452e8 + (396923*pow(alpha,9))/3.4810776e8 - 
-      (2964251*pow(alpha,10))/2.75321592e9)*pow(beta,10);
-
-return X;
-}
