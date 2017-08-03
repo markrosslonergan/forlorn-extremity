@@ -84,16 +84,6 @@ double jacobian = fabs((u_max-u_min)*(t_max-t_min));
 	double E = (Z_mass*Z_mass-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV+ceA); 
 	double F = -(W_mass*W_mass-mS*mS)*2.0*sqrt(2)*pow(Z_mass/mS,2.0)*GF*gamma*(1-sW*sW); 
 
-//	double gVpgA = A/(t - mZprime*mZprime) + B/(t - Z_mass*Z_mass); 
-//	double gVmgA = D/(t - mZprime*mZprime) + E/(t - Z_mass*Z_mass) + F/(u - W_mass*W_mass);
-//	double gV = (gVpgA+gVmgA)/2.0;
-//	double gA = (gVpgA-gVmgA)/2.0;
-//
-//	f  = 4.0*gVpgA*gVpgA*(t - e_mass*e_mass)*(mS*mS + e_mass*e_mass - t); 
-//	f += 4.0*gVmgA*gVmgA*(u - e_mass*e_mass)*(mS*mS + e_mass*e_mass - u); 
-//	f += 4.0*(gV*gV-gA*gA)*e_mass*e_mass*(t+u-2*e_mass*e_mass);
-//	f *= 1e21*jacobian/(32.0*pow(2*M_PI*mS,3.0));
-	
 	double func_f = 4.0*(t - e_mass*e_mass)*(mS*mS + e_mass*e_mass - t); 
 	double func_g = 4.0*(u - e_mass*e_mass)*(mS*mS + e_mass*e_mass - u); 
 	double func_h = 4.0*e_mass*e_mass*(t+u-2*e_mass*e_mass);
@@ -187,7 +177,7 @@ double Gamma_NUMUE(decay_params * params)
 
 	if(mS>=mu_mass+e_mass+1e-6)
 	{
-		G = (GF*GF*pow(mS,5.0)/(192.0*pow(M_PI,3.0)))*(Ue4*Ue4*I1_C5(e_mass/mS,mu_mass/mS) + Um4*Um4*I1_C5(mu_mass/mS,e_mass/mS));
+		G = 2.0*(GF*GF*pow(mS,5.0)/(192.0*pow(M_PI,3.0)))*(Ue4*Ue4*I1_C5(e_mass/mS,mu_mass/mS) + Um4*Um4*I1_C5(mu_mass/mS,e_mass/mS));
 	}
 
 return G;
