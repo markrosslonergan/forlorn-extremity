@@ -33,6 +33,7 @@
 
 #include "fourmomentum.h" // defines class fourmomentum
 #include "sterile_flux.h" // defines class initial_sterile
+#include "decayrates.h" //needs decay_params
 
 #define CHAN_ELECPOSI 0
 #define CHAN_ELECPI 1
@@ -96,7 +97,7 @@ public:
 	int observables(OBSERVABLES * output, gsl_rng *g);
 	virtual int decayfunction(initial_sterile nuS);	
 	virtual int decayfunctionMassive(initial_sterile nuS, double m0, double m1, double m2);
-	virtual int decayfunction_new(initial_sterile nuS, double m0, double m1, double m2);
+	virtual int decayfunction_new(initial_sterile nuS, decay_params *);
 
 };
 
@@ -118,7 +119,7 @@ public:
 	threebody(gsl_rng * g, std::vector<double> input);
 	int decayfunction(initial_sterile nuS);
 	int decayfunctionMassive(initial_sterile nuS,double m0, double m1, double m2);
-	int decayfunction_new(initial_sterile nuS,double m0, double m1, double m2);
+	int decayfunction_new(initial_sterile nuS,decay_params * params);
 
 	struct PDF_CHOICE { 
 		double Enu; 
@@ -140,7 +141,7 @@ private:
 	
 	int drawRestFrameDist(gsl_rng * r, double mS, double mZprime, double output[3]);
 	int drawRestFrameDistMassive(gsl_rng * r, double mS, double m0, double m1, double m2, double out0[4], double out1[4]);
-	int drawRestFrameDist_new(gsl_rng * r, double mS, double mZprime, double m0, double m1, double m2, double out0[4], double out1[4]);
+	int drawRestFrameDist_new(gsl_rng * r, decay_params * params, double out0[4], double out1[4]);
 
 }; 
 

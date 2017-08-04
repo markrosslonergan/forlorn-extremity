@@ -34,9 +34,10 @@ double Gamma_EE_oldest(double, double, double, double);
 double Gamma_NUMUMU_old(double, double, double, double);
 double Gamma_NUMUE_old(double, double, double, double);
 
-//Integrand for the ee decay.
+//Integrand and wrapper for the ee decay integration.
+//Note that "matrix_element" includes all prefactors. Integrate first two arguments over 0,1 to get the full decay rate.
+double matrix_element_ee(double, double, decay_params*);
 static int Integrand_ee(const int *ndim, const cubareal xx[], const int *ncomp, cubareal ff[], void *userdata);
-
 
 //These declarations are for integral approximations given at the bottom of this file.
 double I1(double, double);

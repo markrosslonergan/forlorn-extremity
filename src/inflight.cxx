@@ -393,8 +393,16 @@ int main(int argc, char* argv[])
 
 
 
-			//	CHAN->decayfunction(nus);			//old approximate one
-			CHAN->decayfunctionMassive(nus,ME,ME,0.0);
+			//	CHAN->decayfunction(nus);			//oldest approximate one
+			//CHAN->decayfunctionMassive(nus,ME,ME,0.0); // Marks' old one
+			decay_params params;
+			params.mS = mS;
+			params.mZprime = mZ;
+			params.chi = 1.0;
+			params.Ue4 = 1.0;
+			params.Um4 = 1.0;
+			params.Ut4 = 1.0;
+			CHAN->decayfunction_new(nus,&params); // a new one (4 Aug 2017)
 			CHAN->observables(&Obs, r);
 
 

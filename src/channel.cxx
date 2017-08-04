@@ -42,7 +42,7 @@ int twoIP_channel::decayfunction(initial_sterile nuS)
 	std::cout<<"You've somehow managed to call the decayfunction of the parent class (twoIP_channel). Don't do that."<<std::endl;
 return 0;
 }
-int twoIP_channel::decayfunction_new(initial_sterile nuS, double m0, double m1, double m2)
+int twoIP_channel::decayfunction_new(initial_sterile nuS, decay_params *)
 {
 	std::cout<<"You've somehow managed to call the decayfunction of the parent class (twoIP_channel). Don't do that."<<std::endl;
 return 0;
@@ -245,12 +245,12 @@ int threebody::decayfunctionMassive(initial_sterile nuS,double m0, double m1, do
 return 0;
 }
 
-int threebody::decayfunction_new(initial_sterile nuS,double m0, double m1, double m2)
+int threebody::decayfunction_new(initial_sterile nuS, decay_params * params)
 {
-	double mZprime = model_params.at(0);
 	double p0[] = {0.0,0.0,0.0,0.0};
 	double p1[] = {0.0,0.0,0.0,0.0};
-	drawRestFrameDist_new(r,nuS.mass,mZprime,m0,m1,m2,p0,p1); //this will populate the doubles.
+	
+	drawRestFrameDist_new(r,params,p0,p1); //this will populate the momentum arrays.
 	computeLabFrameVariablesMassive(nuS,p0,p1);
 return 0;
 }
@@ -450,54 +450,82 @@ std::vector<double > threebody::generic_boost(double Ep, double px, double py, d
 }
 
 
-int threebody::drawRestFrameDist_new(gsl_rng * r, double mS, double mZprime, double m0, double m1, double m2, double p0[4], double p1[4])
+int threebody::drawRestFrameDist_new(gsl_rng * r, decay_params * params, double p2[4], double p3[4])
 {
-//This samples the decay including the ME. Another option is to pass the ME as a weight to the event. But that would take more thought. 21/07/2017
+//This samples the decay including the ME. Another option is to pass the ME as a weight to the event. But that would take more thought. 4/08/2017
 
-	double mu_s  = mS/mZprime;
-	double alpha = mu_s*mu_s/(1-mu_s*mu_s);
+	double p1[] = {1.0,0.0,0.0,0.0};
 
-	double PDF_MAX = 1.0; //pdf_function_new. This should be true. But... y'know. Worth a preventative debug?
-
+	double PDF_MAX = 1.0;
 	double x = gsl_rng_uniform(r);
 	double y = gsl_rng_uniform(r);
-	double phi = 2*M_PI*gsl_rng_uniform(r);
 	double z = (PDF_MAX+0.01)*gsl_rng_uniform(r);
 
-	while(threebody::pdf_function_new(x,y,mS,mZprime,NULL)<=z)
+	double mS = params->mS;
+	double m1 = 0.0;
+	double m2 = e_mass;
+	double m3 = e_mass;
+	double Gamma = Gamma_EE(params);
+
+	while(matrix_element_ee(x,y,params)/Gamma<=z)
 	{
-//		printf("I tried!\n");
 		x = gsl_rng_uniform(r);
 		y = gsl_rng_uniform(r);
 		z = (PDF_MAX+0.01)*gsl_rng_uniform(r);
 	}
+	
+	//These five parameters are the event. All the rest is defined uniquely.
+	double u = x;
+	double t = y;
+	double s = mS*mS + m1*m1 + m2*m2 + m3*m3 - x - y;
+	double phi_1 = 2*M_PI*gsl_rng_uniform(r);
+	double theta_1 = M_PI*gsl_rng_uniform(r);
+	double phi_2 = 2*M_PI*gsl_rng_uniform(r);
+	
+	//Then they get turned into useful variables.
+	double E1 = ((mS*mS + m1*m1 - t)/2.0*mS);	
+	double E2 = ((mS*mS + m2*m2 - s)/2.0*mS);	
+	double mod_p1 = sqrt( E1*E1 - m1*m1);
+	double mod_p2 = sqrt( E2*E2 - m2*m2);
 
-//	printf("I succeeded!\n");
+	//Then update the final observables.
+	//First we pretend p1 is aligned with the z-axis.
+	p1[0]=E1;
+	p1[1]=0.0; 
+	p1[2]=0.0;
+	p1[3]=mod_p1;
 
-	double Ef = (mS/2.0)*y;
-	double Efbar = mS/2.0*(2.0-y-x);
-	double Enu = (mS/2.0)*x;
-  	double pf_z = Ef + (mS/2.0)*Efbar - mS*mS/(2.0*Enu); 
-	double pfbar_z = -Enu - pf_z;
-	double pf_y=0.0;
-	double pfbar_y=0.0;
-	double pf_x = sqrt(Ef*Ef - pf_z*pf_z);	
-	double pfbar_x = -pf_x;	
+	//Which allows us to find the azimuthal angle of p2.
+	double cos_theta_2 = (m2*m2 + 2.0*E1*E2 - u)/(2.0*mod_p2*mod_p1);	
+	p2[0]=E2;
+	p2[1]=mod_p2*sqrt(1- cos_theta_2*cos_theta_2);
+	p2[2]=0.0;
+	p2[3]=mod_p2*cos_theta_2;
 
-//Now we rotate the electron system around the z-axis randomly.
-	pf_y=sin(phi)*pf_x + cos(phi)*pf_y;
-	pfbar_y=sin(phi)*pfbar_x + cos(phi)*pfbar_y;
+	//Then we rotate everything by phi_2 around p1, and then rotate everything so that p1 is pointing along phi_1,theta_1.
+	double R11 = cos(theta_1)*cos(phi_1)*cos(phi_2) + sin(phi_1)*sin(phi_2);
+	double R12 = cos(theta_1)*cos(phi_1)*sin(phi_2) - sin(phi_1)*cos(phi_2);
+	double R13 = sin(theta_1)*cos(phi_2); 	
+	double R21 = cos(theta_1)*sin(phi_1)*cos(phi_2) - cos(phi_1)*sin(phi_2);
+	double R22 = cos(theta_1)*sin(phi_1)*sin(phi_2) + cos(phi_1)*cos(phi_2);
+	double R23 = sin(theta_1)*sin(phi_2); 	
+	double R31 = -sin(theta_1)*cos(phi_2);
+	double R32 = -sin(theta_1)*sin(phi_2);
+	double R33 = cos(theta_1);
 
-//Then update the final observables.
-	p0[0]=Ef;
-	p0[1]=pf_x;
-	p0[2]=pf_y;
-	p0[3]=pf_z;
-	p1[0]=Efbar;
-	p1[1]=pfbar_x;
-	p1[2]=pfbar_y;
-	p1[3]=pfbar_z;
+	p1[1] = R11*p1[1] +  R12*p1[2] +  R13*p1[3]; 
+	p1[2] = R21*p1[1] +  R22*p1[2] +  R23*p1[3]; 
+	p1[3] = R31*p1[1] +  R32*p1[2] +  R33*p1[3]; 
+	p2[1] = R11*p2[1] +  R12*p2[2] +  R13*p2[3]; 
+	p2[2] = R21*p2[1] +  R22*p2[2] +  R23*p2[3]; 
+	p2[3] = R31*p2[1] +  R32*p2[2] +  R33*p2[3]; 
 
+	//We construct the other momentum.
+	p3[0]= mS - p1[0] - p2[0];
+	p3[1]= -p1[1]-p2[1];
+	p3[2]= -p1[2]-p2[2];
+	p3[3]= -p1[3]-p2[3];
+	
 return 0;
 }
 

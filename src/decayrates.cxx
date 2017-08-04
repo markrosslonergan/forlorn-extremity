@@ -16,48 +16,43 @@ double Gamma_EE(decay_params * params)
 return (1e-21)*(double)integral;
 }
 
-static int Integrand_ee(const int *ndim, const cubareal xx[], 
-	const int *ncomp, cubareal ff[], void *userdata) {
-
-double x=xx[0];
-double y=xx[1];
-double f = 0.0;
-
-decay_params * params = (decay_params *)userdata;
+double matrix_element_ee(double x, double y, decay_params * params)
+{
 
 double mS = (*params).mS;
 
-if(mS<2*e_mass){ f=0.0;}
-else
+double f = 0.0;
+
+if(mS>2*e_mass)
 {
 
-double mZprime = (*params).mZprime;
-double chi = (*params).chi;
-double Ue4 = (*params).Ue4;
-double Um4 = (*params).Um4;
-double Ut4 = (*params).Ut4;
+	double mZprime = (*params).mZprime;
+	double chi = (*params).chi;
+	double Ue4 = (*params).Ue4;
+	double Um4 = (*params).Um4;
+	double Ut4 = (*params).Ut4;
 
-double alpha = mS*mS/(mZprime*mZprime-mS*mS);
-double beta = mS*mS/(Z_mass*Z_mass-mS*mS);
-double gamma = mS*mS/(W_mass*W_mass-mS*mS);
+	double alpha = mS*mS/(mZprime*mZprime-mS*mS);
+	double beta = mS*mS/(Z_mass*Z_mass-mS*mS);
+	double gamma = mS*mS/(W_mass*W_mass-mS*mS);
 
-//Cuba integrals go over 0,1.
-double u_min = e_mass*e_mass;
-double u_max = (mS-e_mass)*(mS-e_mass);
-double u = u_min + (u_max - u_min)*x; 
+	//Cuba integrals go over 0,1.
+	double u_min = e_mass*e_mass;
+	double u_max = (mS-e_mass)*(mS-e_mass);
+	double u = u_min + (u_max - u_min)*x; 
 
-double E_2 = (u + e_mass*e_mass)/(2.0*sqrt(u));
-double E_3 = (mS*mS - u - e_mass*e_mass)/(2.0*sqrt(u));
-double p2 = sqrt(E_2*E_2 - e_mass*e_mass);
-double p3 = sqrt(E_3*E_3 - e_mass*e_mass);
+	double E_2 = (u + e_mass*e_mass)/(2.0*sqrt(u));
+	double E_3 = (mS*mS - u - e_mass*e_mass)/(2.0*sqrt(u));
+	double p2 = sqrt(E_2*E_2 - e_mass*e_mass);
+	double p3 = sqrt(E_3*E_3 - e_mass*e_mass);
 
-double t_min = pow(E_2 + E_3,2.0) - (p2+p3)*(p2+p3);  
-double t_max = pow(E_2 + E_3,2.0) - (p2-p3)*(p2-p3);  
-double t = t_min + (t_max - t_min)*y;
+	double t_min = pow(E_2 + E_3,2.0) - (p2+p3)*(p2+p3);  
+	double t_max = pow(E_2 + E_3,2.0) - (p2-p3)*(p2-p3);  
+	double t = t_min + (t_max - t_min)*y;
 
-double s = mS*mS + 2.0*e_mass*e_mass - t - u;
+	double s = mS*mS + 2.0*e_mass*e_mass - t - u;
 
-double jacobian = fabs((u_max-u_min)*(t_max-t_min));
+	double jacobian = fabs((u_max-u_min)*(t_max-t_min));
 
 	double sW = sqrt(xW); //I can't pretend the letter s doesn't exist.
 
@@ -93,11 +88,23 @@ double jacobian = fabs((u_max-u_min)*(t_max-t_min));
 	double f3 = ((A*func_h + 2.0*D*func_g)/(t - mZprime*mZprime) + (B*func_h + 2.0*E*func_g)/(t - Z_mass*Z_mass))*F/(u-W_mass*W_mass);
 
 	f = (1-Ue4*Ue4-Um4*Um4-Ut4*Ut4)*(Ue4*Ue4*(f1+f3)+Um4*Um4*f1+Ut4*Ut4*f1) + (1-Ue4*Ue4)*Ue4*Ue4*f2;
-	f *= 1e21*jacobian/(32.0*pow(2*M_PI*mS,3.0));
+	f *= jacobian/(32.0*pow(2*M_PI*mS,3.0));
 
 }
 
-	ff[0] = f;
+return f;
+}
+
+static int Integrand_ee(const int *ndim, const cubareal xx[], 
+	const int *ncomp, cubareal ff[], void *userdata) {
+
+	double x=xx[0];
+	double y=xx[1];
+	double f = 0.0;
+
+	decay_params * params = (decay_params *)userdata;
+
+	ff[0] = 1e21*matrix_element_ee(x,y,params);
 
 return 0;
 }
