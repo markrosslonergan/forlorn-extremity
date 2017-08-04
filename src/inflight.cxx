@@ -402,7 +402,7 @@ int main(int argc, char* argv[])
 			params.Ue4 = 1.0;
 			params.Um4 = 1.0;
 			params.Ut4 = 1.0;
-			CHAN->decayfunction_new(nus,&params); // a new one (4 Aug 2017)
+			CHAN->decayfunction(nus,&params); // a new one (4 Aug 2017)
 			CHAN->observables(&Obs, r);
 
 
@@ -448,9 +448,12 @@ int main(int argc, char* argv[])
 
 			t1->Fill();
 
-			CHAN->decayfunctionMassive(nusBar,ME,ME,0.0); //my new one, tobetested
-			//		CHAN->decayfunction(nus);			//old approximate one
+			CHAN->decayfunction(nusBar,&params); // a new one (4 Aug 2017)
 			CHAN->observables(&Obs, r);
+
+			//CHAN->decayfunctionMassive(nusBar,ME,ME,0.0); //my new one, tobetested
+			//		CHAN->decayfunction(nus);			//old approximate one
+			//CHAN->observables(&Obs, r);
 
 
 			if(Obs.E_low <= Obs.E_high){
