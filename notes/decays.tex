@@ -1,0 +1,608 @@
+\documentclass[11pt, a4paper]{article} 
+\usepackage[force]{feynmp-auto}
+\usepackage{jheppub,multirow,relsize,slashed}
+
+\newcommand{\marrow}[5]{%
+    \fmfcmd{style_def marrow#1
+    expr p = drawarrow subpath (1/4, 3/4) of p shifted 6 #2 withpen pencircle scaled 0.4;
+    label.#3(btex #4 etex, point 0.5 of p shifted 6 #2);
+    enddef;}
+    \fmf{marrow#1,tension=0}{#5}}
+
+\newcommand{\refeq}[1]{Eq.~(\ref{#1})}
+\newcommand{\refeqs}[2]{Eqs.~(\ref{#1})~and~(\ref{#2})}
+\newcommand{\refeqss}[3]{Eqs.~(\ref{#1}), (\ref{#2})~and~(\ref{#3})}
+\newcommand{\reffig}[1]{Fig.~\ref{#1}}
+\newcommand{\reffigs}[2]{Figs.~\ref{#1}~and~\ref{#2}}
+\newcommand{\refsec}[1]{Section~\ref{#1}}
+\newcommand{\refapp}[1]{Appendix~\ref{#1}}
+\newcommand{\reftab}[1]{Table~\ref{#1}}
+\newcommand{\refref}[1]{Ref.~\cite{#1}}
+\newcommand{\refrefs}[2]{Refs.~\cite{#1}~and~\cite{#2}}
+
+\def\abelian{abelian}
+\def\nonabelian{non-abelian}
+\def\lagrangian{lagrangian}
+\def\eg{\emph{e.g.}}
+\def\ie{\emph{i.e.}}
+\def\aka{\emph{a.k.a.}}
+
+\newcommand{\Dslash}{\ensuremath D\hspace{-0.24cm}\raisebox{1pt}{/}\hspace{0.05cm}}
+\newcommand{\Xslash}{\ensuremath X\hspace{-0.26cm}\raisebox{1pt}{/}\hspace{0.06cm}}
+\newcommand{\Wslash}{\ensuremath W\hspace{-0.3cm}\raisebox{1pt}{/}\hspace{0.06cm}}
+\newcommand{\dslash}{\ensuremath \partial\hspace{-0.18cm}\raisebox{1pt}{/}\hspace{0.04cm}}
+\newcommand{\gp}{\ensuremath g^\prime}
+
+\newcommand{\lorem}{ \textcolor[rgb]{0.8,0.8,0.8}{Lorem ipsum dolor sit amet, consectetur
+adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
+id est laborum.}}
+
+%%%%%%% A few editorial macros. %%%%%%%
+
+\definecolor{light-gray}{gray}{0.65}
+\newcommand{\filler}[1]{{\color{light-gray}{#1}}}
+
+\newcounter{CommentCount}
+\setcounter{CommentCount}{1}
+
+\newcommand{\marcom}[2]{\textsuperscript{\textcolor{#1}{\theCommentCount}}\marginpar{\textsuperscript{\textcolor{#1}{\theCommentCount}}\textcolor{#1}{{\small#1: #2}}}\stepcounter{CommentCount}}
+
+\newcommand{\newtext}[2]{\textcolor{#1}{\ul{#2}}}
+
+% Add your own colour down here... 
+\definecolor{PB}{rgb}{0.9,0,0}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{Temporary title}
+
+\author{One}
+\author{Two}
+\author{Three}
+
+\affiliation{Institute for Particle Physics Phenomenology, Department of
+Physics, Durham University, South Road, Durham DH1 3LE, United Kingdom}
+
+\emailAdd{one@durham.ac.uk}
+\emailAdd{two@durham.ac.uk}
+\emailAdd{three@durham.ac.uk}
+
+\abstract{~}
+
+\begin{document} 
+
+%\maketitle
+
+\section{$N$ decay rates}
+
+The sterile neutrino has couplings to the $Z$ and $W^\pm$ bosons as well as the
+new $Z^\prime$. This means that its decay rates are a combination of the
+standard heavy sterile weak decay rates (pure leptonic and semileptonic rates),
+combined with novel processes driven by the $Z\prime$. 
+
+In our model, the $W$-vertices are unchanged (they are still only modified by
+the PMNS matrix), and so at tree-level we can use the usual expressions for the
+decay rates of any process with only CC diagrams. However, the $Z$-boson mediated 
+decays should be recomputed. Not only does the $Z$-boson have
+modified couplings in our model (and crucially slightly modified axial-vector
+relationships), but for any process with a $Z$ exchange, we could also exchange
+the $Z^\prime$. These diagrams should be allowed to interfere. 
+
+We might reasonably expect such interference to be small. Especially when
+$Z^\prime$ mediation produces a significantly enhanced decay rate. However, 
+when pushing the $\chi^2$ value down, this should be borne in mind.
+
+\subsection{$N\to\nu\nu\nu$ (TO DO)}
+
+This is normally the dominant decay rate below the $\pi$ mass threshold.  It
+has a very similar structure to the $e^+e^-$ decay computed below, but with
+different coupling constants.  Specifically, the coupling of $Z^\prime$ to two
+light neutrinos is doubly suppressed by the small sterile mixing angles. It is
+expected to be negligibly enhanced by the $Z^\prime$. 
+
+\subsection{$N\to\nu\pi^0$}
+
+This is purely neutral current decay, and would expect diagrams involving an
+exchanged $Z^\prime$.
+%
+Their effect is expected to be small, because of the predominately vectorial
+couplings of the boson to fermions. At first order in $\chi$, there is actually
+no coupling of our boson to pseudoscalar mesons. The leading sensitivity then
+comes from the modifed couplings to the $Z$ boson. However, the coupling
+between pion and $Z^\prime$ enters with finite $Z^\prime$ mass at first order
+in $\chi$, or at third order in $\chi$. As it's quick to do, we recompute this
+rate with both $Z$ and $Z^\prime$ bosons, ensuring these effects are taken into
+account.
+
+\subsubsection{Recap of basic calculation}
+
+We define our interaction vertices as in \refapp{app:vertices}.
+%
+Because we are dealing with a bound state, we must make use of the pion decay constant, and start from the transition matrix element. We consider the process with only the $Z$ mediator to start:
+%
+\begin{align*}   \left\langle k_1, k_2\right| iT \left|p\right\rangle &= i\mathcal{M}(2\pi)^4\delta^4(p-k_1-k_2), \\
+%
+&= \left.\left\langle k_1,k_2\right|T\left\{e^{i\int d^4x \mathcal{L}_\text{Int}} \right\} \left|p\right\rangle\right|_\text{conn. amput.}\\
+%
+&= \frac{ic^u_Ac^{4i}}{2}\left(\frac{g}{c_W}\right)^2 \frac{\overline{u}(k_1) \gamma^\mu P_\text{L} u(p)}{k_2^2-M_Z^2}\int d^4x e^{i(k_1-p)\cdot x} \left\langle k_2\right| \left(\overline{u}\gamma^\mu\gamma^5u - \overline{d}\gamma^\mu\gamma^5d\right)\left|0\right\rangle 
+%
+\end{align*}
+%
+We cannot compute the final amplitude, but use the pion decay constant in the form  
+%
+\[ \int d^4x e^{i(k_1-p)\cdot x}  \left\langle k_2\right| \left(\overline{u}\gamma^\mu\gamma^5u - \overline{d}\gamma^\mu\gamma^5d\right)\left|0\right\rangle = if_\pi k_2^\mu (2\pi)^4\delta^4(p-k_1-k_2).  \]
+%
+All together we find, 
+%
+\begin{align*}
+%
+i\mathcal{M} &= \left(\frac{g}{c_W}\right)^2\frac{c^u_A c^{4i} f_\pi }{2} k_2^\mu\frac{\overline{u}(k_1) \gamma^\mu P_\text{L} u(p)}{k_2^2-M_Z^2}
+%
+\end{align*}
+
+\subsubsection{Full interference calculation}
+
+As the matrix element for a single mediator is so simple, we can also include the decays via
+$Z$-boson and their interference. The full matrix element is given by the sum of two terms like the one calculated above
+%
+\begin{align*}
+%
+i\mathcal{M} &= \frac{1}{2}\left(\frac{g}{c_W}\right)^2\left(\frac{c^u_A c^{4i}}{k_2^2-M_Z^2} + \frac{d^u_A d^{4i} }{k_2^2-\mu^2} \right) f_\pi k_2^\mu \overline{u}(k_1) \gamma_\mu P_\text{L} u(p),\\
+%
+&\equiv F_i f_\pi k_2^\mu 
+\overline{u}(k_1) \gamma_\mu P_\text{L} u(p). 
+%
+\end{align*}
+%
+Where $F_i$ is the product of the two initital factors. Although $F_i$ depends on $k_2^2$, when we impose energy conservation this is just a function of particle masses as $k_2^2=m_{\pi^0}^2$, so this term is just an overall scaling of the rate. Completing the calculation leads us to 
+%
+\begin{align*}
+%
+\Gamma_i = \frac{1}{4\pi}\left|F_i\right|^2 f^2_\pi m_\pi m_\mu^2\left(1-\frac{m^2_{\pi^0}}{m^2_s}\right)^2.
+%
+\end{align*}
+%
+This should be summed over the three final mass states $\Gamma = \sum_{i=1}^3 \Gamma_i$.
+
+
+As a sanity check, we set $\chi=0$, which means $d^{ij}=d^u_A=0$ and the $c$ coupings become their $\nu$SM values. We find the factor $F_i$ becomes 
+%
+\[  |F_i|^2 = \left| \frac{1}{8} \left(\frac{g}{c_W}\right)^2 \frac{U^*_{s4}U_{si}}{M_Z^2-m_\pi^2}\right|^2 = \frac{G_F^2|U_{s4}|^2|U_{si}|^2}{2} + \mathcal{O}\left(\frac{m_\pi^2}{M_Z^2}\right). \]
+%
+which produces the standard expression:
+%
+\[  \Gamma_i = \frac{1}{8\pi}|U_{s4}|^2|U_{si}|^2 G_F^2 f^2_\pi m_\pi m_\mu^2\left(1-\frac{m^2_{\pi^0}}{m^2_s}\right)^2. \]
+%
+and therefore
+%
+\[  \Gamma =  \left(1-\sum_{\alpha \neq s}  |U_{\alpha 4}|^2\right) \sum_{\alpha \neq s} |U_{\alpha 4}|^2 \frac{1}{8\pi} G_F^2 f^2_\pi m_\pi m_\mu^2\left(1-\frac{m^2_{\pi^0}}{m^2_s}\right)^2. \]
+
+\subsection{$N\to \nu e^+e^-$}
+
+We have three diagrams with different mediators (see \reffig{fig:NCdiag} and \reffig{fig:CCdiag}); however, they turn out to have very similar matrix elements and can be combined before square-summing. 
+
+It helps to introduce the following Mandelstam/Dalitz variables, 
+%
+\[ t=\left(p_1-q_1\right)^2,\qquad u=\left(p_1-q_3\right)^2 \qquad\text{and}\qquad s=\left(p_1-q_2\right)^2. \]
+
+\subsubsection{NC diagrams}
+
+
+\begin{figure}[t!]
+\centering
+\begin{fmffile}{ster_decay_1}
+	\begin{fmfgraph*}(130,110)
+		\fmfstraight
+		\fmfleftn{i}{9}
+		\fmfrightn{o}{9}
+		\fmf{fermion, tension=1.0}{i3,v1,o6}
+		\fmf{boson, tension=2.0, label=$Z^\prime$}{v1,v2}
+		\fmf{fermion}{o4,v2,o2}
+		\fmf{phantom,tension=1.2}{i2,v1}
+		\fmflabel{$\nu_4$}{i3}
+		\fmflabel{$\nu_i$}{o6}
+		\fmflabel{$e^-$}{o2}
+		\fmflabel{$e^+$}{o4}
+		\marrow{a}{up}{top}{$p_1$}{i3,v1}
+		\marrow{b}{up}{top}{$q_1$}{v1,o6}
+		\marrow{c}{up}{top}{$q_2$}{v2,o4}
+		\marrow{d}{down}{bot}{$q_3$}{v2,o2}
+	\end{fmfgraph*}
+\end{fmffile}
+%
+\hspace{1cm}
+%
+\begin{fmffile}{ster_decay_2}
+	\begin{fmfgraph*}(130,110)
+		\fmfstraight
+		\fmfleftn{i}{9}
+		\fmfrightn{o}{9}
+		\fmf{fermion, tension=1.0}{i3,v1,o6}
+		\fmf{boson, tension=2.0, label=$Z$}{v1,v2}
+		\fmf{fermion}{o4,v2,o2}
+		\fmf{phantom,tension=1.2}{i2,v1}
+		\fmflabel{$\nu_4$}{i3}
+		\fmflabel{$\nu_i$}{o6}
+		\fmflabel{$e^-$}{o2}
+		\fmflabel{$e^+$}{o4}
+		\marrow{a}{up}{top}{$p_1$}{i3,v1}
+		\marrow{b}{up}{top}{$q_1$}{v1,o6}
+		\marrow{c}{up}{top}{$q_2$}{v2,o4}
+		\marrow{d}{down}{bot}{$q_3$}{v2,o2}
+	\end{fmfgraph*}
+\end{fmffile}
+%
+
+\caption{\label{fig:NCdiag}The two NC Feynman diagrams for tree-level $N$ decay into a lepton-antilepton pair of the same flavour.}
+
+\end{figure}
+
+The NC diagrams are shown in \reffig{fig:NCdiag}. We compute the $Z^\prime$ mediated diagram first. Its matrix element reads
+%
+\begin{align*}
+%
+i\mathcal{M} = -\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{d^{4i}}{(p_1-q_1)^2-\mu^2} \overline{u}(q_1)\gamma^\mu P_\text{L} u(p_1) \overline{u}(q_3)\gamma_\mu\left(d^e_V-d^e_A\gamma^5\right)
+v(q_2),  
+%
+\end{align*}
+%
+where $\mu$ is the mass of the $Z^\prime$. 
+%
+We can write this as
+%
+\[ \mathcal{M} = \overline{u}(q_1)\gamma^\mu P_\text{L} u(p_1) \overline{u}(q_3)\gamma_\mu\left(V+A\gamma^5\right)
+v(q_2), \] 
+%
+where
+%
+\[  V = -\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{d^{4i}d^e_V}{t-\mu^2}\qquad\text{and}\qquad A = +\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{d^{4i}d^e_A}{t-\mu^2}. \]
+
+The matrix element for the $Z$-mediated diagram is identical with the coupling constants and mediator mass swapped,
+%
+\[  V = -\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{c^{4i}c^e_V}{t-M_Z^2}\qquad\text{and}\qquad A = +\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{c^{4i}c^e_A}{t-M_Z^2}. \]
+
+
+\subsubsection{CC diagram}
+
+\begin{figure}[t!]
+\centering
+\begin{fmffile}{ster_decay_3}
+	\begin{fmfgraph*}(130,110)
+		\fmfstraight
+		\fmfleftn{i}{9}
+		\fmfrightn{o}{9}
+		\fmf{fermion, tension=1.0}{i3,v1,o6}
+		\fmf{boson, tension=2.0, label=$W$}{v1,v2}
+		\fmf{fermion}{o4,v2,o2}
+		\fmf{phantom,tension=1.2}{i2,v1}
+		\fmflabel{$\nu_4$}{i3}
+		\fmflabel{$e^-$}{o6}
+		\fmflabel{$\nu_i$}{o2}
+		\fmflabel{$e^+$}{o4}
+		\marrow{a}{up}{top}{$p_1$}{i3,v1}
+		\marrow{b}{up}{top}{$q_3$}{v1,o6}
+		\marrow{c}{up}{top}{$q_2$}{v2,o4}
+		\marrow{d}{down}{bot}{$q_1$}{v2,o2}
+	\end{fmfgraph*}
+\end{fmffile}
+
+\caption{\label{fig:CCdiag}The CC Feynman diagram for tree-level $N$ decay into a lepton-antilepton pair of the same flavour.}
+
+\end{figure}
+
+Although this diagram looks different, we can actually manhandle it into the same form 
+as the NC diagrams. The matrix element is given by
+%
+\begin{align*}
+%
+i\mathcal{M} &= -\left(\frac{g}{\sqrt{2}}\right)^2\frac{U^*_{e4}U_{ei}}{(p_1-q_3)^2-M_W^2} \overline{u}(q_3)\gamma^\mu
+P_\text{L} u(p_1) \overline{u}(q_1)\gamma_\mu P_\text{L}
+v(q_2), \\ 
+%
+&= +\left(\frac{g}{\sqrt{2}}\right)^2\frac{U^*_{e4}U_{ei}}{(p_1-q_3)^2-M_W^2} \overline{u}(q_1)\gamma^\mu
+P_\text{L} u(p_1) \overline{u}(q_3)\gamma_\mu P_\text{L} v(q_2),
+%
+\end{align*}
+%
+where we have used a Fierz identity\footnote{Nice reference: 0412245} in the last line.
+%
+This means we can rewrite it in the form of the other diagrams:
+%
+\begin{align*}
+%
+\mathcal{M} &= \overline{u}(q_3)\gamma^\mu P_\text{L} u(p_1) \overline{u}(q_1)\gamma_\mu\left(V+ A\right)v(q_2),
+%
+\end{align*}
+%
+where we have defined:
+%
+\begin{align*}
+%
+V = +\frac{g^2}{4}\frac{U^*_{e4}U_{ei}}{u-M_W^2} \qquad\text{and}\qquad A = - \frac{g^2}{4}\frac{U^*_{e4}U_{ei}}{u-M_W^2}.
+%
+\end{align*}
+%
+%For reference, $u = m^2_s(1-y)$ and $\gamma = m_s^2/(M_W^2-m_s^2)$; therefore,
+%
+%\begin{align*}
+%
+%g_V(y) = \frac{1}{2}\frac{\gamma}{m_s^2}\frac{g_\nu g_e}{1 + \gamma y} \qquad\text{and}\qquad g_V(y) =- \frac{1}{2}\frac{\gamma}{m_s^2}\frac{g_\nu g_e}{1 + \gamma y} .
+%%
+%\end{align*}
+%
+
+\subsubsection{All the diagrams!}
+
+All the matrix elements have identical Dirac structures, and we can group all
+three together in terms of generalised chiral couplings. These have kinematic
+dependence because of the propagators, but this will only be a complication
+when we are trying to integrate over the phase space at the end.
+%
+
+We define the new couplings, 
+%
+\begin{align*}
+%
+g_V(t,u) &=  -\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{d^{4i}d^e_V}{t-\mu^2} -\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{c^{4i}c^e_V}{t-M_Z^2} +\frac{g^2}{4}\frac{U^*_{e4}U_{ei}}{u-M_W^2},\\ 
+%
+g_A(t,u) &=  +\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{d^{4i}d^e_A}{t-\mu^2} +\left(\frac{g}{\sqrt{2}c_W}\right)^2\frac{c^{4i}c^e_A}{t-M_Z^2} -\frac{g^2}{4}\frac{U^*_{e4}U_{ei}}{u-M_W^2}. 
+%
+\end{align*}
+%
+
+Using these definitions, the full matrix element is given by, 
+%
+\begin{align*}
+%
+i\mathcal{M} = \overline{u}(q_1)\gamma^\mu P_\text{L} u(p_1)
+\overline{u}(q_3)\gamma_\mu\left[g_V(t,u)+g_A(t,u)\gamma^5\right] v(q_2),  
+%
+\end{align*}
+%
+but we'll drop the arguments of the couplings for convenience (we'll need them
+again on integration). On squared-averaging, we find
+%
+\[ \overline{\left|\mathcal{M}\right|^2} =  A^{\mu\nu}B_{\mu\nu},\]
+%
+where
+%
+\begin{align*}
+%
+A^{\mu\nu} &\equiv \text{tr}\left[\slashed{q_1}\gamma^\mu
+P_\text{L}\left(\slashed{p_1}+m_s\right)\gamma^\nu P_\text{L} \right],\\
+B^{\mu\nu} &\equiv  \text{tr}\left[\left(\slashed{q_3}+m_3\right)\gamma^\mu
+\left(g_V^*+g_A^*\gamma^5\right)\left(\slashed{q_2}-m_2\right)\gamma^\nu
+\left(g_V+g_A\gamma^5\right) \right].
+%
+\end{align*}
+%
+Standard fiddling leaves us with, 
+%
+\begin{align*}
+%
+A^{\mu\nu} &\equiv 2\left[q_1^\mu p_1^\nu + q_1^\nu p_1^\mu - (p_1\cdot
+q_1)g^{\mu\nu} + i\varepsilon^{\alpha\mu\beta\nu}\left(q_1\right)_\alpha
+\left(p_1\right)_\beta\right],\\
+%
+B^{\mu\nu} &\equiv  4\left(|g_V|^2+|g_A|^2\right)\left[q_3^\mu q_2^\nu +
+q_3^\nu q_2^\mu - (q_2\cdot q_3)g^{\mu\nu} \right]\\ 
+&\qquad+
+i8\left(\frac{g^*_Vg_A+g_Vg^*_A}{2}\right)\varepsilon^{\alpha\mu\beta\nu}(q_3)_\alpha(q_2)_\beta - 4m_2m_3\left(|g_V|^2-|g_A|^2\right)g^{\mu\nu},
+%
+\end{align*}
+%
+and therefore, 
+%
+\begin{align*} 
+%
+A^{\mu\nu}B_{\mu\nu} &= 16\left[ \left|g_V+g_A\right|^2\left(q_1\cdot
+q_2\right) \left(p_1\cdot q_3\right) + \left|g_V-g_A\right|^2\left(q_1\cdot
+q_3\right) \left(p_1\cdot q_2\right)\right.\\ 
+&\qquad\qquad \left.+ m_2m_3\left(|g_V|^2-|g_A|^2\right)\left(p_1\cdot q_1\right)\right]. 
+%
+\end{align*}
+%
+In our Mandelstam-esque variables, 
+%
+\begin{align*} (p_1\cdot q_2) = \frac{m_s^2 + m_2^2 - s}{2},\qquad
+(p_1\cdot q_3) &= \frac{m_s^2 + m_3^2 - u}{2} , \qquad \left(p_1\cdot q_1\right) = \frac{m_s^2+m_1^2 - t}{2}, \\ 
+%
+(q_1\cdot q_3) = \frac{s -m_1^2 - m_3^2}{2},\qquad (q_1\cdot q_2) &= \frac{u - m_1^2 - m_2^2}{2},\qquad (q_2\cdot q_3) = \frac{t - m_2^2 - m_3^2}{2}.
+%
+\end{align*}
+%
+We therefore have, 
+%
+\begin{align*} \overline{\left|\mathcal{M}\right|^2} &= A^{\mu\nu}B_{\mu\nu},\\  
+%
+&= 16\left[ \left|g_V+g_A\right|^2\left(q_1\cdot q_2\right) \left(p_1\cdot
+q_3\right) + \left|g_V-g_A\right|^2\left(q_1\cdot q_3\right) \left(p_1\cdot
+q_2\right) + m_2m_3\left(|g_V|^2-|g_A|^2\right)\left(p_1\cdot q_1\right)  \right],\\
+%
+&=4\left[ \left|g_V+g_A\right|^2 (u - m_1^2 - m_2^2)(m_s^2 + m_3^2 - u)\right.\\
+%
+&\qquad\qquad \left.+ \left|g_V-g_A\right|^2 (s -m_1^2 - m_3^2)(m_s^2 + m_2^2 - s) + \left(|g_V|^2-|g_A|^2\right)\frac{m_2m_3}{2}\left( m_s^2+m_1^2 - t\right) \right].
+%
+\end{align*}
+%
+
+\subsubsection{Dealing with the PMNS}
+
+This diagram actually occurs for any outgoing mass state, and we need to sum
+over these diagrams incoherently (at the matrix element squared level).
+However, it is easier if we do this summation by hand, as we can then express
+the answer in terms of the normal $U_{\alpha 4}$ elements (and we minimize the 
+number of times we perform the numerical integrals that will be necessary for
+the total rate).
+
+%
+Defining some convenient functions, 
+%
+\begin{align*}  f(u) &= 4(u - m_1^2 - m_2^2)(m_s^2 + m_3^2 - u),\\  
+g(s) &= 4(s -m_1^2 - m_3^2)(m_s^2 + m_2^2 - s),\\
+h(s,u) &= 2m_2m_3\left(s + u - m_2^2 + m_3^2\right), \end{align*}
+%
+we can rewrite the matrix element as,
+%
+\begin{align*} \overline{\left|\mathcal{M}\right|^2} &=\left|g_V+g_A\right|^2 f(u)
++ \left|g_V-g_A\right|^2g(s) + \left(|g_V|^2-|g_A|^2\right)h(s,u).
+%
+\end{align*}
+%
+
+With all the matrix elements included, we can express the matrix element summed over all outgoing mass states as 
+%
+\begin{align*} 
+%
+\overline{\left|\mathcal{M}\right|^2} &= \left(1-\sum_{\alpha\neq s}|U_{\alpha 4}|^2\right)\left( \sum_{\alpha\neq s}|U_{\alpha 4}|^2\left[f_1(s,t,u)+\delta_{e\alpha}f_3(s,t,u)\right]\right) + \left(1-|U_{e 4}|^2\right)|U_{e 4}|^2f_2(s,t,u).
+%
+\end{align*}
+%
+with the definitions,
+%
+\begin{align*}  
+%
+f_1(s,t,u) &= \left( \frac{A}{t-\mu^2} + \frac{B}{t-M_Z^2}\right)\left(\frac{Af(u) + Dh(s,u)}{t-\mu^2} + \frac{Bf(u)+Eh(s,u)}{t-M_Z^2}\right),\\
+%
+f_2(s,t,u) &= \left( \frac{F}{u-M_W^2} \right)^2h(s,u),\\
+%
+f_3(s,t,u) &= \left( \frac{F}{u-M_W^2} \right)\left(\frac{Ah(s,u) + 2Dg(s)}{t-\mu^2} + \frac{Bh(s,u)+2Eg(s)}{t-M_Z^2}\right),
+%
+\end{align*}
+%
+and we keep going,
+%
+\begin{align*}  
+%
+A = 2\sqrt{2}\left(\frac{M_Z}{m_s}\right)^2G_F\alpha \frac{d^{4i}}{U^*_{s4}U_{si}}(d^e_V-d^e_A), \\
+B = 2\sqrt{2}\left(\frac{M_Z}{m_s}\right)^2G_F\beta \frac{c^{4i}}{U^*_{s4}U_{si}}(c^e_V-c^e_A), \\
+D = 2\sqrt{2}\left(\frac{M_Z}{m_s}\right)^2G_F\alpha\frac{d^{4i}}{U^*_{s4}U_{si}}(d^e_V+d^e_A), \\
+E = 2\sqrt{2}\left(\frac{M_Z}{m_s}\right)^2G_F\beta \frac{c^{4i}}{U^*_{s4}U_{si}}(c^e_V+c^e_A), \\
+F = - 2\sqrt{2}\left(\frac{M_Z}{m_s}\right)^2G_F\gamma c_W^2. 
+%
+\end{align*}
+
+
+\subsubsection{Total rate}
+
+The decay rate is given by
+%
+\begin{align*} 
+%
+d\Gamma &= \frac{1}{(2\pi)^5}\frac{1}{64m^3_s}\overline{\left|\mathcal{M}\right|^2}
+du dt d^2\Omega d\phi.
+%
+\end{align*}
+
+To find the total rate we integrate the matrix element up. The angular integrals just add prefactors, but the Mandelstam integrals require a bit of care (for later use we consider non-zero $m_1$, but recall that our matrix element assumes $m_1=0$ so we have to impose that before doing the integrals),
+%
+\[  \Gamma = \frac{1}{(2\pi)^3}\frac{1}{32m^3_s}\int_{(m_1+m_2)^2}^{(m_s-m_3)^2}du\int_{t_-}^{t_+}dt\,\overline{\left|\mathcal{M}\right|^2}. \]
+%
+For fixed $s$ the limits on the $t$ integral are: 
+%
+\[ t_\pm = \left(E_2^* + E_3^*\right)^2 - \left(|p_2^*| \pm |p_3^*|\right)^2, \]
+%
+where $\left(E^*_i\right)^2 - \left(p^*_i\right)^2 = m_i^2$ and 
+%
+\[   |p^*_2|^2 = \frac{\lambda(u,m_1^2,m_2^2)}{4u} \qquad\text{and}\qquad  |p^*_3|^2 = \frac{\lambda(u,m_s^2,m_3^2)}{4u}. \]
+%
+
+I am just going to resort to doing these integrals numerically. You can get so
+far analytically, but keeping the propagators and mass terms makes it a bit
+nasty. I haven't explicitly checked that turning off $\chi$ sends this to the
+Atre et al. value, but numerically it is wihtin a factor of $~2$. 
+
+\subsection{$N \to \nu \mu^+\mu^-$  (TO DO)}
+
+This would also be enhanced, just as for the electron case. The calculation is
+identical with masses and mixing elements swapped. Apart from these factors the
+couplings are universal. I have not coded it up or checked it. In fact, I see
+no reason for it being suppressed, so it might be a reason to keep the sterile
+mass under the dimuon threshold.
+
+
+\appendix
+\newpage
+\section{\label{app:vertices}Vertices}
+
+For reference, here we give our notation for all the vertex factors. Every
+vertex in our model is identical to the SM apart from the neutrino and neutral
+current interactions:
+%
+\begin{align*}  
+%
+-\mathcal{L}_\text{I} \supset &\sum_{f\in\{e,u,d,\dots\}}
+\overline{f}\gamma^\mu \left[
+\frac{g}{2c_W}\left(c^f_V-c^f_A\gamma^5\right)Z_\mu  +
+\frac{g}{2c_W}\left(d^f_V-d^f_A\gamma^5\right)Z^\prime_\mu \right]f, \\
+%
+&+\overline{\nu}_i\gamma^\mu \left[
+\frac{g}{2c_W}c^{ij}\left(1-\gamma^5\right)Z_\mu  +
+\frac{g}{2c_W}d^{ij}\left(1-\gamma^5\right)Z^\prime_\mu \right] \nu_j +
+\overline{\nu_i}\gamma^\mu f^{i\alpha}W^+_\mu P_\text{L} e_\alpha. 
+%
+\end{align*}
+%
+where the undefined constants are given for the neutrinos by
+%
+\begin{align*}
+%
+f^{i\alpha} &= \frac{g}{\sqrt{2}}U^*_{\alpha i}, \\
+%
+c^{ij} &= \left(\delta_{ij} - U^*_{si}U_{sj}\right)\frac{c_\beta - s_\beta s_W
+t_\chi}{2} - U^*_{si}U_{sj}Q_s \frac{g_X}{g}\frac{c_W s_\beta}{c_\chi}, \\
+d^{ij} &= \left(\delta_{ij} - U^*_{si}U_{sj}\right)\frac{c_\beta s_W t_\chi +
+s_\beta}{2} + U^*_{si}U_{sj}Q_s \frac{g_X}{g}\frac{c_W c_\beta}{c_\chi}.
+\end{align*}
+%
+And we'll need the following charged fermion couplings,
+%
+\begin{align*} c^e_V = c_\beta \left(2s_W^2-\frac{1}{2}\right) -
+\frac{3}{2}s_\beta s_W t_\chi, \qquad&\qquad c^e_A = -\frac{c_\beta - s_\beta
+s_W t_\chi}{2}, \\
+%
+c^u_V = c_\beta \left(\frac{1}{2}-\frac{4}{3}s_W^2\right) + \frac{5}{6}s_\beta
+s_W t_\chi,\qquad&\qquad c^u_A = \frac{c_\beta + s_\beta s_W t_\chi}{2}, \\
+%
+c^d_V = c_\beta \left(-\frac{1}{2}+\frac{2}{3}s_W^2\right) - \frac{1}{6}s_\beta
+s_W t_\chi, \qquad&\qquad c^d_A = -\frac{c_\beta + s_\beta s_W t_\chi}{2}, \\
+%
+d^e_V = \frac{3}{2}c_\beta s_Wt_\chi + s_\beta\left(-\frac{1}{2} -
+2s^2_W\right), \qquad&\qquad d^e_A = -\frac{s_\beta + c_\beta s_W t_\chi}{2},
+\\
+%
+d^u_V = -\frac{5}{6}c_\beta s_Wt_\chi + s_\beta\left(\frac{1}{2} -
+\frac{4}{3}s^2_W\right),\qquad&\qquad d^u_A = \frac{s_\beta + c_\beta s_W
+t_\chi}{2}, \\
+%
+d^d_V = \frac{1}{6}c_\beta s_Wt_\chi + s_\beta\left(-\frac{1}{2} +
+\frac{2}{3}s^2_W\right),\qquad & \qquad d^d_A = -\frac{s_\beta + c_\beta s_W
+t_\chi}{2}.
+%
+\end{align*}
+%
+Throughout the preceding expressions $c_\theta = \cos\theta$, $s_\theta =
+\sin\theta$ and $t_\theta = s_\theta/c_\theta$. The angle $W$ denotes the
+Weinberg angle, $\chi$ is the kinetic mixing parameter and $\beta$ is defined
+by
+%
+\[   \tan(2\beta) = \frac{s_W \sin(2\chi)}{\left(\frac{\mu}{v}\right)^2 -
+\cos(2\chi) - c_W^2 s_\chi^2}, \]
+%
+with $\mu$ being the (tree-level) mass of the $Z^\prime$ boson and $v$ the
+Higgs VEV.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{apsrev4-1}
+\bibliography{ZP}{}
+
+\end{document}
+

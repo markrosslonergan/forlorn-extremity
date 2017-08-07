@@ -13,6 +13,7 @@ double Gamma_EE(decay_params * params)
     		GRIDNO, STATEFILE, SPIN,
     		&neval, &fail, &integral, &error, &prob);
 
+//Note this factor of 1e-21 is removing the one I add to the integrand in Integrand_ee to help the integrator. 
 return (1e-21)*(double)integral;
 }
 
@@ -104,6 +105,7 @@ static int Integrand_ee(const int *ndim, const cubareal xx[],
 
 	decay_params * params = (decay_params *)userdata;
 
+	//Note this factor of 1e21 should be removed again in Gamma_EE. Make sure it is!
 	ff[0] = 1e21*matrix_element_ee(x,y,params);
 
 return 0;
