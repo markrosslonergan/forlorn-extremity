@@ -330,7 +330,7 @@ double minInstance::minimize(){
 
 	double step[5] = {0.005,0.005,0.005, 0.001,0.001};
 	double lower[5] = {-6,-6,-10,-1,-1};
-	double upper[5] = {0,0,0,1,1 };	
+	double upper[5] = {-0.1,-0.1,-0.1,1,1 };	
 
 
 	std::string name[5] ={"chi\0","Up\0","Ud\0","zeta_nu\0","zeta_nubar\0"};

@@ -14,6 +14,7 @@ struct decay_params
 	double Ue4;
 	double Um4;
 	double Ut4;
+	double numeval;
 };
 
 

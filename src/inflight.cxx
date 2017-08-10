@@ -271,8 +271,6 @@ int main(int argc, char* argv[])
 		double e2Pz_B;
 		double e2Py_B;
 
-
-
 		double sM;
 		double zM;
 		double csTotalNum;
@@ -309,8 +307,6 @@ int main(int argc, char* argv[])
 		t1->Branch("e2Py",&e2Py);
 		t1->Branch("e2Pz",&e2Pz);
 
-
-
 		// branches
 		t3->Branch("csTmandel", &csTmandel_B);	
 		t3->Branch("sEn", &sEn_B);	
@@ -339,9 +335,6 @@ int main(int argc, char* argv[])
 		t3->Branch("e2Pz",&e2Pz_B);
 
 
-
-
-
 		//Bit from zprime
 		double norm =totalevents2(1,1,mZ,mS, POSNU);
 		double normBar =totalevents2(1,1,mZ,mS, NEGNU);
@@ -356,6 +349,7 @@ int main(int argc, char* argv[])
 		sM = mS;
 
 		for(int i=0; i<NUMEVENTS; i++){
+			std::cout<<"#: "<<i<<std::endl;
 
 			if(i%5000==0) std::cout<<"#: "<<i<<std::endl;
 			double  phiS = 2.0*M_PI*gsl_rng_uniform(r);
@@ -398,10 +392,11 @@ int main(int argc, char* argv[])
 			decay_params params;
 			params.mS = mS;
 			params.mZprime = mZ;
-			params.chi = 1.0;
-			params.Ue4 = 1.0;
-			params.Um4 = 1.0;
-			params.Ut4 = 1.0;
+			
+			params.chi = 0.1;
+			params.Ue4 = 0.1;
+			params.Um4 = 0.1;
+			params.Ut4 = 0.1;
 			CHAN->decayfunction(nus,&params); // a new one (4 Aug 2017)
 			CHAN->observables(&Obs, r);
 
@@ -898,7 +893,7 @@ int main(int argc, char* argv[])
 		//Right so returning to statDir, we basicall have all ingredients, 4 vSignal vectors, 4 Observed Vectors and 4 Expected background vector and 2 norms
 		// Norm_nu and Norm_nubar
 		std::cout<<"Going to initilize statInatance now"<<std::endl;
-		minInstance statInstance(Norm_nu, Norm_nubar, tAna_nu, tAna_nubar  ,10000);
+		minInstance statInstance(Norm_nu, Norm_nubar, tAna_nu, tAna_nubar  ,1000);
 		std::cout<<"Done. initilized statInatance"<<std::endl;
 
 		statInstance.setMass(mZ,mS);
