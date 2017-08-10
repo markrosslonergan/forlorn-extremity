@@ -33,6 +33,7 @@
 
 #include "fourmomentum.h" // defines class fourmomentum
 #include "sterile_flux.h" // defines class initial_sterile
+#include "decayrates.h" //needs decay_params
 
 #define CHAN_ELECPOSI 0
 #define CHAN_ELECPI 1
@@ -94,8 +95,7 @@ public:
 	std::vector<double> model_params;
 
 	int observables(OBSERVABLES * output, gsl_rng *g);
-	virtual int decayfunction(initial_sterile nuS);	
-	virtual int decayfunctionMassive(initial_sterile nuS, double m0, double m1, double m2);
+	virtual int decayfunction(initial_sterile nuS, decay_params *);
 
 };
 
@@ -115,74 +115,12 @@ class threebody : public twoIP_channel {
 
 public:
 	threebody(gsl_rng * g, std::vector<double> input);
-	int decayfunction(initial_sterile nuS);
-	int decayfunctionMassive(initial_sterile nuS,double m0, double m1, double m2);
-
-	struct PDF_CHOICE { 
-		double Enu; 
-		double cosThnu; 
-		double Phinu; };
-
-//	typedef double (*threebody_pdf_function)(double, double, double, double, void *);
-
-private:
-	int computeLabFrameVariablesMassive(initial_sterile nuS, double p0[4], double p1[4]);
-	int computeLabFrameVariables(double mS, double Es, double costhS, double phiS, double restFrameParams[3]);
-	double pdf_function(double x, double y, double mS, double mZprime, void * pointer);
-//	struct PDF_CHOICE choose_from_pdf(gsl_rng * r, double mS, double mZprime, threebody_pdf_function pdf);
-	int rotor(double theta, double phi, double vector[3]);
+	int decayfunction(initial_sterile nuS, decay_params* params);
+	int computeLabFrameVariables(initial_sterile nuS, double p0[4], double p1[4]);
+	int drawRestFrameDist(gsl_rng * r, decay_params* params, double out0[4], double out1[4]);
+private:	
 	std::vector<double > generic_boost(double Ep, double px, double py, double pz, double Er, double rx, double ry, double rz);
 
-	
-	
-	int drawRestFrameDist(gsl_rng * r, double mS, double mZprime, double output[3]);
-	int drawRestFrameDistMassive(gsl_rng * r, double mS, double m0, double m1, double m2, double out0[4], double out1[4]);
-
 }; 
-
-
-/* ########################################################################
-
-	This is the nu_s \to \nu Zprime \to \nu e+ e- channel (on-shell Zprime).
-
-   ######################################################################## */
-
-class Zprimeresonance : public twoIP_channel {
-
-public: 
-	Zprimeresonance(gsl_rng * g, std::vector<double> input);
-	int decayfunction(initial_sterile nuS);
-
-private:
-	double fourvec_costheta(double FOURVEC[4]);
-	double fourvec_cosphi(double FOURVEC[4]);
-	double rot_boost(double costh, double phi, double gam, double FOURVEC[4]);	
-}; 
-
-/* ########################################################################
-
-	This is for a generic two body with a two (massive)  particle final state.
-
-	This might be confusing... but when initialized you pass it two masses
-	(ma and mb, in order).  The OBSERVABLES struct which is populated is then the
-same as used for the eplus and eminus channel (defined at the top) -- but with
-	E_high, costheta_high refering to the first particle (mass ma) and E_low ,
-	costheta_low referring to the second particle (mass mb). It seems silly to
-	actually order these different particles.
-
-	Of course, we could come up with a more general OBSERVABLES function to
-	make this a bit more logical.
-
-   ######################################################################## */
-
-class twobody : public twoIP_channel {
-
-public: 
-	twobody(gsl_rng * g, std::vector<double> input);
-	int decayfunction(initial_sterile nuS);
-
-}; 
-
-
 
 #endif
