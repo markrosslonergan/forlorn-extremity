@@ -420,7 +420,7 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 
 		//Mark changed this 15th/july, think we do need gamma_total correctly
 		double GT = Gamma_total(sqrt(ch2), mass_z, mass_s, 0.0, sqrt(u2) , 0.0);
-		double GZEE = Gamma_ZP_EE( sqrt(ch2), mass_z, mass_s, 0.0, sqrt(u2), 0.0); 
+		double GZEE = Gamma_ZP_EE( sqrt(ch2), mass_z, mass_s, 0.0, 0.0, 1.0); 
 	        double BR = GZEE/GT;
 		
 
