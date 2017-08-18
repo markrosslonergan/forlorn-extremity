@@ -2,7 +2,7 @@
 include_directories (${CMAKE_SOURCE_DIR}/inc/)
 
 
-add_library(inflightlib channel.cxx detector.cxx minInstance.cxx fourmomentum.cxx sterile_flux.cxx bounds.cxx decayrates.cxx)
+add_library(inflightlib channel.cxx detector.cxx minInstance.cxx fourmomentum.cxx sterile_flux.cxx bounds.cxx decayrates.cxx appellced.cxx hyp_2F1.cxx complex_functions.cxx)
 target_include_directories (inflightlib PUBLIC ${CMAKE_SOURCE_DIR}/inc/)
 target_link_libraries(inflightlib ${ROOT_LIBRARIES} cuba)
 

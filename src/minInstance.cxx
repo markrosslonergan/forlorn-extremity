@@ -426,9 +426,10 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 		params.Ue4=0.0;
 		params.Um4=sqrt(u2);
 		params.Ut4=0.0;
-		
-		double GT = Gamma_total(&params);
-		double GZEE = Gamma_EE(&params); 
+	
+		decay_obj decayor(&params);	
+		double GT = decayor.Gamma_total;
+		double GZEE = decayor.Gamma_ee; 
 	        double BR = GZEE/GT;
 
 	for(int i=0; i<tnu->GetEntries(); i++){

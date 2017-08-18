@@ -255,7 +255,7 @@ int threebody::drawRestFrameDist(gsl_rng * r, decay_params * params, double p2[4
 	double m1 = 0.0;
 	double m2 = e_mass;
 	double m3 = e_mass;
-	double Gamma = Gamma_EE(params);
+	double Gamma = Gamma_EE_integral(params);
 
 	double PDF_MAX = 4.0;
 	double x = gsl_rng_uniform(r);

@@ -93,6 +93,8 @@ bool bound::ps191(double mS, double mZ, double Um, double chi){
 	our_params.Um4=Um;
 	our_params.Ut4=0.0;
 
+	decay_obj our_decay(&our_params);
+
 	decay_params their_params;
 	their_params.mS=mS;
 	their_params.mZprime=80.0; //Set mass to anything if chi=0. Shouldn't matter. But bigger turns off effect too.
@@ -101,10 +103,12 @@ bool bound::ps191(double mS, double mZ, double Um, double chi){
 	their_params.Um4=sqrt(UtildeSq);
 	their_params.Ut4=0.0;
 
-	double my_rate = Gamma_EE(&our_params);
-	double their_rate = Gamma_EE(&their_params); 
-	double my_fullrate = Gamma_total(&our_params);
-	double their_fullrate = Gamma_total(&their_params);
+	decay_obj their_decay(&their_params);
+
+	double my_rate = our_decay.Gamma_ee;
+	double their_rate = their_decay.Gamma_ee; 
+	double my_fullrate = our_decay.Gamma_total;
+	double their_fullrate = their_decay.Gamma_total;
 
 	//Going to multiply by U^2 each side as I think we lost "flux folded bit"
 	double my_flux_folded_prob = Um*Um*probDecay(mS, my_rate, my_fullrate,16);
@@ -146,7 +150,9 @@ double bound::myRate(double chi, double mS, double mZprime)
 	params.Um4=1.0/sqrt(3);
 	params.Ut4=1.0/sqrt(3);
 
-	double ret = Gamma_EE(&params); 
+	decay_obj decayor(&params);
+
+	double ret = decayor.Gamma_ee; 
 
 return ret; 
 }
@@ -164,7 +170,11 @@ double bound::assumedRate(double mS)
 	params.Um4=1.0/sqrt(3);
 	params.Ut4=1.0/sqrt(3);
 
-	return Gamma_total(&params);
+	decay_obj decayor(&params);
+
+	double ret = decayor.Gamma_total; 
+
+return ret;
 }
 
 double bound::old_assumedRate(double mS)
