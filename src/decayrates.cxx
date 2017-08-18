@@ -1,20 +1,312 @@
 #include "decayrates.h"
 
-double Gamma_EE(decay_params * params)
+decay_obj :: decay_obj(decay_params* p)
 {
-	std::cout<<"Gamma_EE: starting"<<std::endl;
-	int comp, nregions, neval, fail;
-	cubareal integral, error, prob;
+	params = *p;
+	compute_master_integrals();
 
-	double function = 1;
-	params->numeval=0;
-	Vegas(NDIM, NCOMP, Integrand_ee, params, NVEC,
-			EPSREL, EPSABS, VERBOSE, SEED,MINEVAL, MAXEVAL, 					   NSTART, NINCREASE, NBATCH,GRIDNO, STATEFILE, SPIN,
-			&neval, &fail, &integral, &error, &prob);
+	Gamma_nununu = Gamma_NUNUNU(&params);
+	Gamma_nugamma  = Gamma_NUGAMMA(&params);
+	Gamma_ee = Gamma_EE(&params, &master_ints);
+	Gamma_epi = Gamma_EPI(&params);
+	Gamma_nupi0 = Gamma_NUPI0(&params);
+	Gamma_numue = Gamma_NUMUE(&params);
+	Gamma_mupi = Gamma_MUPI(&params);
+	Gamma_numumu = Gamma_NUMUMU(&params);
 
-	//Note this factor of 1e-21 is removing the one I add to the integrand in Integrand_ee to help the integrator. 
-	return (1e-21)*(double)integral;
+	compute_gamma_total();
+
 }
+
+void decay_obj :: compute_master_integrals()
+{
+	double mS = params.mS;
+	double mu = params.mZprime;
+	double alpha = (mS*mS - 4.0*e_mass*e_mass)/(4.0*e_mass*e_mass);
+	double beta = (mS*mS - 4.0*e_mass*e_mass)/(mu*mu - 4.0*e_mass*e_mass);
+
+//std::cout<<"F1 = "<<AppellF1(3.0/2.0,0.5,0.0,7.0/2.0,-alpha,beta,NULL)<<std::endl;
+//std::cout<<"2F1 = "<<G2F1(3.0/2.0,0.5,7.0/2.0,-alpha)<<std::endl;
+
+	double m=0.0;
+	double p=0.0;
+	master_ints.I00 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+	m=0.0;
+	p=1.0;
+	master_ints.I01 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+	m=0.0;
+	p=2.0;
+	master_ints.I02 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+	m=1.0;
+	p=0.0;
+	master_ints.I10 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+
+	m=1.0;
+	p=1.0;
+	master_ints.I11 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+	m=1.0;
+	p=2.0;
+	master_ints.I12 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+	m=2.0;
+	p=0.0;
+	master_ints.I20 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+	m=2.0;
+	p=1.0;
+	master_ints.I21 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+	m=2.0;
+	p=2.0;
+	master_ints.I22 =  pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL);
+
+
+	m=0.0;
+	p=0.0;
+	master_ints.J01_0 = pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*( 0.5*(mS*mS-4.0*e_mass*e_mass)*(16.0/105.0)*AppellF1(3.0/2.0,0.5-m,p,9.0/2.0,-alpha,beta,NULL) + e_mass*e_mass*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL));
+
+	m=1.0;
+	p=0.0;
+	master_ints.J11_0 = pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*( 0.5*(mS*mS-4.0*e_mass*e_mass)*(16.0/105.0)*AppellF1(3.0/2.0,0.5-m,p,9.0/2.0,-alpha,beta,NULL) + e_mass*e_mass*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL));
+
+	m=0.0;
+	p=1.0;
+	master_ints.J01_1 = pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*( 0.5*(mS*mS-4.0*e_mass*e_mass)*(16.0/105.0)*AppellF1(3.0/2.0,0.5-m,p,9.0/2.0,-alpha,beta,NULL) + e_mass*e_mass*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL));
+
+	m=1.0;
+	p=1.0;
+	master_ints.J11_1 = pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,m-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*( 0.5*(mS*mS-4.0*e_mass*e_mass)*(16.0/105.0)*AppellF1(3.0/2.0,0.5-m,p,9.0/2.0,-alpha,beta,NULL) + e_mass*e_mass*(4.0/15.0)*AppellF1(3.0/2.0,0.5-m,p,7.0/2.0,-alpha,beta,NULL));
+
+
+	m=0.0;
+	p=0.0;
+	master_ints.J02_0 = pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*(1.0/3.0)*(
+		 (1.0/(4.0*e_mass*e_mass))*(-e_mass*e_mass*pow(mS,4.0))*AppellF1(1.5,1.5,p,3.5,-alpha,beta,NULL)
+		 + (3.0*pow(e_mass,4.0) +5.0*e_mass*e_mass*mS*mS +pow(mS,4.0))*AppellF1(1.5,0.5,p,3.5,-alpha,beta,NULL)
+		 + pow(4.0*e_mass*e_mass,1.0)*(-2.0*(2.0*e_mass*e_mass + mS*mS))*AppellF1(1.5,0.5-1,p,3.5,-alpha,beta,NULL)
+		 + pow(4.0*e_mass*e_mass,2.0)*(1.0)*AppellF1(1.5,0.5-2,p,3.5,-alpha,beta,NULL));
+
+
+	m=0.0;
+	p=1.0;
+	master_ints.J02_1 = pow(mS*mS-4.0*e_mass*e_mass,5.0/2.0)*pow(4.0*e_mass*e_mass,-0.5)*pow(4.0*e_mass*e_mass-mu*mu,-p)*(4.0/15.0)*(1.0/3.0)*(
+		 (1.0/(4.0*e_mass*e_mass))*(-e_mass*e_mass*pow(mS,4.0))*AppellF1(1.5,1.5,p,3.5,-alpha,beta,NULL)
+		 + (3.0*pow(e_mass,4.0) +5.0*e_mass*e_mass*mS*mS +pow(mS,4.0))*AppellF1(1.5,0.5,p,3.5,-alpha,beta,NULL)
+		 + pow(4.0*e_mass*e_mass,1.0)*(-2.0*(2.0*e_mass*e_mass + mS*mS))*AppellF1(1.5,0.5-1,p,3.5,-alpha,beta,NULL)
+		 + pow(4.0*e_mass*e_mass,2.0)*(1.0)*AppellF1(1.5,0.5-2,p,3.5,-alpha,beta,NULL));
+
+
+//std::cout<<alpha<<" "<<beta<<" "<<master_ints.I00<<" " <<master_ints.I01<<" "<<master_ints.I02<<" "<<master_ints.I10<<" "<<master_ints.I11<<" "<<master_ints.I12<<" "<<master_ints.I20<<" "<<master_ints.I21<<" "<<master_ints.I22<<" "<<master_ints.J01_0<<" "<<master_ints.J02_0<<" "<<master_ints.J11_0<<" "<<master_ints.J01_1<<" "<<master_ints.J02_1<<" "<<master_ints.J11_1<<std::endl;
+
+return;
+}
+ 
+void decay_obj :: update(decay_params* p)
+{
+	if(p->mS==params.mS && p->Ue4 == params.Ue4 && p->Um4 == params.Um4 && p->Ut4 == params.Ut4)
+	{ 
+	//Then none of the nuSM channels need to be updated.
+		if(p->mZprime != params.mZprime || p->chi != params.chi)
+		{
+		//We need to recompute all Z prime processes
+			if(p->mZprime != params.mZprime)
+			{
+			//Master integrals need updating.
+				params = *p;
+				compute_master_integrals();
+			}
+			else
+			{
+			//We do not need to recompute master integrals.
+				params=*p;
+			}
+				
+			Gamma_nununu = Gamma_NUNUNU(&params);
+			Gamma_ee = Gamma_EE(&params, &master_ints);
+			Gamma_nupi0 = Gamma_NUPI0(&params);
+			Gamma_numumu = Gamma_NUMUMU(&params);
+
+		}
+		else 
+		{
+		//Nothing doing.
+			params=*p;
+		}
+	}
+	else if(p->mS == params.mS && p->mZprime == params.mZprime)
+	{
+	//Master integrals don't need to be recalculated, everything else has to be updated.
+		params=*p;
+		Gamma_nununu = Gamma_NUNUNU(&params);
+		Gamma_nugamma  = Gamma_NUGAMMA(&params);
+		Gamma_ee = Gamma_EE(&params, &master_ints);
+		Gamma_epi = Gamma_EPI(&params);
+		Gamma_nupi0 = Gamma_NUPI0(&params);
+		Gamma_numue = Gamma_NUMUE(&params);
+		Gamma_mupi = Gamma_MUPI(&params);
+		Gamma_numumu = Gamma_NUMUMU(&params);
+
+	}
+	else
+	{
+	//Everything needs to be recomputed.
+		params = *p;
+		compute_master_integrals();
+
+		Gamma_nununu = Gamma_NUNUNU(&params);
+		Gamma_nugamma  = Gamma_NUGAMMA(&params);
+		Gamma_ee = Gamma_EE(&params, &master_ints);
+		Gamma_epi = Gamma_EPI(&params);
+		Gamma_nupi0 = Gamma_NUPI0(&params);
+		Gamma_numue = Gamma_NUMUE(&params);
+		Gamma_mupi = Gamma_MUPI(&params);
+		Gamma_numumu = Gamma_NUMUMU(&params);
+
+	}
+
+compute_gamma_total(); 
+
+return;
+}
+
+//This should report the total decay width in GeV.
+void decay_obj :: compute_gamma_total()
+{
+
+	//Aliasing to same me typing.
+	double& mS = params.mS;
+ 
+	/* Now we add the relevant contributions according to the mass of nu_s */
+ 
+	Gamma_total = Gamma_nununu + Gamma_nugamma;
+
+	if(mS>=2.0*e_mass+1e-8)
+	{
+		Gamma_total += Gamma_ee; 
+
+		if(mS>=mu_mass+e_mass)
+		{
+			Gamma_total += Gamma_numue;
+
+			if(mS>=pi0_mass)
+			{
+				Gamma_total += Gamma_nupi0;
+
+				if(mS>=pi_mass+e_mass)
+				{
+					Gamma_total += Gamma_epi;
+
+					if(mS>=2.0*mu_mass)
+					{ 
+						Gamma_total += Gamma_numumu;
+
+						if(mS>mu_mass + pi_mass)
+						{
+							Gamma_total += Gamma_mupi;
+						}
+					}
+				}
+			}
+
+		}
+	}
+
+}
+
+double Gamma_EE(decay_params* params, master_integrals* master_ints)
+{
+	double I00 = master_ints->I00;
+	double I01 = master_ints->I01;
+	double I02 = master_ints->I02;
+	double I10 = master_ints->I10;
+	double I11 = master_ints->I11;
+	double I12 = master_ints->I12;
+	double I20 = master_ints->I20;
+	double I21 = master_ints->I21;
+	double I22 = master_ints->I22;
+	double J01_0 = master_ints->J01_0;
+	double J02_0 = master_ints->J02_0;
+	double J11_0 = master_ints->J11_0;
+	double J01_1 = master_ints->J01_1;
+	double J02_1 = master_ints->J02_1;
+	double J11_1 = master_ints->J11_1;
+	double mS = (*params).mS;
+
+	double f = 0.0;
+
+	if(mS>2*e_mass)
+	{
+
+		double mZprime = (*params).mZprime;
+		double chi = (*params).chi;
+		double Ue4 = (*params).Ue4;
+		double Um4 = (*params).Um4;
+		double Ut4 = (*params).Ut4;
+
+		double alpha = mS*mS/(mZprime*mZprime-mS*mS);
+		double beta = mS*mS/(Z_mass*Z_mass-mS*mS);
+		double gamma = mS*mS/(W_mass*W_mass-mS*mS);
+
+		double sW = sqrt(xW); //I can't pretend the letter s doesn't exist.
+
+		double tanchi = chi + pow(chi,3.0)/3.0 + (2.0/15.0)*pow(chi,5.0) + (17.0/315.0)*pow(chi,7.0) + + (62.0/2835.0)*pow(chi,9.0); //Just the tan(chi) but chi is small... works fine up to \chi=1.	
+		double coschi = 1 - 0.5*pow(chi,2.0) + (1.0/24.0)*pow(chi,4.0) - (1.0/720.0)*pow(chi,6.0) + (1.0/40320.0)*pow(chi,8.0) - (1.0/3628800.0)*pow(chi,10.0); 	
+		double sinbeta = sbeta_mathematica(mZprime/v_vev,chi);	
+		double cosbeta = cbeta_mathematica(mZprime/v_vev,chi);	
+		double Qs=1.0; //This is an assumption.
+		double g=sqrt(4*M_PI/137.0)/sW; //The weak force coupling: g=e/sW.	
+		double gX=g; //See QX.
+
+		// Note that the d4i c4i and CC coefficients below do not have PMNS matrix elements included. I am doing that by hand to exploit unitarity relations.
+		double d4i = -0.5*(cosbeta*sW*tanchi+sinbeta) + Qs*(gX/g)*sqrt(1-sW*sW)*cosbeta/coschi; 
+		double c4i = 0.5*(-sinbeta*sW*tanchi+cosbeta) - Qs*(gX/g)*sqrt(1-sW*sW)*sinbeta/coschi; 
+		double deV = 1.5*cosbeta*sW*tanchi+sinbeta*(-0.5+2.0*sW*sW);
+		double deA = -0.5*(cosbeta*sW*tanchi+sinbeta);
+		double ceV = -1.5*sinbeta*sW*tanchi+cosbeta*(-0.5+2.0*sW*sW);
+		double ceA = -0.5*(-sinbeta*sW*tanchi+cosbeta);
+
+		double A = (mZprime*mZprime-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV-deA); 
+		double B = (Z_mass*Z_mass-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV-ceA); 
+		double D = (mZprime*mZprime-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV+deA); 
+		double E = (Z_mass*Z_mass-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV+ceA); 
+		double F = -(W_mass*W_mass-mS*mS)*2.0*sqrt(2)*pow(Z_mass/mS,2.0)*GF*gamma*(1-sW*sW); 
+
+		double f1 = 	-4.0*A*A*I22 + (4.0*A*A*(mS*mS-2*e_mass*e_mass) - 2.0*A*D*e_mass*e_mass)*I12 
+			 	+( -4.0*A*A*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*A*D*e_mass*e_mass*mS*mS)*I02
+				+(8*A*B/(Z_mass*Z_mass))*I21 + ( -8.0*A*B*(mS*mS+2.0*e_mass*e_mass) + 2.0*e_mass*e_mass*(A*E+B*D))*I11/(Z_mass*Z_mass)
+				+(8.0*A*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) - 2.0*(A*E+B*D)*e_mass*e_mass*mS*mS)*I01/(Z_mass*Z_mass)
+				-4*B*B/(pow(Z_mass,4.0))*I20  + (4.0*B*B*(mS*mS+2.0*e_mass*e_mass) - 2.0*B*E*e_mass*e_mass)*I11/pow(Z_mass,4.0)
+				+ (-4.0*B*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*B*E*e_mass*e_mass*mS*mS)*I00/(pow(Z_mass,4.0));
+
+		double f2 = (-2.0*e_mass*e_mass*F*F/pow(W_mass,4.0))*I10 + (2.0*e_mass*e_mass*mS*mS*F*F/pow(W_mass,4.0))*I00;
+
+		double f3 =	  (2*F*B*e_mass*e_mass*mS*mS - 8.0*F*E*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I00/pow(W_mass*Z_mass,2.0)
+				+ (-2*F*B*e_mass*e_mass + 8.0*F*E*(mS*mS+2.0*e_mass*e_mass))*I10/pow(W_mass*Z_mass,2.0)
+				+ -8*F*E*I20/pow(W_mass*Z_mass,2.0)
+				+ (-2*A*F*e_mass*e_mass*mS*mS - 8.0*F*D*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I01/pow(W_mass,2.0)
+				+ (2*A*F*e_mass*e_mass - 8.0*F*D*(mS*mS+2.0*e_mass*e_mass))*I11/pow(W_mass,2.0)
+				+ 8*F*D*I21/pow(W_mass,2.0)
+				+ 8.0*F*E*(2.0*e_mass*e_mass+mS*mS)*J01_0/pow(W_mass*Z_mass,2.0)
+				- 8.0*F*E*J02_0/pow(W_mass*Z_mass,2.0)
+				+ 16.0*F*E*J11_0/pow(W_mass*Z_mass,2.0)
+				- 8.0*F*D*(2.0*e_mass*e_mass+mS*mS)*J01_1/pow(W_mass,2.0)
+				+ 8.0*F*D*J02_1/pow(W_mass,2.0)
+				+ 16.0*F*D*J11_1/pow(W_mass,2.0);
+ 
+		f = (1-Ue4*Ue4-Um4*Um4-Ut4*Ut4)*(Ue4*Ue4*(f1+f3)+Um4*Um4*f1+Ut4*Ut4*f1) + (1-Ue4*Ue4)*Ue4*Ue4*f2;
+		f *= 1.0/(32.0*pow(2*M_PI*mS,3.0));
+
+	}
+
+	return f;
+}
+
+
 
 double matrix_element_ee(double x, double y, decay_params * params)
 {
@@ -93,6 +385,22 @@ double matrix_element_ee(double x, double y, decay_params * params)
 	}
 
 	return f;
+}
+
+double Gamma_EE_integral(decay_params * params)
+{
+//	std::cout<<"Gamma_EE: starting"<<std::endl;
+	int comp, nregions, neval, fail;
+	cubareal integral, error, prob;
+
+	double function = 1;
+	params->numeval=0;
+	Vegas(NDIM, NCOMP, Integrand_ee, params, NVEC,
+			EPSREL, EPSABS, VERBOSE, SEED,MINEVAL, MAXEVAL, 					   NSTART, NINCREASE, NBATCH,GRIDNO, STATEFILE, SPIN,
+			&neval, &fail, &integral, &error, &prob);
+
+	//Note this factor of 1e-21 is removing the one I add to the integrand in Integrand_ee to help the integrator. 
+	return (1e-21)*(double)integral;
 }
 
 static int Integrand_ee(const int *ndim, const cubareal xx[], 
@@ -251,85 +559,29 @@ double Gamma_NUNUNU(decay_params * params)
 	return G_3nu;
 }
 
-//This should report the total decay width in GeV.
-double Gamma_total(decay_params * params)
-{
-	/* Total decay width */
-	double Gamma =0.0;
-
-	/* Now we add the relevant contributions according to the mass of nu_s */
-	Gamma = Gamma_NUNUNU(params);
-
-	//Add also radiative channel, why not, 
-	Gamma += Gamma_NUGAMMA(params);
-
-	double mS = (*params).mS;
-
-	if(mS>=2.0*e_mass+1e-8)
-	{
-		Gamma += Gamma_EE(params); 
-
-		if(mS>=mu_mass+e_mass)
-		{
-			Gamma += Gamma_NUMUE(params);
-
-			if(mS>=pi0_mass)
-			{
-				Gamma += Gamma_NUPI0(params);
-
-				if(mS>=pi_mass+e_mass)
-				{
-					Gamma += Gamma_EPI(params);
-
-					if(mS>=2.0*mu_mass)
-					{ 
-						Gamma += Gamma_NUMUMU(params);
-
-						if(mS>mu_mass + pi_mass)
-						{
-							Gamma += Gamma_MUPI(params);
-						}
-					}
-				}
-			}
-
-		}
-	}
-
-	return Gamma;
-}
-
-
 //This can plot the branching ratios
 double branch_plotter(decay_params * params)
 {
-	double GT = 0.0;
-	double G1 = 0.0;
-	double G2 = 0.0;
-	double G3 = 0.0;
-	double G4 = 0.0;
-	double G5 = 0.0;
-	double G6 = 0.0;
-	double G7 = 0.0;
-	double G8 = 0.0;
+	decay_obj decayor(params);
 
 	double log_mS = 0.0;
 
 	for(log_mS=-5.0; log_mS<=log(0.490)/log(10)+1e-5; log_mS+=0.01)
 	{
 		params->mS=pow(10.0,log_mS);
+		decayor.update(params);
 
-		GT = Gamma_total(params);
-		G1 = Gamma_NUNUNU(params); 
-		G2 = Gamma_NUGAMMA(params);
-		G3 = Gamma_EE(params);
-		G4 = Gamma_NUMUE(params);
-		G5 = Gamma_NUPI0(params);
-		G6 = Gamma_EPI(params);
-		G7 = Gamma_NUMUMU(params);
-		G8 = Gamma_MUPI(params);
-
-		std::cout<<params->mS<<" "<<GT<<" "<<G1/GT<<" "<<G2/GT<<" "<<G3/GT<<" "<<G4/GT<<" "<<G5/GT<<" "<<G6/GT<<" "<<G7/GT<<" "<<G8/GT<<" "<<std::endl;
+		std::cout<<decayor.params.mS
+			 <<" "<<decayor.Gamma_total
+			 <<" "<<decayor.Gamma_nununu/decayor.Gamma_total
+			 <<" "<<decayor.Gamma_nugamma/decayor.Gamma_total
+			 <<" "<<decayor.Gamma_ee/decayor.Gamma_total
+			 <<" "<<decayor.Gamma_numue/decayor.Gamma_total
+			 <<" "<<decayor.Gamma_nupi0/decayor.Gamma_total
+			 <<" "<<decayor.Gamma_epi/decayor.Gamma_total
+			 <<" "<<decayor.Gamma_numumu/decayor.Gamma_total
+			 <<" "<<decayor.Gamma_mupi/decayor.Gamma_total
+			 <<std::endl;
 	}
 
 	return 0;
@@ -699,7 +951,7 @@ double Gamma_NUMUE_old(double mS, double Ue4, double Um4, double Ut4)
 
 }
 
-double Gamma_EE_old(double mS, double Ue4, double Um4, double Ut4)
+double Gamma_EE_old(double mS, double mZprime, double chi, double Ue4, double Um4, double Ut4)
 {
 	//The standard model Z + W mediators only decay from Pascoli/Han etc.
 	double G_nu_e_e = 0.0; 

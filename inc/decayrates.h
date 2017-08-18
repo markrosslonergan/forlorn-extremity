@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <iostream>
 #include "cuba.h"
+#include "appellced.h"
 
 struct decay_params
 {
@@ -17,9 +18,49 @@ struct decay_params
 	double numeval;
 };
 
+struct master_integrals 
+{ 
+	double I00; 
+	double I01; 
+	double I02; 
+	double I10; 
+	double I11; 
+	double I12; 
+	double I20; 
+	double I21; 
+	double I22; 
+	double J01_0; 
+	double J02_0; 
+	double J11_0; 
+	double J01_1; 
+	double J02_1; 
+	double J11_1; 
+};
+ 
+class decay_obj {
 
-double Gamma_total(decay_params*);
-double Gamma_EE(decay_params*);
+public:
+	decay_obj(decay_params*);
+
+	void update(decay_params*);
+	void compute_master_integrals();
+	void compute_gamma_total();
+		
+	decay_params params;
+	master_integrals master_ints;
+
+	double Gamma_nununu;
+	double Gamma_nugamma;
+	double Gamma_ee;
+	double Gamma_epi;
+	double Gamma_nupi0;
+	double Gamma_numue;
+	double Gamma_mupi;
+	double Gamma_numumu;
+	double Gamma_total;
+};
+
+double Gamma_EE(decay_params*, master_integrals*);
 double Gamma_EPI(decay_params*);
 double Gamma_MUPI(decay_params*);
 double Gamma_NUPI0(decay_params*);
@@ -28,17 +69,18 @@ double Gamma_NUMUE(decay_params*);
 double Gamma_NUMUMU(decay_params*);
 double Gamma_NUNUNU(decay_params*);
 
+//Integrand and integrator for Gamma_ee and wrapper for the ee decay integration.
+//Note that "matrix_element" includes all prefactors. Integrate first two arguments over 0,1 to get the full decay rate.
+double Gamma_EE_integral(decay_params*);
+double matrix_element_ee(double, double, decay_params*);
+static int Integrand_ee(const int *ndim, const cubareal xx[], const int *ncomp, cubareal ff[], void *userdata);
+
 //for testing and consistency purposes.
 double Gamma_NUPI0_old(double, double, double, double, double, double); 
 double Gamma_EE_old(double, double, double, double, double, double);
 double Gamma_EE_oldest(double, double, double, double);
 double Gamma_NUMUMU_old(double, double, double, double);
 double Gamma_NUMUE_old(double, double, double, double);
-
-//Integrand and wrapper for the ee decay integration.
-//Note that "matrix_element" includes all prefactors. Integrate first two arguments over 0,1 to get the full decay rate.
-double matrix_element_ee(double, double, decay_params*);
-static int Integrand_ee(const int *ndim, const cubareal xx[], const int *ncomp, cubareal ff[], void *userdata);
 
 //These declarations are for integral approximations given at the bottom of this file.
 double I1(double, double);
@@ -60,7 +102,6 @@ double sbeta_mathematica(double, double);
 double cbeta_mathematica(double, double);
 
 double branch_plotter(decay_params*);
-
 
 #define GF  1.16636e-5 /* Fermi's constant in GeV^-2 */
 #define fPi  0.1307 /* pion decay constant in GeV */
@@ -93,8 +134,6 @@ double branch_plotter(decay_params*);
 #define GRIDNO 		0
 #define STATEFILE 	NULL
 #define SPIN 		NULL
-
-
 
 
 #endif

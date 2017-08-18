@@ -58,7 +58,7 @@ int fourmomentum::populate(double energy, std::vector<double> momentum)
 	if(fabs(mass) < 1e-12){ mass = 0.0; }
 
 	if(mass < 0.0 ){
-	       	std::cout<<"ERROR: 4-vector is spacelike. This isn't what we had agreed on!"<<std::endl;       
+	       	std::cout<<"ERROR: 4-vector is spacelike. This isn't what we had agreed on! [(P_mu)^2: "<<mass<<", (P_mu)^2/E^2 ="<<mass/(E*E)<<", E = "<<energy<<"]."<<std::endl;       
 	}
 	else{ mass = sqrt(mass); }
 
