@@ -171,6 +171,9 @@ class minInstance {
 	int init_minim();
 	double minimize();
 	int reset_minim();
+	
+	std::vector<double> grid_scan();
+
 
 	int clear_all();
 };

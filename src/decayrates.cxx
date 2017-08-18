@@ -238,15 +238,15 @@ double Gamma_EE(decay_params* params, master_integrals* master_ints)
 	double mS = (*params).mS;
 
 	double f = 0.0;
-
-	if(mS>2*e_mass)
-	{
-
 		double mZprime = (*params).mZprime;
 		double chi = (*params).chi;
 		double Ue4 = (*params).Ue4;
 		double Um4 = (*params).Um4;
 		double Ut4 = (*params).Ut4;
+	if(mS>2*e_mass)
+	{
+
+
 
 		double alpha = mS*mS/(mZprime*mZprime-mS*mS);
 		double beta = mS*mS/(Z_mass*Z_mass-mS*mS);
@@ -301,6 +301,12 @@ double Gamma_EE(decay_params* params, master_integrals* master_ints)
 		f = (1-Ue4*Ue4-Um4*Um4-Ut4*Ut4)*(Ue4*Ue4*(f1+f3)+Um4*Um4*f1+Ut4*Ut4*f1) + (1-Ue4*Ue4)*Ue4*Ue4*f2;
 		f *= 1.0/(32.0*pow(2*M_PI*mS,3.0));
 
+	}
+
+	if(f<0){
+		std::cout<<"ERROR! decay_obj::Gamma_EE || value for rate is negative: "<<f<<" mS: "<<mS<<" mZ: "<<mZprime<<" chi: "<<chi<<" ue4: "<<Ue4<<" um4: "<<Um4<<" Ut4: "<<Ut4<<std::endl;
+		std::cerr<<"ERROR! decay_obj::Gamma_EE || value for rate is negative: "<<f<<" mS: "<<mS<<" mZ: "<<mZprime<<" chi: "<<chi<<" ue4: "<<Ue4<<" um4: "<<Um4<<" Ut4: "<<Ut4<<std::endl;
+		exit(EXIT_FAILURE);
 	}
 
 	return f;

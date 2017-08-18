@@ -893,7 +893,7 @@ int main(int argc, char* argv[])
 		//Right so returning to statDir, we basicall have all ingredients, 4 vSignal vectors, 4 Observed Vectors and 4 Expected background vector and 2 norms
 		// Norm_nu and Norm_nubar
 		std::cout<<"Going to initilize statInatance now"<<std::endl;
-		minInstance statInstance(Norm_nu, Norm_nubar, tAna_nu, tAna_nubar  ,1000);
+		minInstance statInstance(Norm_nu, Norm_nubar, tAna_nu, tAna_nubar  , (double)NUMEVENTS);
 		std::cout<<"Done. initilized statInatance"<<std::endl;
 
 		statInstance.setMass(mZ,mS);
@@ -902,6 +902,10 @@ int main(int argc, char* argv[])
 		statInstance.bound_vector.push_back(bound_babar);
 		statInstance.bound_vector.push_back(bound_gm2);
 		statInstance.bound_vector.push_back(bound_nutev);
+
+		statInstance.use_bounds=true;
+		std::cout<<"Set Bounds"<<std::endl;
+
 
 		std::cout<<"Norm nu: "<< statInstance.norm_nu<<std::endl;
 		std::cout<<"Norm nu_bar: "<< statInstance.norm_nubar<<std::endl;

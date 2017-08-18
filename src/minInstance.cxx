@@ -28,9 +28,9 @@ minInstance::minInstance(double normn, double normb, TTree * nutree, TTree* nuba
 
 	f_minimizer_mode ="GSLSimAn";
 	f_minimizer_algo= "";
-//		f_minimizer_mode ="GSLMultiMin"; //"GSLSimAn"
-//		f_minimizer_algo= "BFGS2";
-	
+	//f_minimizer_mode ="GSLMultiMin"; //"GSLSimAn"
+	//f_minimizer_algo= "BFGS2";
+
 	N_bf=0;
 	N_bf_bar=0;
 
@@ -293,7 +293,7 @@ double minInstance::minim_calc_chi(const double * x){
 	std::vector<double> vchi;
 	vchi = this->calc_chi(v_chi, v_up, v_ud, v_zeta_b_nu, v_zeta_b_nubar );	
 
-	double chi = vchi[0]+vchi[1];//+vchi[2]+vchi[3];
+	double chi = vchi[0]+vchi[1]+vchi[2]+vchi[3];
 
 
 
@@ -314,7 +314,7 @@ double minInstance::minim_calc_chi(const double * x){
 double minInstance::minimize(){
 
 	ROOT::Math::Minimizer* min = ROOT::Math::Factory::CreateMinimizer(f_minimizer_mode, f_minimizer_algo);
-	min->SetMaxIterations(500000);     // for GSL
+	min->SetMaxIterations(50000);     // for GSL
 	min->SetTolerance(0.000001); 	//times 4 for normal
 	min->SetPrecision(0.000001);	//times 4 for normal
 	min->SetPrintLevel(2);
@@ -325,12 +325,18 @@ double minInstance::minimize(){
 	TRandom3 *rangen    = new TRandom3(0);
 
 
-	double variable[5] ={-3.02,-4.02,0,0.0,0.0};
+	std::vector<double> qkscan = this->grid_scan();
 
+	std::cout<<"Minimim of GridScan is "<<qkscan.at(2)<<" at chi: "<<qkscan.at(0)<<" and u: "<<qkscan.at(1)<<std::endl;
+	exit(EXIT_FAILURE);
 
 	double step[5] = {0.005,0.005,0.005, 0.001,0.001};
 	double lower[5] = {-6,-6,-10,-1,-1};
 	double upper[5] = {-0.1,-0.1,-0.1,1,1 };	
+
+	//double variable[5] = {rangen->Uniform(lower[0], upper[0]),rangen->Uniform(lower[0], upper[0]), 0,0,0};
+	double variable[5] ={-2.02,-3.52,0,0.0,0.0};
+
 
 
 	std::string name[5] ={"chi\0","Up\0","Ud\0","zeta_nu\0","zeta_nubar\0"};
@@ -381,16 +387,16 @@ double minInstance::minimize(){
 
 	return valAns;
 
-/*	for(double etst = mass_s+0.05; etst<=3; etst=etst+0.05){
+	/*	for(double etst = mass_s+0.05; etst<=3; etst=etst+0.05){
 		double gb=mass_s/sqrt(etst*etst-mass_s*mass_s);
 		double rat = fabs(1-(1-exp(-pdec/gb))/(pdec/gb));
 
 		if(rat>0.05){
-			std::cout<<"The Best fit point isnt really very good.."<<std::endl;
-			std::cout<<"pdec: "<<etst<<" "<<gb<<" "<<1-exp(-pdec/gb)<<" "<<pdec/gb<<" "<<(1-exp(-pdec/gb))/(pdec/gb)<<std::endl;
+		std::cout<<"The Best fit point isnt really very good.."<<std::endl;
+		std::cout<<"pdec: "<<etst<<" "<<gb<<" "<<1-exp(-pdec/gb)<<" "<<pdec/gb<<" "<<(1-exp(-pdec/gb))/(pdec/gb)<<std::endl;
 		}
 
-	}
+		}
 
 */
 
@@ -415,27 +421,27 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 	sig_E_nubar.clear();
 	sig_C_nubar.clear();
 
-//Peter changed this 11/July
-//	double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
+	//Peter changed this 11/July
+	//	double pdec = diam_miniboone*bound_vector[0].myRate(mass_s, mass_z)*ch2; 
 
-		//I made this "better" by adding more arbitrary structures.
-		decay_params params;
-		params.mS=mass_s;
-		params.mZprime=mass_z;
-		params.chi=sqrt(ch2);
-		params.Ue4=0.0;
-		params.Um4=sqrt(u2);
-		params.Ut4=0.0;
-	
-		decay_obj decayor(&params);	
-		double GT = decayor.Gamma_total;
-		double GZEE = decayor.Gamma_ee; 
-	        double BR = GZEE/GT;
+	//I made this "better" by adding more arbitrary structures.
+	decay_params params;
+	params.mS=mass_s;
+	params.mZprime=mass_z;
+	params.chi=sqrt(ch2);
+	params.Ue4=0.0;
+	params.Um4=sqrt(u2);
+	params.Ut4=0.0;
+
+	decay_obj decayor(&params);	
+	double GT = decayor.Gamma_total;
+	double GZEE = decayor.Gamma_ee; 
+	double BR = GZEE/GT;
 
 	for(int i=0; i<tnu->GetEntries(); i++){
 		tnu->GetEntry(i);
 		double wei = (1.0-exp(-diam_miniboone*GT*m2GEV*mass_s/sqrt(en_nu*en_nu-mass_s*mass_s)))*BR;
-		
+
 		if(wei>=1 || wei <0 ){
 			std::cout<<"minInstance::fill_signal_vecs || WARNING, probability to decay to our channel inside miniboone is >1. prob: "<<wei<<" Total Gamma: "<<GT<<" myrate: "<<GZEE<<" BR: "<<BR<<" norm_nu: "<<norm_nu<<" normnubar: "<<norm_nubar<<" ngen: "<<n_gen_entries<<" total weight: "<<wei*norm_nu/n_gen_entries<<std::endl;
 		}
@@ -453,16 +459,16 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 	}
 
 	for(int i=1;i<=19;i++){ //Dont forget, root hists count from 1 as 0 is underflow.
-			sig_E_nu.push_back( h_sig_E_nu->GetBinContent(i));				
-			sig_E_nubar.push_back( h_sig_E_nubar->GetBinContent(i));				
+		sig_E_nu.push_back( h_sig_E_nu->GetBinContent(i));				
+		sig_E_nubar.push_back( h_sig_E_nubar->GetBinContent(i));				
 	}
 	for(int i=1;i<=10;i++){
-			sig_C_nu.push_back( h_sig_C_nu->GetBinContent(i));				
-			sig_C_nubar.push_back( h_sig_C_nubar->GetBinContent(i));				
+		sig_C_nu.push_back( h_sig_C_nu->GetBinContent(i));				
+		sig_C_nubar.push_back( h_sig_C_nubar->GetBinContent(i));				
 	}
 
 
-return 0;
+	return 0;
 }
 
 
@@ -474,7 +480,7 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 
 	this->fill_signal_vecs(inchi,inUp, inUd);
 
-	
+
 	double u2 = pow(pow(10,inUp),2.0);
 	double ch2 = pow(pow(10,inchi),2.0);
 	// so the scaling is prob_decay * u^2 chi^2 from scattering, and prob_decay is already taken care of.
@@ -528,24 +534,28 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 		bool is_ok = bound_vector.at(0).ps191(mass_s,mass_z,ch2,u2);
 		if(!is_ok){
 			penalty=1e10;
+			std::cout<<"FAIL PS191"<<std::endl;
 		}
 		is_ok = bound_vector.at(1).asIs(mass_s,u2);
 		if(!is_ok){
 			penalty=1e10;
+			std::cout<<"FAIL PEAK"<<std::endl;
 		}
 		is_ok = bound_vector.at(2).asIs(mass_z,ch2);
 		if(!is_ok){
 			penalty=1e10;
+			std::cout<<"FAIL BABAR"<<std::endl;
 		}
-		is_ok = bound_vector.at(3).asIs(mass_z,ch2);//gm2
+		is_ok = bound_vector.at(3).asIs(mass_z, ch2 );//gm2
 		if(!is_ok){
 			penalty=1e10;
+			std::cout<<"FAIL GM2"<<std::endl;
 		}
 		is_ok = bound_vector.at(4).ps191(mass_s,mass_z,ch2,u2);//nutev
 		if(!is_ok){
 			penalty=1e10;
+			std::cout<<"FAIL NuTeV"<<std::endl;
 		}
-
 
 
 		X_E_nu += penalty;
@@ -563,4 +573,27 @@ std::vector<double> minInstance::calc_chi(double inchi, double inUp, double inUd
 	return ans;
 }
 
+
+std::vector<double> minInstance::grid_scan(){
+	std::vector<double> chimin = {-99,-99,1e40};
+
+	for(double c = -4; c<-0.4; c=c+0.1){
+		for(double u = -4; u<-0.4; u=u+0.1){
+
+			std::vector<double> ank = calc_chi(c,u, 0, 0,0);
+			double chi = ank.at(0)+ank.at(1);
+			std::cout<<"X: "<<c<<" U: "<<u<<" "<<chi<<std::endl;
+			if(chi<chimin.at(2)){
+				chimin.at(0)=c;
+				chimin.at(1)=u;
+				chimin.at(2)=chi;
+
+			}
+		}
+	}
+
+	return chimin;
+
+
+}
 

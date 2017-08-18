@@ -116,9 +116,13 @@ bool bound::ps191(double mS, double mZ, double Um, double chi){
 
 	bool ans = false;
 
+
 	if(my_flux_folded_prob < their_flux_folded_prob){
 		ans = true;		
 	}
+
+//	std::cout<<"mS: "<<mS<<" mZ: "<<mZ<<" my_flux_folded_prob: "<<my_flux_folded_prob<<" their_flux_folded_prob: "<<their_flux_folded_prob<<" my_rate: "<<my_rate<<" their_rate "<<their_rate<<" my_fullrate: "<<my_fullrate<<" their_fullrate: "<<their_fullrate<<" Um*Um: "<<Um*Um<<" UtildeSq: "<<UtildeSq<<std::endl;
+
 
 	return ans;
 
@@ -131,7 +135,7 @@ bool bound::asIs(double mass, double Us){
 	}
 	bool ans = false;
 
-	//std::cout<<"PEAK: "<<UtildeSq<<" "<<Us<<std::endl;
+//	std::cout<<"PEAK: "<<UtildeSq<<" in: "<<Us<<" m: "<<mass<<std::endl;
 	if(Us <= UtildeSq){ ans = true;}
 
 	return ans;
