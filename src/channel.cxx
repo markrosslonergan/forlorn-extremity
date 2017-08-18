@@ -212,6 +212,7 @@ int threebody::decayfunction(initial_sterile nuS, decay_params * params)
 {
 	double p0[] = {0.0,0.0,0.0,0.0};
 	double p1[] = {0.0,0.0,0.0,0.0};
+
  	//Populate the momentum arrays in the rest frame.
 	drawRestFrameDist(r,params,p0,p1);	
 
@@ -250,12 +251,14 @@ int threebody::drawRestFrameDist(gsl_rng * r, decay_params * params, double p2[4
 //This samples the decay including the ME. Another option is to pass the ME as
 //a weight to the event. But that would take more thought.
 
+	decay_obj decayor(params);
+
 	double p1[] = {1.0,0.0,0.0,0.0};
 	double mS = params->mS;
 	double m1 = 0.0;
 	double m2 = e_mass;
 	double m3 = e_mass;
-	double Gamma = Gamma_EE_integral(params);
+	double Gamma = decayor.Gamma_ee;
 
 	double PDF_MAX = 4.0;
 	double x = gsl_rng_uniform(r);
@@ -270,21 +273,21 @@ int threebody::drawRestFrameDist(gsl_rng * r, decay_params * params, double p2[4
 	}	
 
 	//We map our scaled variables back into normal parameters.
-	double u_min = (m1+m2)*(m1+m2);
-	double u_max = (mS-m3)*(mS-m3);
-	double u = u_min + (u_max - u_min)*x;
+	double t_min = (m2+m3)*(m2+m3);
+	double t_max = (mS-m1)*(mS-m1);
+	double t = t_min + (t_max - t_min)*x; 
 
-	//The following energies and momenta are in a weird frame, but they give the bounds on t. See PDG kinematics. 
-	double Estar_2 = (u + m2*m2-m1*m1)/(2.0*sqrt(u));
-	double Estar_3 = (mS*mS - u - m3*m3)/(2.0*sqrt(u));
-	double pstar_2 = sqrt(Estar_2*Estar_2 - e_mass*e_mass);
-	double pstar_3 = sqrt(Estar_3*Estar_3 - e_mass*e_mass);
+	double E1star = (mS*mS-t-m1*m1)/(2.0*sqrt(t));
+	double p1star = E1star;
+	double E2star = (t+m2*m2-m3*m3)/(2.0*sqrt(t));
+	double p2star = sqrt(E2star*E2star - e_mass*e_mass);
 
-	double t_min = pow(Estar_2 + Estar_3,2.0) - (pstar_2+pstar_3)*(pstar_2+pstar_3);  
-	double t_max = pow(Estar_2 + Estar_3,2.0) - (pstar_2-pstar_3)*(pstar_2-pstar_3);  
-	double t = t_min + (t_max - t_min)*y;
+	double u_min = pow(E1star + E2star,2.0) - (p1star+p2star)*(p1star+p2star);  
+	double u_max = pow(E1star + E2star,2.0) - (p1star-p2star)*(p1star-p2star);  
+	double u = u_min + (u_max - u_min)*y;
 
 	double s = mS*mS + m1*m1 + m2*m2 + m3*m3 - u - t;
+
 	double phi_1 = 2*M_PI*gsl_rng_uniform(r);
 	double theta_1 = M_PI*gsl_rng_uniform(r);
 	double phi_2 = 2*M_PI*gsl_rng_uniform(r);
@@ -313,29 +316,37 @@ int threebody::drawRestFrameDist(gsl_rng * r, decay_params * params, double p2[4
 
 	//Then we rotate everything by phi_2 around p1, and then rotate
 	//everything so that p1 is pointing along phi_1,theta_1.
-	double R11 = cos(theta_1)*cos(phi_1)*cos(phi_2) + sin(phi_1)*sin(phi_2);
-	double R12 = cos(theta_1)*cos(phi_1)*sin(phi_2) - sin(phi_1)*cos(phi_2);
-	double R13 = sin(theta_1)*cos(phi_2); 	
-	double R21 = cos(theta_1)*sin(phi_1)*cos(phi_2) - cos(phi_1)*sin(phi_2);
-	double R22 = cos(theta_1)*sin(phi_1)*sin(phi_2) + cos(phi_1)*cos(phi_2);
-	double R23 = sin(theta_1)*sin(phi_2); 	
+	double R11 = cos(theta_1)*cos(phi_1)*cos(phi_2) - sin(phi_1)*sin(phi_2);
+	double R12 = -cos(theta_1)*cos(phi_1)*sin(phi_2) - sin(phi_1)*cos(phi_2);
+	double R13 = sin(theta_1)*cos(phi_1); 	
+	double R21 = cos(theta_1)*sin(phi_1)*cos(phi_2) + cos(phi_1)*sin(phi_2);
+	double R22 = -cos(theta_1)*sin(phi_1)*sin(phi_2) + cos(phi_1)*cos(phi_2);
+	double R23 = sin(theta_1)*sin(phi_1); 	
 	double R31 = -sin(theta_1)*cos(phi_2);
-	double R32 = -sin(theta_1)*sin(phi_2);
+	double R32 = sin(theta_1)*cos(phi_2);
 	double R33 = cos(theta_1);
 
-	p1[1] = R11*p1[1] +  R12*p1[2] +  R13*p1[3]; 
-	p1[2] = R21*p1[1] +  R22*p1[2] +  R23*p1[3]; 
-	p1[3] = R31*p1[1] +  R32*p1[2] +  R33*p1[3]; 
-	p2[1] = R11*p2[1] +  R12*p2[2] +  R13*p2[3]; 
-	p2[2] = R21*p2[1] +  R22*p2[2] +  R23*p2[3]; 
-	p2[3] = R31*p2[1] +  R32*p2[2] +  R33*p2[3]; 
+	double t1,t2,t3;
+	t1 = R11*p1[1] +  R12*p1[2] +  R13*p1[3]; 
+	t2 = R21*p1[1] +  R22*p1[2] +  R23*p1[3]; 
+	t3 = R31*p1[1] +  R32*p1[2] +  R33*p1[3]; 
+	p1[1]=t1;
+	p1[2]=t2;
+	p1[3]=t3;
+
+	t1 = R11*p2[1] +  R12*p2[2] +  R13*p2[3]; 
+	t2 = R21*p2[1] +  R22*p2[2] +  R23*p2[3]; 
+	t3 = R31*p2[1] +  R32*p2[2] +  R33*p2[3]; 
+	p2[1]=t1;
+	p2[2]=t2;
+	p2[3]=t3;
 
 	//We construct the other momentum.
 	p3[0]= mS - p1[0] - p2[0];
 	p3[1]= -p1[1]-p2[1];
 	p3[2]= -p1[2]-p2[2];
 	p3[3]= -p1[3]-p2[3];
-	
+
 return 0;
 }
 

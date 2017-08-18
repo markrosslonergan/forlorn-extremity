@@ -329,20 +329,39 @@ double matrix_element_ee(double x, double y, decay_params * params)
 		double gamma = mS*mS/(W_mass*W_mass-mS*mS);
 
 		//Cuba integrals go over 0,1.
-		double u_min = e_mass*e_mass;
-		double u_max = (mS-e_mass)*(mS-e_mass);
-		double u = u_min + (u_max - u_min)*x; 
+		double t_min = 4.0*e_mass*e_mass;
+		double t_max = (mS)*(mS);
+		double t = t_min + (t_max - t_min)*x; 
 
-		double E_2 = (u + e_mass*e_mass)/(2.0*sqrt(u));
-		double E_3 = (mS*mS - u - e_mass*e_mass)/(2.0*sqrt(u));
+		double E_1 = (mS*mS - t)/(2.0*sqrt(t));
+		double p1 = E_1;
+		double E_2 = sqrt(t)/2.0;
 		double p2 = sqrt(E_2*E_2 - e_mass*e_mass);
-		double p3 = sqrt(E_3*E_3 - e_mass*e_mass);
 
-		double t_min = pow(E_2 + E_3,2.0) - (p2+p3)*(p2+p3);  
-		double t_max = pow(E_2 + E_3,2.0) - (p2-p3)*(p2-p3);  
-		double t = t_min + (t_max - t_min)*y;
+		double u_min = pow(E_1 + E_2,2.0) - (p1+p2)*(p1+p2);  
+		double u_max = pow(E_1 + E_2,2.0) - (p1-p2)*(p1-p2);  
+		double u = u_min + (u_max - u_min)*y;
 
 		double s = mS*mS + 2.0*e_mass*e_mass - t - u;
+
+//What follows isn't really true... but these replacements turn the analytic
+//decay rate into the matrix element. The normal definition of the terms on the
+//is the *integral over u,t* of the terms on the right.
+		double I00 = 1.0;
+		double I01 = 1.0/(t-mZprime*mZprime);
+		double I02 = 1.0/pow(t-mZprime*mZprime,2.0);
+		double I10 = t;
+		double I11 = t/(t-mZprime*mZprime);
+		double I12 = t/pow(t-mZprime*mZprime,2.0);
+		double I20 = t*t;
+		double I21 = t*t/(t-mZprime*mZprime);
+		double I22 = t*t/pow(t-mZprime*mZprime,2.0);
+		double J01_0 = u;
+		double J11_0 = t*u;
+		double J02_0 = u*u;
+		double J01_1 = u/(t-mZprime*mZprime);
+		double J11_1 = t*u/(t-mZprime*mZprime);
+		double J02_1 = u*u/(t-mZprime*mZprime);
 
 		double jacobian = fabs((u_max-u_min)*(t_max-t_min));
 
@@ -359,7 +378,6 @@ double matrix_element_ee(double x, double y, decay_params * params)
 		// Note that the d4i c4i and CC coefficients below do not have PMNS matrix elements included. I am doing that by hand to exploit unitarity relations.
 		double d4i = -0.5*(cosbeta*sW*tanchi+sinbeta) + Qs*(gX/g)*sqrt(1-sW*sW)*cosbeta/coschi; 
 		double c4i = 0.5*(-sinbeta*sW*tanchi+cosbeta) - Qs*(gX/g)*sqrt(1-sW*sW)*sinbeta/coschi; 
-
 		double deV = 1.5*cosbeta*sW*tanchi+sinbeta*(-0.5+2.0*sW*sW);
 		double deA = -0.5*(cosbeta*sW*tanchi+sinbeta);
 		double ceV = -1.5*sinbeta*sW*tanchi+cosbeta*(-0.5+2.0*sW*sW);
@@ -371,15 +389,30 @@ double matrix_element_ee(double x, double y, decay_params * params)
 		double E = (Z_mass*Z_mass-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV+ceA); 
 		double F = -(W_mass*W_mass-mS*mS)*2.0*sqrt(2)*pow(Z_mass/mS,2.0)*GF*gamma*(1-sW*sW); 
 
-		double func_f = 4.0*(t - e_mass*e_mass)*(mS*mS + e_mass*e_mass - t); 
-		double func_g = 4.0*(u - e_mass*e_mass)*(mS*mS + e_mass*e_mass - u); 
-		double func_h = 4.0*e_mass*e_mass*(t+u-2*e_mass*e_mass);
+		double f1 = 	-4.0*A*A*I22 + (4.0*A*A*(mS*mS-2*e_mass*e_mass) - 2.0*A*D*e_mass*e_mass)*I12 
+			 	+( -4.0*A*A*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*A*D*e_mass*e_mass*mS*mS)*I02
+				+(8*A*B/(Z_mass*Z_mass))*I21 + ( -8.0*A*B*(mS*mS+2.0*e_mass*e_mass) + 2.0*e_mass*e_mass*(A*E+B*D))*I11/(Z_mass*Z_mass)
+				+(8.0*A*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) - 2.0*(A*E+B*D)*e_mass*e_mass*mS*mS)*I01/(Z_mass*Z_mass)
+				-4*B*B/(pow(Z_mass,4.0))*I20  + (4.0*B*B*(mS*mS+2.0*e_mass*e_mass) - 2.0*B*E*e_mass*e_mass)*I11/pow(Z_mass,4.0)
+				+ (-4.0*B*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*B*E*e_mass*e_mass*mS*mS)*I00/(pow(Z_mass,4.0));
 
-		double f1 = ( A/(t - mZprime*mZprime) + B/(t - Z_mass*Z_mass)  )*((A*func_f + D*func_h)/(t - mZprime*mZprime) + (B*func_f + E*func_h)/(t - Z_mass*Z_mass));
-		double f2 = pow(F/(u - W_mass*W_mass),2.0)*func_h;
-		double f3 = ((A*func_h + 2.0*D*func_g)/(t - mZprime*mZprime) + (B*func_h + 2.0*E*func_g)/(t - Z_mass*Z_mass))*F/(u-W_mass*W_mass);
+		double f2 = (-2.0*e_mass*e_mass*F*F/pow(W_mass,4.0))*I10 + (2.0*e_mass*e_mass*mS*mS*F*F/pow(W_mass,4.0))*I00;
 
+		double f3 =	  (2*F*B*e_mass*e_mass*mS*mS - 8.0*F*E*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I00/pow(W_mass*Z_mass,2.0)
+				+ (-2*F*B*e_mass*e_mass + 8.0*F*E*(mS*mS+2.0*e_mass*e_mass))*I10/pow(W_mass*Z_mass,2.0)
+				+ -8*F*E*I20/pow(W_mass*Z_mass,2.0)
+				+ (-2*A*F*e_mass*e_mass*mS*mS - 8.0*F*D*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I01/pow(W_mass,2.0)
+				+ (2*A*F*e_mass*e_mass - 8.0*F*D*(mS*mS+2.0*e_mass*e_mass))*I11/pow(W_mass,2.0)
+				+ 8*F*D*I21/pow(W_mass,2.0)
+				+ 8.0*F*E*(2.0*e_mass*e_mass+mS*mS)*J01_0/pow(W_mass*Z_mass,2.0)
+				- 8.0*F*E*J02_0/pow(W_mass*Z_mass,2.0)
+				+ 16.0*F*E*J11_0/pow(W_mass*Z_mass,2.0)
+				- 8.0*F*D*(2.0*e_mass*e_mass+mS*mS)*J01_1/pow(W_mass,2.0)
+				+ 8.0*F*D*J02_1/pow(W_mass,2.0)
+				+ 16.0*F*D*J11_1/pow(W_mass,2.0);
+ 
 		f = (1-Ue4*Ue4-Um4*Um4-Ut4*Ut4)*(Ue4*Ue4*(f1+f3)+Um4*Um4*f1+Ut4*Ut4*f1) + (1-Ue4*Ue4)*Ue4*Ue4*f2;
+
 		f *= jacobian/(32.0*pow(2*M_PI*mS,3.0));
 
 	}
@@ -413,7 +446,8 @@ static int Integrand_ee(const int *ndim, const cubareal xx[],
 
 	decay_params * params = (decay_params *)userdata;
 	params->numeval++;
-	//Note this factor of 1e21 should be removed again in Gamma_EE. Make sure it is!
+
+	//Note this factor of 1e21 should be removed again in Gamma_EE_integral. Make sure it is!
 	ff[0] = 1e21*matrix_element_ee(x,y,params);
 
 	//std::cout<<"Integrand_ee: val "<<ff[0]<<" x "<<x<<" y "<<y<<" numeval "<<params->numeval<<std::endl;
