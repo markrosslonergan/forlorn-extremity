@@ -3,6 +3,22 @@
 decay_obj :: decay_obj(decay_params* p)
 {
 	params = *p;
+	master_ints.I00 = 0.0;
+	master_ints.I10 = 0.0;
+	master_ints.I20 = 0.0;
+	master_ints.I01 = 0.0;
+	master_ints.I11 = 0.0;
+	master_ints.I21 = 0.0;
+	master_ints.I02 = 0.0;
+	master_ints.I12 = 0.0;
+	master_ints.I22 = 0.0;
+	master_ints.J01_0 = 0.0;
+	master_ints.J02_0 = 0.0;
+	master_ints.J11_0 = 0.0;
+	master_ints.J01_1 = 0.0;
+	master_ints.J02_1 = 0.0;
+	master_ints.J11_1 = 0.0;
+
 	compute_master_integrals();
 
 	Gamma_nununu = Gamma_NUNUNU(&params);
@@ -21,6 +37,8 @@ decay_obj :: decay_obj(decay_params* p)
 void decay_obj :: compute_master_integrals()
 {
 	double mS = params.mS;
+if(mS>2.0*e_mass)
+{
 	double mu = params.mZprime;
 	double alpha = (mS*mS - 4.0*e_mass*e_mass)/(4.0*e_mass*e_mass);
 	double beta = (mS*mS - 4.0*e_mass*e_mass)/(mu*mu - 4.0*e_mass*e_mass);
@@ -102,6 +120,7 @@ void decay_obj :: compute_master_integrals()
 
 
 //std::cout<<alpha<<" "<<beta<<" "<<master_ints.I00<<" " <<master_ints.I01<<" "<<master_ints.I02<<" "<<master_ints.I10<<" "<<master_ints.I11<<" "<<master_ints.I12<<" "<<master_ints.I20<<" "<<master_ints.I21<<" "<<master_ints.I22<<" "<<master_ints.J01_0<<" "<<master_ints.J02_0<<" "<<master_ints.J11_0<<" "<<master_ints.J01_1<<" "<<master_ints.J02_1<<" "<<master_ints.J11_1<<std::endl;
+}
 
 return;
 }
@@ -246,8 +265,6 @@ double Gamma_EE(decay_params* params, master_integrals* master_ints)
 	if(mS>2*e_mass)
 	{
 
-
-
 		double alpha = mS*mS/(mZprime*mZprime-mS*mS);
 		double beta = mS*mS/(Z_mass*Z_mass-mS*mS);
 		double gamma = mS*mS/(W_mass*W_mass-mS*mS);
@@ -264,44 +281,77 @@ double Gamma_EE(decay_params* params, master_integrals* master_ints)
 
 		// Note that the d4i c4i and CC coefficients below do not have PMNS matrix elements included. I am doing that by hand to exploit unitarity relations.
 		double d4i = -0.5*(cosbeta*sW*tanchi+sinbeta) + Qs*(gX/g)*sqrt(1-sW*sW)*cosbeta/coschi; 
-		double c4i = 0.5*(-sinbeta*sW*tanchi+cosbeta) - Qs*(gX/g)*sqrt(1-sW*sW)*sinbeta/coschi; 
-		double deV = 1.5*cosbeta*sW*tanchi+sinbeta*(-0.5+2.0*sW*sW);
-		double deA = -0.5*(cosbeta*sW*tanchi+sinbeta);
+		double c4i = -0.5*(-sinbeta*sW*tanchi+cosbeta) - Qs*(gX/g)*sqrt(1-sW*sW)*sinbeta/coschi; 
+		double deV = 1.5*cosbeta*sW*tanchi+sinbeta*(-0.5-2.0*sW*sW);
+		//double deA = -0.5*(cosbeta*sW*tanchi+sinbeta);
+		double deA = -0.5*sinbeta_plus_cosbeta_sW_tanchi(mZprime,chi);
 		double ceV = -1.5*sinbeta*sW*tanchi+cosbeta*(-0.5+2.0*sW*sW);
 		double ceA = -0.5*(-sinbeta*sW*tanchi+cosbeta);
 
-		double A = (mZprime*mZprime-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV-deA); 
-		double B = (Z_mass*Z_mass-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV-ceA); 
-		double D = (mZprime*mZprime-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV+deA); 
-		double E = (Z_mass*Z_mass-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV+ceA); 
-		double F = -(W_mass*W_mass-mS*mS)*2.0*sqrt(2)*pow(Z_mass/mS,2.0)*GF*gamma*(1-sW*sW); 
+		double A = sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV-deA); 
+		double B = sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV-ceA); 
+		double D = sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV+deA); 
+		double E = sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV+ceA); 
+		double F = -2.0*sqrt(2)*pow(Z_mass/mS,2.0)*GF*gamma*(1-sW*sW); 
 
-		double f1 = 	-4.0*A*A*I22 + (4.0*A*A*(mS*mS-2*e_mass*e_mass) - 2.0*A*D*e_mass*e_mass)*I12 
-			 	+( -4.0*A*A*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*A*D*e_mass*e_mass*mS*mS)*I02
-				+(8*A*B/(Z_mass*Z_mass))*I21 + ( -8.0*A*B*(mS*mS+2.0*e_mass*e_mass) + 2.0*e_mass*e_mass*(A*E+B*D))*I11/(Z_mass*Z_mass)
-				+(8.0*A*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) - 2.0*(A*E+B*D)*e_mass*e_mass*mS*mS)*I01/(Z_mass*Z_mass)
-				-4*B*B/(pow(Z_mass,4.0))*I20  + (4.0*B*B*(mS*mS+2.0*e_mass*e_mass) - 2.0*B*E*e_mass*e_mass)*I11/pow(Z_mass,4.0)
-				+ (-4.0*B*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*B*E*e_mass*e_mass*mS*mS)*I00/(pow(Z_mass,4.0));
+//		double f1 = 	-4.0*A*A*I22 + (4.0*A*A*(mS*mS+2*e_mass*e_mass) - 2.0*A*D*e_mass*e_mass)*I12 
+//			 	+( -4.0*A*A*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*A*D*e_mass*e_mass*mS*mS)*I02
+//				+(8*A*B/(Z_mass*Z_mass))*I21 + ( -8.0*A*B*(mS*mS+2.0*e_mass*e_mass) + 2.0*e_mass*e_mass*(A*E+B*D))*I11/(Z_mass*Z_mass)
+//				+(8.0*A*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) - 2.0*(A*E+B*D)*e_mass*e_mass*mS*mS)*I01/(Z_mass*Z_mass)
+//				-4*B*B/(pow(Z_mass,4.0))*I20  + (4.0*B*B*(mS*mS+2.0*e_mass*e_mass) - 2.0*B*E*e_mass*e_mass)*I11/pow(Z_mass,4.0)
+//				+ (-4.0*B*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*B*E*e_mass*e_mass*mS*mS)*I00/(pow(Z_mass,4.0));
+
+		double f1 = ((-2*B*pow(e_mass,2)*(2*B*pow(e_mass,2) + 2*B*pow(mS,2) - E*pow(mS,2)))/pow(Z_mass,4))*I00
+			+ ((2*B*(4*B*pow(e_mass,2) - E*pow(e_mass,2) + 2*B*pow(mS,2)))/pow(Z_mass,4))*I10
+			+((-4*pow(B,2))/pow(Z_mass,4))*I20
+			+((2*pow(e_mass,2)*(4*A*B*pow(e_mass,2) + 4*A*B*pow(mS,2) - B*D*pow(mS,2) - 
+       A*E*pow(mS,2)))/pow(Z_mass,2))*I01
+			+((-2*(8*A*B*pow(e_mass,2) - B*D*pow(e_mass,2) - A*E*pow(e_mass,2) + 4*A*B*pow(mS,2)))/pow(Z_mass,2))*I11
+			+((8*A*B)/pow(Z_mass,2))*I21
+			+(-2*A*pow(e_mass,2)*(2*A*pow(e_mass,2) + 2*A*pow(mS,2) - D*pow(mS,2)))*I02
+			+(2*A*(4*A*pow(e_mass,2) - D*pow(e_mass,2) + 2*A*pow(mS,2)))*I12
+			+(-4*pow(A,2))*I22;
 
 		double f2 = (-2.0*e_mass*e_mass*F*F/pow(W_mass,4.0))*I10 + (2.0*e_mass*e_mass*mS*mS*F*F/pow(W_mass,4.0))*I00;
 
-		double f3 =	  (2*F*B*e_mass*e_mass*mS*mS - 8.0*F*E*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I00/pow(W_mass*Z_mass,2.0)
-				+ (-2*F*B*e_mass*e_mass + 8.0*F*E*(mS*mS+2.0*e_mass*e_mass))*I10/pow(W_mass*Z_mass,2.0)
-				+ -8*F*E*I20/pow(W_mass*Z_mass,2.0)
-				+ (-2*A*F*e_mass*e_mass*mS*mS - 8.0*F*D*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I01/pow(W_mass,2.0)
-				+ (2*A*F*e_mass*e_mass - 8.0*F*D*(mS*mS+2.0*e_mass*e_mass))*I11/pow(W_mass,2.0)
-				+ 8*F*D*I21/pow(W_mass,2.0)
-				+ 8.0*F*E*(2.0*e_mass*e_mass+mS*mS)*J01_0/pow(W_mass*Z_mass,2.0)
-				- 8.0*F*E*J02_0/pow(W_mass*Z_mass,2.0)
-				+ 16.0*F*E*J11_0/pow(W_mass*Z_mass,2.0)
-				- 8.0*F*D*(2.0*e_mass*e_mass+mS*mS)*J01_1/pow(W_mass,2.0)
-				+ 8.0*F*D*J02_1/pow(W_mass,2.0)
-				+ 16.0*F*D*J11_1/pow(W_mass,2.0);
+//		double f3 =	  (2*F*B*e_mass*e_mass*mS*mS - 8.0*F*E*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I00/pow(W_mass*Z_mass,2.0)
+//				+ (-2*F*B*e_mass*e_mass + 8.0*F*E*(mS*mS+2.0*e_mass*e_mass))*I10/pow(W_mass*Z_mass,2.0)
+//				+ -8*F*E*I20/pow(W_mass*Z_mass,2.0)
+//				+ (-2*A*F*e_mass*e_mass*mS*mS - 8.0*F*D*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I01/pow(W_mass,2.0)
+//				+ (2*A*F*e_mass*e_mass - 8.0*F*D*(mS*mS+2.0*e_mass*e_mass))*I11/pow(W_mass,2.0)
+//				+ 8*F*D*I21/pow(W_mass,2.0)
+//				+ 8.0*F*E*(2.0*e_mass*e_mass+mS*mS)*J01_0/pow(W_mass*Z_mass,2.0)
+//				- 8.0*F*E*J02_0/pow(W_mass*Z_mass,2.0)
+//				+ 16.0*F*E*J11_0/pow(W_mass*Z_mass,2.0)
+//				- 8.0*F*D*(2.0*e_mass*e_mass+mS*mS)*J01_1/pow(W_mass,2.0)
+//				+ 8.0*F*D*J02_1/pow(W_mass,2.0)
+//				+ 16.0*F*D*J11_1/pow(W_mass,2.0);
+
+		double f3 = ((-2*F*pow(e_mass,2)*(4*E*pow(e_mass,2) - B*pow(mS,2) + 4*E*pow(mS,2)))/(pow(W_mass,2)*pow(Z_mass,2)))*I00
+			+((-2*F*(B*pow(e_mass,2) - 8*E*pow(e_mass,2) - 4*E*pow(mS,2)))/(pow(W_mass,2)*pow(Z_mass,2)))*I10
+			+((-8*E*F)/(pow(W_mass,2)*pow(Z_mass,2)))*I20
+			+((2*F*pow(e_mass,2)*(4*D*pow(e_mass,2) - A*pow(mS,2) + 4*D*pow(mS,2)))/pow(W_mass,2))*I01
+			+((2*F*(A*pow(e_mass,2) - 8*D*pow(e_mass,2) - 4*D*pow(mS,2)))/pow(W_mass,2))*I11
+			+((8*D*F)/pow(W_mass,2))*I21
+			+((8*E*F*(2*pow(e_mass,2) + pow(mS,2)))/(pow(W_mass,2)*pow(Z_mass,2)))*J01_0
+			+((-8*E*F)/(pow(W_mass,2)*pow(Z_mass,2)))*J02_0
+			+((-16*E*F)/(pow(W_mass,2)*pow(Z_mass,2)))*J11_0
+			+((-8*D*F*(2*pow(e_mass,2) + pow(mS,2)))/pow(W_mass,2))*J01_1
+			+((8*D*F)/pow(W_mass,2))*J02_1
+			+((16*D*F)/pow(W_mass,2))*J11_1;
+
+
  
 		f = (1-Ue4*Ue4-Um4*Um4-Ut4*Ut4)*(Ue4*Ue4*(f1+f3)+Um4*Um4*f1+Ut4*Ut4*f1) + (1-Ue4*Ue4)*Ue4*Ue4*f2;
 		f *= 1.0/(32.0*pow(2*M_PI*mS,3.0));
 
+//std::cout<<"cosbeta = "<<cosbeta<<", sinbeta = "<<sinbeta<<", tanchi = "<<tanchi<<", coschi ="<<coschi<<std::endl;
+//std::cout<<"d4i = "<<d4i<<", c4i = "<<c4i<<", deV = "<<deV<<", deA ="<<deA<<", ceV ="<<ceV<<", ceA ="<<ceA<<std::endl;
+//std::cout<<"A = "<<A<<", B = "<<B<<", D = "<<D<<", E ="<<E<<", F ="<<F<<std::endl;
+//std::cout<<"f1 = "<<f1<<", f2 = "<<f2<<", f3 = "<<f3<<", f ="<<f<<std::endl;
 	}
+
+if(fabs(f)<1e-35){ f = 0;}
 
 	if(f<0){
 		std::cout<<"ERROR! decay_obj::Gamma_EE || value for rate is negative: "<<f<<" mS: "<<mS<<" mZ: "<<mZprime<<" chi: "<<chi<<" ue4: "<<Ue4<<" um4: "<<Um4<<" Ut4: "<<Ut4<<std::endl;
@@ -383,41 +433,72 @@ double matrix_element_ee(double x, double y, decay_params * params)
 
 		// Note that the d4i c4i and CC coefficients below do not have PMNS matrix elements included. I am doing that by hand to exploit unitarity relations.
 		double d4i = -0.5*(cosbeta*sW*tanchi+sinbeta) + Qs*(gX/g)*sqrt(1-sW*sW)*cosbeta/coschi; 
-		double c4i = 0.5*(-sinbeta*sW*tanchi+cosbeta) - Qs*(gX/g)*sqrt(1-sW*sW)*sinbeta/coschi; 
-		double deV = 1.5*cosbeta*sW*tanchi+sinbeta*(-0.5+2.0*sW*sW);
-		double deA = -0.5*(cosbeta*sW*tanchi+sinbeta);
+		double c4i = -0.5*(-sinbeta*sW*tanchi+cosbeta) - Qs*(gX/g)*sqrt(1-sW*sW)*sinbeta/coschi; 
+		double deV = 1.5*cosbeta*sW*tanchi+sinbeta*(-0.5-2.0*sW*sW);
+		//double deA = -0.5*(cosbeta*sW*tanchi+sinbeta);
+		double deA = -0.5*sinbeta_plus_cosbeta_sW_tanchi(mZprime,chi);
 		double ceV = -1.5*sinbeta*sW*tanchi+cosbeta*(-0.5+2.0*sW*sW);
 		double ceA = -0.5*(-sinbeta*sW*tanchi+cosbeta);
 
-		double A = (mZprime*mZprime-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV-deA); 
-		double B = (Z_mass*Z_mass-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV-ceA); 
-		double D = (mZprime*mZprime-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV+deA); 
-		double E = (Z_mass*Z_mass-mS*mS)*sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV+ceA); 
-		double F = -(W_mass*W_mass-mS*mS)*2.0*sqrt(2)*pow(Z_mass/mS,2.0)*GF*gamma*(1-sW*sW); 
+		double A = sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV-deA); 
+		double B = sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV-ceA); 
+		double D = sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*alpha*d4i*(deV+deA); 
+		double E = sqrt(2)*pow(Z_mass/mS,2.0)*GF*2.0*beta*c4i*(ceV+ceA); 
+		double F = -2.0*sqrt(2)*pow(Z_mass/mS,2.0)*GF*gamma*(1-sW*sW); 
 
-		double f1 = 	-4.0*A*A*I22 + (4.0*A*A*(mS*mS-2*e_mass*e_mass) - 2.0*A*D*e_mass*e_mass)*I12 
-			 	+( -4.0*A*A*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*A*D*e_mass*e_mass*mS*mS)*I02
-				+(8*A*B/(Z_mass*Z_mass))*I21 + ( -8.0*A*B*(mS*mS+2.0*e_mass*e_mass) + 2.0*e_mass*e_mass*(A*E+B*D))*I11/(Z_mass*Z_mass)
-				+(8.0*A*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) - 2.0*(A*E+B*D)*e_mass*e_mass*mS*mS)*I01/(Z_mass*Z_mass)
-				-4*B*B/(pow(Z_mass,4.0))*I20  + (4.0*B*B*(mS*mS+2.0*e_mass*e_mass) - 2.0*B*E*e_mass*e_mass)*I11/pow(Z_mass,4.0)
-				+ (-4.0*B*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*B*E*e_mass*e_mass*mS*mS)*I00/(pow(Z_mass,4.0));
+//		double f1 = 	-4.0*A*A*I22 + (4.0*A*A*(mS*mS+2*e_mass*e_mass) - 2.0*A*D*e_mass*e_mass)*I12 
+//			 	+( -4.0*A*A*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*A*D*e_mass*e_mass*mS*mS)*I02
+//				+(8*A*B/(Z_mass*Z_mass))*I21 + ( -8.0*A*B*(mS*mS+2.0*e_mass*e_mass) + 2.0*e_mass*e_mass*(A*E+B*D))*I11/(Z_mass*Z_mass)
+//				+(8.0*A*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) - 2.0*(A*E+B*D)*e_mass*e_mass*mS*mS)*I01/(Z_mass*Z_mass)
+//				-4*B*B/(pow(Z_mass,4.0))*I20  + (4.0*B*B*(mS*mS+2.0*e_mass*e_mass) - 2.0*B*E*e_mass*e_mass)*I11/pow(Z_mass,4.0)
+//				+ (-4.0*B*B*e_mass*e_mass*(mS*mS+e_mass*e_mass) + 2.0*B*E*e_mass*e_mass*mS*mS)*I00/(pow(Z_mass,4.0));
+
+		double f1 = ((-2*B*pow(e_mass,2)*(2*B*pow(e_mass,2) + 2*B*pow(mS,2) - E*pow(mS,2)))/pow(Z_mass,4))*I00
+			+ ((2*B*(4*B*pow(e_mass,2) - E*pow(e_mass,2) + 2*B*pow(mS,2)))/pow(Z_mass,4))*I10
+			+((-4*pow(B,2))/pow(Z_mass,4))*I20
+			+((2*pow(e_mass,2)*(4*A*B*pow(e_mass,2) + 4*A*B*pow(mS,2) - B*D*pow(mS,2) - 
+       A*E*pow(mS,2)))/pow(Z_mass,2))*I01
+			+((-2*(8*A*B*pow(e_mass,2) - B*D*pow(e_mass,2) - A*E*pow(e_mass,2) + 4*A*B*pow(mS,2)))/pow(Z_mass,2))*I11
+			+((8*A*B)/pow(Z_mass,2))*I21
+			+(-2*A*pow(e_mass,2)*(2*A*pow(e_mass,2) + 2*A*pow(mS,2) - D*pow(mS,2)))*I02
+			+(2*A*(4*A*pow(e_mass,2) - D*pow(e_mass,2) + 2*A*pow(mS,2)))*I12
+			+(-4*pow(A,2))*I22;
 
 		double f2 = (-2.0*e_mass*e_mass*F*F/pow(W_mass,4.0))*I10 + (2.0*e_mass*e_mass*mS*mS*F*F/pow(W_mass,4.0))*I00;
 
-		double f3 =	  (2*F*B*e_mass*e_mass*mS*mS - 8.0*F*E*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I00/pow(W_mass*Z_mass,2.0)
-				+ (-2*F*B*e_mass*e_mass + 8.0*F*E*(mS*mS+2.0*e_mass*e_mass))*I10/pow(W_mass*Z_mass,2.0)
-				+ -8*F*E*I20/pow(W_mass*Z_mass,2.0)
-				+ (-2*A*F*e_mass*e_mass*mS*mS - 8.0*F*D*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I01/pow(W_mass,2.0)
-				+ (2*A*F*e_mass*e_mass - 8.0*F*D*(mS*mS+2.0*e_mass*e_mass))*I11/pow(W_mass,2.0)
-				+ 8*F*D*I21/pow(W_mass,2.0)
-				+ 8.0*F*E*(2.0*e_mass*e_mass+mS*mS)*J01_0/pow(W_mass*Z_mass,2.0)
-				- 8.0*F*E*J02_0/pow(W_mass*Z_mass,2.0)
-				+ 16.0*F*E*J11_0/pow(W_mass*Z_mass,2.0)
-				- 8.0*F*D*(2.0*e_mass*e_mass+mS*mS)*J01_1/pow(W_mass,2.0)
-				+ 8.0*F*D*J02_1/pow(W_mass,2.0)
-				+ 16.0*F*D*J11_1/pow(W_mass,2.0);
+//		double f3 =	  (2*F*B*e_mass*e_mass*mS*mS - 8.0*F*E*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I00/pow(W_mass*Z_mass,2.0)
+//				+ (-2*F*B*e_mass*e_mass + 8.0*F*E*(mS*mS+2.0*e_mass*e_mass))*I10/pow(W_mass*Z_mass,2.0)
+//				+ -8*F*E*I20/pow(W_mass*Z_mass,2.0)
+//				+ (-2*A*F*e_mass*e_mass*mS*mS - 8.0*F*D*e_mass*e_mass*(mS*mS+e_mass*e_mass))*I01/pow(W_mass,2.0)
+//				+ (2*A*F*e_mass*e_mass - 8.0*F*D*(mS*mS+2.0*e_mass*e_mass))*I11/pow(W_mass,2.0)
+//				+ 8*F*D*I21/pow(W_mass,2.0)
+//				+ 8.0*F*E*(2.0*e_mass*e_mass+mS*mS)*J01_0/pow(W_mass*Z_mass,2.0)
+//				- 8.0*F*E*J02_0/pow(W_mass*Z_mass,2.0)
+//				+ 16.0*F*E*J11_0/pow(W_mass*Z_mass,2.0)
+//				- 8.0*F*D*(2.0*e_mass*e_mass+mS*mS)*J01_1/pow(W_mass,2.0)
+//				+ 8.0*F*D*J02_1/pow(W_mass,2.0)
+//				+ 16.0*F*D*J11_1/pow(W_mass,2.0);
+
+		double f3 = ((-2*F*pow(e_mass,2)*(4*E*pow(e_mass,2) - B*pow(mS,2) + 4*E*pow(mS,2)))/(pow(W_mass,2)*pow(Z_mass,2)))*I00
+			+((-2*F*(B*pow(e_mass,2) - 8*E*pow(e_mass,2) - 4*E*pow(mS,2)))/(pow(W_mass,2)*pow(Z_mass,2)))*I10
+			+((-8*E*F)/(pow(W_mass,2)*pow(Z_mass,2)))*I20
+			+((2*F*pow(e_mass,2)*(4*D*pow(e_mass,2) - A*pow(mS,2) + 4*D*pow(mS,2)))/pow(W_mass,2))*I01
+			+((2*F*(A*pow(e_mass,2) - 8*D*pow(e_mass,2) - 4*D*pow(mS,2)))/pow(W_mass,2))*I11
+			+((8*D*F)/pow(W_mass,2))*I21
+			+((8*E*F*(2*pow(e_mass,2) + pow(mS,2)))/(pow(W_mass,2)*pow(Z_mass,2)))*J01_0
+			+((-8*E*F)/(pow(W_mass,2)*pow(Z_mass,2)))*J02_0
+			+((-16*E*F)/(pow(W_mass,2)*pow(Z_mass,2)))*J11_0
+			+((-8*D*F*(2*pow(e_mass,2) + pow(mS,2)))/pow(W_mass,2))*J01_1
+			+((8*D*F)/pow(W_mass,2))*J02_1
+			+((16*D*F)/pow(W_mass,2))*J11_1;
+
+
  
 		f = (1-Ue4*Ue4-Um4*Um4-Ut4*Ut4)*(Ue4*Ue4*(f1+f3)+Um4*Um4*f1+Ut4*Ut4*f1) + (1-Ue4*Ue4)*Ue4*Ue4*f2;
+		f *= 1.0/(32.0*pow(2*M_PI*mS,3.0));
+
+
+
 
 		f *= jacobian/(32.0*pow(2*M_PI*mS,3.0));
 
@@ -1067,4 +1148,19 @@ double I2_3arg_e(double ms)
 	}
 }
 
-
+inline double sinbeta_plus_cosbeta_sW_tanchi(double mu, double chi)
+{
+return (0.48062459362791665 + 0.48062459362791665/(-1 + 0.000015500031000061998*pow(mu,2)))*
+    chi + (0.1602081978759722*(1.2322531354888e10*pow(mu,2) - 
+        322580.00000000006*pow(mu,4) + 1.*pow(mu,6))*pow(chi,3))/
+    pow(-64516.00000000001 + 1.*pow(mu,2),3) + 
+   (0.06408327915038889*(-2.4216808199812326e9 + 7.0215735464333115e19*pow(mu,2) - 
+        4.189383745474061e15*pow(mu,4) + 6.700805662878003e10*pow(mu,6) - 
+        258064.00000000006*pow(mu,8) + 1.*pow(mu,10))*pow(chi,5))/
+    pow(-64516.00000000001 + 1.*pow(mu,2),5) + 
+   (0.025938470132300266*(-1.881674621235628e19 + 2.6128088161029513e29*pow(mu,2) - 
+        3.101934223758936e25*pow(mu,4) + 1.0305694672509878e21*pow(mu,6) - 
+        1.1875244269913044e16*pow(mu,8) + 5.174515630454686e10*pow(mu,10) - 
+        466792.2352941177*pow(mu,12) + 1.*pow(mu,14))*pow(chi,7))/
+    pow(-64516.00000000001 + 1.*pow(mu,2),7); 
+}

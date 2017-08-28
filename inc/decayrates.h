@@ -100,6 +100,8 @@ double I2_3arg_mu(double);
 //Here are some nasty mathematica expressions
 double sbeta_mathematica(double, double);
 double cbeta_mathematica(double, double);
+//This odd combination cancels analytically in a numerically nasty way.
+inline double sinbeta_plus_cosbeta_sW_tanchi(double, double); 
 
 double branch_plotter(decay_params*);
 
