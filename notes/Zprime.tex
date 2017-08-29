@@ -1,3 +1,4 @@
+%SAVEDAT= 1443708096
 \documentclass[11pt, a4paper]{article} 
 \usepackage[force]{feynmp-auto}
 \usepackage{jheppub,multirow,relsize,slashed}
@@ -85,6 +86,26 @@ new $Z^\prime$. This means that its decay rates are a combination of the
 standard heavy sterile weak decay rates (pure leptonic and semileptonic rates),
 combined with novel processes driven by the $Z\prime$. 
 
+%For relatively light
+%$N$, we only expect corrections to the rates of processess like $N\to
+%\nu\nu\nu$ and $N \to \nu e^+e^-$. However, we \emph{expect} the three neutrino
+%rate to be very suppressed ($Z^\prime$-$\nu_i\nu_j$ vertices are quite
+%suppressed by mixing) while the electron rate will be much larger than its
+%standard model counterpart. In what follows we compute the $Z^\prime$ mediated
+%decay rate: this is a necessary input to our model in itself, but it will also
+%allow us to check in which regions of parameter space we can neglect the $Z$
+%mediated contributions to the same process.
+%
+%As an aside from compiling this document, it is interesting to note that in our
+%model the $Z^\prime$ produces no FCNCs, aside from in the neutrinos, does not
+%lead to NSIs in electrically neutral matter (as it couples to non-neutrinos
+%proportionally to their electric charge), and has a significantly suppressed
+%coupling to pseudoscalar mesons (due to its vectorial nature). 
+%
+%
+%
+%\section{Standard and non-standard rates}
+%
 In our model, the $W$-vertices are unchanged (they are still only modified by
 the PMNS matrix), and so at tree-level we can use the usual expressions for the
 decay rates of any process with only CC diagrams. However, the $Z$-boson mediated 
@@ -167,17 +188,37 @@ Where $F_i$ is the product of the two initital factors. Although $F_i$ depends o
 %
 \end{align*}
 %
-This should be summed over the three final mass states $\Gamma = \sum_{i=1}^3 \Gamma_i$.
+This should be summed over the three final mass states $\Gamma = \sum_{i=1}^3 \Gamma_i$. We can do this by hand, by defining a simplified set of couplings,
+%
+\[   c^{4i} \equiv U_{s4}^*U_{si}\widetilde{c}^4\qquad \text{and}\qquad  d^{4i} \equiv U_{s4}^*U_{si}\widetilde{d}^4, \]
+%
+which allows us to factorize out the dependence on $i$, 
+%
+\[ \sum_{i=1}^3\left| F_i\right|^2 = |U_{s4}|^2\left(1-|U_{s4}|^2\right) \frac{G_\text{F}^2}{2} \rho. \]
+%
+where we define a new parameter 
+%
+\[  \rho = 16M_Z^4 \left |\frac{c^u_A \widetilde{c}^{4}}{k_2^2-M_Z^2} + \frac{d^u_A \widetilde{d}^{4} }{k_2^2-\mu^2} \right|^2. \] 
+%
+This gives us the final formula
+%
+\[  \Gamma =  \left(1-\sum_{\alpha \neq s}  |U_{\alpha 4}|^2\right) \sum_{\alpha \neq s} |U_{\alpha 4}|^2 \rho \frac{1}{8\pi} G_F^2 f^2_\pi m_\pi m_\mu^2\left(1-\frac{m^2_{\pi^0}}{m^2_s}\right)^2. \]
 
+\subsubsection{Sanity check}
 
-As a sanity check, we set $\chi=0$, which means $d^{ij}=d^u_A=0$ and the $c$ coupings become their $\nu$SM values. We find the factor $F_i$ becomes 
+As a check we set $\chi=0$, which means $d^{ij}=d^u_A=0$ and the $c$ coupings
+become their $\nu$SM values, $c^u_A = \widetilde{c}^4 = \frac{1}{2}$.
 %
-\[  |F_i|^2 = \left| \frac{1}{8} \left(\frac{g}{c_W}\right)^2 \frac{U^*_{s4}U_{si}}{M_Z^2-m_\pi^2}\right|^2 = \frac{G_F^2|U_{s4}|^2|U_{si}|^2}{2} + \mathcal{O}\left(\frac{m_\pi^2}{M_Z^2}\right). \]
+The $\rho$ parameter can be shown, expanding to first order in in $m_\pi/M_Z$, to take the value $1$,%
 %
-which produces the standard expression:
-%
-\[  \Gamma_i = \frac{1}{8\pi}|U_{s4}|^2|U_{si}|^2 G_F^2 f^2_\pi m_\pi m_\mu^2\left(1-\frac{m^2_{\pi^0}}{m^2_s}\right)^2. \]
-%
+%We find the factor $F_i$ becomes 
+%%
+%\[  |F_i|^2 = \left| \frac{1}{8} \left(\frac{g}{c_W}\right)^2 \frac{U^*_{s4}U_{si}}{M_Z^2-m_\pi^2}\right|^2 = \frac{G_F^2|U_{s4}|^2|U_{si}|^2}{2} + \mathcal{O}\left(\frac{m_\pi^2}{M_Z^2}\right). \]
+%%
+%which produces the standard expression:
+%%
+%\[  \Gamma_i = \frac{1}{8\pi}|U_{s4}|^2|U_{si}|^2 G_F^2 f^2_\pi m_\pi m_\mu^2\left(1-\frac{m^2_{\pi^0}}{m^2_s}\right)^2. \]
+%%
 and therefore
 %
 \[  \Gamma =  \left(1-\sum_{\alpha \neq s}  |U_{\alpha 4}|^2\right) \sum_{\alpha \neq s} |U_{\alpha 4}|^2 \frac{1}{8\pi} G_F^2 f^2_\pi m_\pi m_\mu^2\left(1-\frac{m^2_{\pi^0}}{m^2_s}\right)^2. \]
@@ -445,7 +486,7 @@ Defining some convenient functions,
 %
 \begin{align*}  f(u) &= 4(u - m_1^2 - m_2^2)(m_s^2 + m_3^2 - u),\\  
 g(s) &= 4(s -m_1^2 - m_3^2)(m_s^2 + m_2^2 - s),\\
-h(s,u) &= 2m_2m_3\left(s + u - m_2^2 + m_3^2\right), \end{align*}
+h(s,u) &= 2m_2m_3\left(s + u - m_2^2 - m_3^2\right), \end{align*}
 %
 we can rewrite the matrix element as,
 %
@@ -501,21 +542,109 @@ du dt d^2\Omega d\phi.
 
 To find the total rate we integrate the matrix element up. The angular integrals just add prefactors, but the Mandelstam integrals require a bit of care (for later use we consider non-zero $m_1$, but recall that our matrix element assumes $m_1=0$ so we have to impose that before doing the integrals),
 %
-\[  \Gamma = \frac{1}{(2\pi)^3}\frac{1}{32m^3_s}\int_{(m_1+m_2)^2}^{(m_s-m_3)^2}du\int_{t_-}^{t_+}dt\,\overline{\left|\mathcal{M}\right|^2}. \]
+%\[  \Gamma = \frac{1}{(2\pi)^3}\frac{1}{32m^3_s}\int_{(m_1+m_2)^2}^{(m_s-m_3)^2}du\int_{t_-}^{t_+}dt\,\overline{\left|\mathcal{M}\right|^2}. \]
+%%
+%For fixed $s$ the limits on the $t$ integral are: 
+%%
+%\[ t_\pm = \left(E_2^* + E_3^*\right)^2 - \left(|p_2^*| \pm |p_3^*|\right)^2, \]
+%%
+%where $\left(E^*_i\right)^2 - \left(p^*_i\right)^2 = m_i^2$ and 
+%%
+%\[   |p^*_2|^2 = \frac{\lambda(u,m_1^2,m_2^2)}{4u} \qquad\text{and}\qquad  |p^*_3|^2 = \frac{\lambda(u,m_s^2,m_3^2)}{4u}. \]
+%%
 %
-For fixed $s$ the limits on the $t$ integral are: 
+%Or, 
 %
-\[ t_\pm = \left(E_2^* + E_3^*\right)^2 - \left(|p_2^*| \pm |p_3^*|\right)^2, \]
+\[  \Gamma = \frac{1}{(2\pi)^3}\frac{1}{32m^3_s}\int_{(m_2+m_3)^2}^{(m_s-m_1)^2}dt\int_{u_+}^{u_-}du\,\overline{\left|\mathcal{M}\right|^2}. \]
+%
+\[ u_\pm = \left(E_1^* + E_2^*\right)^2 - \left(|p_1^*| \pm |p_2^*|\right)^2, \]
 %
 where $\left(E^*_i\right)^2 - \left(p^*_i\right)^2 = m_i^2$ and 
 %
-\[   |p^*_2|^2 = \frac{\lambda(u,m_1^2,m_2^2)}{4u} \qquad\text{and}\qquad  |p^*_3|^2 = \frac{\lambda(u,m_s^2,m_3^2)}{4u}. \]
+\[   |p^*_1|^2 = \frac{\lambda(m_s^2,t,m_1^2)}{4t} \qquad\text{and}\qquad  |p^*_2|^2 = \frac{\lambda(t,m_2^2,m_3^2)}{4t}. \]
 %
 
-I am just going to resort to doing these integrals numerically. You can get so
-far analytically, but keeping the propagators and mass terms makes it a bit
-nasty. I haven't explicitly checked that turning off $\chi$ sends this to the
-Atre et al. value, but numerically it is wihtin a factor of $~2$. 
+These can of course be done numerically, however, doing this repeatedly turned
+out to be intolerably slow. I'll go a bit further analytically, albeit
+at the (further) expense of elegance.
+
+The idea is that the functions $f_i$ are made up for fairly simple
+elementary integrals, all of which can be either precomputed or expressed as
+special functions. The first set of elementary integrals are
+%
+\begin{align*}  I_{mp} &\equiv \int^{m_s^2}_{4m_e^2} dt \int_{u_+}^{u_-} du \frac{t^m}{(t-\mu^2)^p},\\ &= \frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{m-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{4}{15}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{7}{2},-\alpha,\beta\right). \end{align*}
+%
+where $F_1(a,b1,b2,c,x,y)$ is the Appell F1 hypergeometric function. We also need to define another set of integrals, 
+%
+\[   J^{mn}_{p} \equiv \int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} \frac{t^m u^n}{(t-\mu^2)^p}. \]
+%
+I didn't manage to find a general formulae for these integrals, but we will only need $n=1$ and $n=2$. These can be expressed as
+%
+\begin{align*}
+%
+J^{m1}_p = &\frac{\left(m_s^2-4m_e^2\right)^\frac{7}{2}\left(4m_e^2\right)^{m-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{\Gamma\left(\frac{3}{2}\right)\Gamma\left(3\right)}{2\Gamma\left(\frac{9}{2}\right)}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{9}{2},-\alpha,\beta\right)\\ 
+%
+&+ \frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{m-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{m_e^2\Gamma\left(\frac{3}{2}\right)\Gamma\left(2\right)}{\Gamma\left(\frac{7}{2}\right)}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{7}{2},-\alpha,\beta\right).
+%
+\end{align*}
+%
+Of the $n=2$ series, we only need $J^{02}_p$ which can be computed 
+%
+\begin{align*}
+J^{02}_p = &\frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p} \frac{4}{45}\sum_{q=-1}^2\left(4m_e^2\right)^q d_q F_1\left(\frac{3}{2},\frac{1}{2}-q,p,\frac{7}{2},-\alpha,\beta\right). 
+\end{align*}
+%
+where the coefficients $d_q$ are given by 
+%
+\begin{align*}
+d_{-1} = -m_e^2m_s^4,\qquad d_{0} = 3m_e^4 + 5m_e^2m_s^2 + m_s^4,\qquad d_{1} = -2(2m_e^2 +m_s^2),\qquad d_{2} = 1.
+\end{align*}
+%
+I find that the following decomposition holds for the integral of the first function,
+%
+\begin{align*}
+%
+\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_1(s,t,u) &= -4A^2 I_{22} + \left[4A^2(m_s^2+2m_e^2) - 2ADm_e^2\right]I_{12}\\
+%
+~~~~& + \left[ -4A^2m_e^2(m_s^2+m_e^2) + 2ADm_e^2m_s^2\right]I_{02} + \frac{8AB}{M_Z^2}I_{21}\\
+%
+~~~~& + \left[ -\frac{8AB}{M_Z^2} (m_s^2+2m_e^2) + \frac{2m_e^2}{M_Z^2} (AE + BD) \right]I_{11} \\
+%
+~~~~& + \left[ \frac{8AB}{M_Z^2}m_e^2(m_s^2+m_e^2) - \frac{2(AE+BD)}{M_Z^2}m_e^2m_s^2 \right]I_{01} - \frac{4B^2}{M_Z^4}I_{20}\\
+%
+~~~~& + \left[ \frac{4B^2}{M_Z^4} (m_s^2+2m_e^2) - \frac{2BEme^2}{M_Z^4}\right]I_{10} \\
+%
+~~~~& + \left[ -\frac{4B^2}{M_Z^4}m_e^2(m_s^2+m_e^2) + \frac{2BE}{M_Z^4}m_e^2m_s^2 \right]I_{00}. 
+%
+\end{align*}
+%
+For the second function,
+%
+\begin{align*}
+%
+\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_2(s,t,u) &= -\frac{2F^2m_e^2}{M_W^4}I_{10} + \frac{2F^2m_e^2m_s^2}{M_W^4}I_{00}
+%
+\end{align*}
+%
+Believe it or not, the third function is even uglier, 
+%
+\begin{align*}
+%
+\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_3(s,t,u) &= \left[2FB\frac{m_e^2m_s^2}{M_W^2M_Z^2} - 8FE\frac{m_e^2(m_s^2+m_e^2)}{M_W^2M_Z^2}\right]I_{00}\\
+%
+~~~~&+ \left[-2FB\frac{m_e^2}{M_W^2M_Z^2} + 8FE\frac{m_s^2+2m_e^2}{M_W^2M_Z^2}\right]I_{10} - \frac{8FE}{M_W^2M_Z^2}I_{20} \\
+%
+~~~~& + \left[-2AF\frac{m_e^2m_s^2}{M_W^2} - 8FD\frac{m_e^2(m_s^2+m_e^2)}{M_W^2}\right]I_{01}\\
+%
+~~~~&+ \left[2AF\frac{m_e^2}{M_W^2} - 8FD\frac{m_s^2+2m_e^2}{M_W^2}\right]I_{11} + \frac{8FD}{M_W^2}I_{21}\\
+%
+~~~~& + \frac{8FE(2m_e^2+m_s^2)}{M_W^2M_Z^2}J^{01}_0 - \frac{8FE}{M_W^2M_Z^2}J^{02}_0 + \frac{16FE}{M_W^2M_Z^2}J^{11}_0 \\
+%
+~~~~& - \frac{8FD(2m_e^2+m_s^2)}{M_W^2}J^{01}_1 + \frac{8FD}{M_W^2}J^{02}_1 + \frac{16FD}{M_W^2}J^{11}_1. 
+%
+\end{align*}
+
+
 
 \subsection{$N \to \nu \mu^+\mu^-$  (TO DO)}
 
