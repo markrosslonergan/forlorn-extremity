@@ -126,6 +126,11 @@ different coupling constants.  Specifically, the coupling of $Z^\prime$ to two
 light neutrinos is doubly suppressed by the small sterile mixing angles. It is
 expected to be negligibly enhanced by the $Z^\prime$. 
 
+One of the complications in computing this decay rate is the various
+permutations of three mass eigenstates which are allowed for majorana
+particles. This is more incentive not to do it.
+
+
 \subsection{$N\to\nu\pi^0$}
 
 This is purely neutral current decay, and would expect diagrams involving an
@@ -568,53 +573,75 @@ These can of course be done numerically, however, doing this repeatedly turned
 out to be intolerably slow. I'll go a bit further analytically, albeit
 at the (further) expense of elegance.
 
-The idea is that the functions $f_i$ are made up for fairly simple
-elementary integrals, all of which can be either precomputed or expressed as
-special functions. The first set of elementary integrals are
+First we expand the SM propagators, assuming the scales of the process are well
+below the SM weak boson masses. After this, we see that the functions $f_i$ are
+made up for fairly simple elementary integrals, all of which can be either
+precomputed or expressed as special functions. The first set of elementary
+integrals are
 %
-\begin{align*}  I_{mp} &\equiv \int^{m_s^2}_{4m_e^2} dt \int_{u_+}^{u_-} du \frac{t^m}{(t-\mu^2)^p},\\ &= \frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{m-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{4}{15}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{7}{2},-\alpha,\beta\right). \end{align*}
+\begin{align*}  I_{mp} &\equiv \int^{m_s^2}_{4m_e^2} dt \int_{u_+}^{u_-} du
+\frac{t^m}{(t-\mu^2)^p},\\ &=
+\frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{m-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{4}{15}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{7}{2},-\alpha,\beta\right).
+\end{align*}
 %
-where $F_1(a,b1,b2,c,x,y)$ is the Appell F1 hypergeometric function. We also need to define another set of integrals, 
+where $\alpha = \frac{m_s^2-4m_e^2}{4m_e^2} $, $\beta =\frac{m_s^2-4m_e^2}{\mu^2-4m_e^2} $ and $F_1(a,b1,b2,c,x,y)$ is the Appell F1 hypergeometric function, which has some nice series 
+respresentations (and can be analytically continued to a much larger domain), but enters here through its intergral representation
 %
-\[   J^{mn}_{p} \equiv \int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} \frac{t^m u^n}{(t-\mu^2)^p}. \]
+\[  F_1(a,b1,b2,c,x,y) = \frac{\Gamma\left(c\right)}{\Gamma\left(a\right)\Gamma\left(c-a\right)}\int_0^1 z^a(1-z)^{c-a-1}(1-xz)^{-b1} (1-yz)^{-b2}dz. \]
 %
-I didn't manage to find a general formulae for these integrals, but we will only need $n=1$ and $n=2$. These can be expressed as
+We also need to define another set of integrals, 
+%
+\[   J^{mn}_{p} \equiv \int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-}du \frac{t^m
+u^n}{(t-\mu^2)^p}. \]
+%
+I didn't manage to find a general formulae for these integrals, but we will
+only need $n=1$ and $n=2$. These can be expressed as
 %
 \begin{align*}
 %
-J^{m1}_p = &\frac{\left(m_s^2-4m_e^2\right)^\frac{7}{2}\left(4m_e^2\right)^{m-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{\Gamma\left(\frac{3}{2}\right)\Gamma\left(3\right)}{2\Gamma\left(\frac{9}{2}\right)}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{9}{2},-\alpha,\beta\right)\\ 
+J^{m1}_p =
+&\frac{\left(m_s^2-4m_e^2\right)^\frac{7}{2}\left(4m_e^2\right)^{m-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{8}{105}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{9}{2},-\alpha,\beta\right)\\ 
 %
-&+ \frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{m-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{m_e^2\Gamma\left(\frac{3}{2}\right)\Gamma\left(2\right)}{\Gamma\left(\frac{7}{2}\right)}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{7}{2},-\alpha,\beta\right).
+&+
+\frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{m+\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}\frac{1}{15}F_1\left(\frac{3}{2},\frac{1}{2}-m,p,\frac{7}{2},-\alpha,\beta\right).
 %
 \end{align*}
 %
 Of the $n=2$ series, we only need $J^{02}_p$ which can be computed 
 %
-\begin{align*}
-J^{02}_p = &\frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p} \frac{4}{45}\sum_{q=-1}^2\left(4m_e^2\right)^q d_q F_1\left(\frac{3}{2},\frac{1}{2}-q,p,\frac{7}{2},-\alpha,\beta\right). 
+\begin{align*} J^{02}_p =
+&\frac{\left(m_s^2-4m_e^2\right)^\frac{5}{2}\left(4m_e^2\right)^{-\frac{1}{2}}}{\left(4m_e^2-\mu^2\right)^p}
+\frac{4}{45}\sum_{q=-1}^2\left(4m_e^2\right)^q d_q
+F_1\left(\frac{3}{2},\frac{1}{2}-q,p,\frac{7}{2},-\alpha,\beta\right).
 \end{align*}
 %
 where the coefficients $d_q$ are given by 
 %
+\begin{align*} d_{-1} = -m_e^2m_s^4,\qquad d_{0} = 3m_e^4 + 5m_e^2m_s^2 +
+m_s^4,\qquad d_{1} = -2(2m_e^2 +m_s^2),\qquad d_{2} = 1.  \end{align*}
+%
+I find that the following decomposition holds for the integral of the first
+function,
+%
 \begin{align*}
-d_{-1} = -m_e^2m_s^4,\qquad d_{0} = 3m_e^4 + 5m_e^2m_s^2 + m_s^4,\qquad d_{1} = -2(2m_e^2 +m_s^2),\qquad d_{2} = 1.
-\end{align*}
 %
-I find that the following decomposition holds for the integral of the first function,
+\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_1(s,t,u) &= -4A^2 I_{22} +
+\left[4A^2(m_s^2+2m_e^2) - 2ADm_e^2\right]I_{12}\\
 %
-\begin{align*}
+~~~~& + \left[ -4A^2m_e^2(m_s^2+m_e^2) + 2ADm_e^2m_s^2\right]I_{02} +
+\frac{8AB}{M_Z^2}I_{21}\\
 %
-\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_1(s,t,u) &= -4A^2 I_{22} + \left[4A^2(m_s^2+2m_e^2) - 2ADm_e^2\right]I_{12}\\
+~~~~& + \left[ -\frac{8AB}{M_Z^2} (m_s^2+2m_e^2) + \frac{2m_e^2}{M_Z^2} (AE +
+BD) \right]I_{11} \\
 %
-~~~~& + \left[ -4A^2m_e^2(m_s^2+m_e^2) + 2ADm_e^2m_s^2\right]I_{02} + \frac{8AB}{M_Z^2}I_{21}\\
+~~~~& + \left[ \frac{8AB}{M_Z^2}m_e^2(m_s^2+m_e^2) -
+\frac{2(AE+BD)}{M_Z^2}m_e^2m_s^2 \right]I_{01} - \frac{4B^2}{M_Z^4}I_{20}\\
 %
-~~~~& + \left[ -\frac{8AB}{M_Z^2} (m_s^2+2m_e^2) + \frac{2m_e^2}{M_Z^2} (AE + BD) \right]I_{11} \\
+~~~~& + \left[ \frac{4B^2}{M_Z^4} (m_s^2+2m_e^2) -
+\frac{2BEme^2}{M_Z^4}\right]I_{10} \\
 %
-~~~~& + \left[ \frac{8AB}{M_Z^2}m_e^2(m_s^2+m_e^2) - \frac{2(AE+BD)}{M_Z^2}m_e^2m_s^2 \right]I_{01} - \frac{4B^2}{M_Z^4}I_{20}\\
-%
-~~~~& + \left[ \frac{4B^2}{M_Z^4} (m_s^2+2m_e^2) - \frac{2BEme^2}{M_Z^4}\right]I_{10} \\
-%
-~~~~& + \left[ -\frac{4B^2}{M_Z^4}m_e^2(m_s^2+m_e^2) + \frac{2BE}{M_Z^4}m_e^2m_s^2 \right]I_{00}. 
+~~~~& + \left[ -\frac{4B^2}{M_Z^4}m_e^2(m_s^2+m_e^2) +
+\frac{2BE}{M_Z^4}m_e^2m_s^2 \right]I_{00}. 
 %
 \end{align*}
 %
@@ -622,7 +649,8 @@ For the second function,
 %
 \begin{align*}
 %
-\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_2(s,t,u) &= -\frac{2F^2m_e^2}{M_W^4}I_{10} + \frac{2F^2m_e^2m_s^2}{M_W^4}I_{00}
+\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_2(s,t,u) &=
+-\frac{2F^2m_e^2}{M_W^4}I_{10} + \frac{2F^2m_e^2m_s^2}{M_W^4}I_{00}
 %
 \end{align*}
 %
@@ -630,17 +658,25 @@ Believe it or not, the third function is even uglier,
 %
 \begin{align*}
 %
-\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_3(s,t,u) &= \left[2FB\frac{m_e^2m_s^2}{M_W^2M_Z^2} - 8FE\frac{m_e^2(m_s^2+m_e^2)}{M_W^2M_Z^2}\right]I_{00}\\
+\int_{4m_e^2}^{m_s^2}dt \int_{u_+}^{u_-} du\,f_3(s,t,u) &=
+\left[2FB\frac{m_e^2m_s^2}{M_W^2M_Z^2} -
+8FE\frac{m_e^2(m_s^2+m_e^2)}{M_W^2M_Z^2}\right]I_{00}\\
 %
-~~~~&+ \left[-2FB\frac{m_e^2}{M_W^2M_Z^2} + 8FE\frac{m_s^2+2m_e^2}{M_W^2M_Z^2}\right]I_{10} - \frac{8FE}{M_W^2M_Z^2}I_{20} \\
+~~~~&+ \left[-2FB\frac{m_e^2}{M_W^2M_Z^2} +
+8FE\frac{m_s^2+2m_e^2}{M_W^2M_Z^2}\right]I_{10} - \frac{8FE}{M_W^2M_Z^2}I_{20}
+\\
 %
-~~~~& + \left[-2AF\frac{m_e^2m_s^2}{M_W^2} - 8FD\frac{m_e^2(m_s^2+m_e^2)}{M_W^2}\right]I_{01}\\
+~~~~& + \left[-2AF\frac{m_e^2m_s^2}{M_W^2} -
+8FD\frac{m_e^2(m_s^2+m_e^2)}{M_W^2}\right]I_{01}\\
 %
-~~~~&+ \left[2AF\frac{m_e^2}{M_W^2} - 8FD\frac{m_s^2+2m_e^2}{M_W^2}\right]I_{11} + \frac{8FD}{M_W^2}I_{21}\\
+~~~~&+ \left[2AF\frac{m_e^2}{M_W^2} -
+8FD\frac{m_s^2+2m_e^2}{M_W^2}\right]I_{11} + \frac{8FD}{M_W^2}I_{21}\\
 %
-~~~~& + \frac{8FE(2m_e^2+m_s^2)}{M_W^2M_Z^2}J^{01}_0 - \frac{8FE}{M_W^2M_Z^2}J^{02}_0 + \frac{16FE}{M_W^2M_Z^2}J^{11}_0 \\
+~~~~& + \frac{8FE(2m_e^2+m_s^2)}{M_W^2M_Z^2}J^{01}_0 -
+\frac{8FE}{M_W^2M_Z^2}J^{02}_0 + \frac{16FE}{M_W^2M_Z^2}J^{11}_0 \\
 %
-~~~~& - \frac{8FD(2m_e^2+m_s^2)}{M_W^2}J^{01}_1 + \frac{8FD}{M_W^2}J^{02}_1 + \frac{16FD}{M_W^2}J^{11}_1. 
+~~~~& - \frac{8FD(2m_e^2+m_s^2)}{M_W^2}J^{01}_1 + \frac{8FD}{M_W^2}J^{02}_1 +
+\frac{16FD}{M_W^2}J^{11}_1. 
 %
 \end{align*}
 
@@ -650,7 +686,7 @@ Believe it or not, the third function is even uglier,
 
 This would also be enhanced, just as for the electron case. The calculation is
 identical with masses and mixing elements swapped. Apart from these factors the
-couplings are universal. I have not coded it up or checked it. In fact, I see
+couplings are universal. I have not coded it up or checked it. In fact, as there is 
 no reason for it being suppressed, so it might be a reason to keep the sterile
 mass under the dimuon threshold.
 
