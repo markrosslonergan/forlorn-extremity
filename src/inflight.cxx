@@ -349,9 +349,8 @@ int main(int argc, char* argv[])
 		sM = mS;
 
 		for(int i=0; i<NUMEVENTS; i++){
-			std::cout<<"#: "<<i<<std::endl;
 
-			if(i%5000==0) std::cout<<"#: "<<i<<std::endl;
+			if(i%500==0) std::cout<<"#: "<<i<<std::endl;
 			double  phiS = 2.0*M_PI*gsl_rng_uniform(r);
 
 			std::vector<double> event = MCkin(mZ,mS,r,CSmax[1],POSNU); //Get Event
@@ -879,13 +878,13 @@ int main(int argc, char* argv[])
 		TH1D * hSignal_Evis_nubar = (TH1D*)anaDir->Get("hSignalSignal_Evis_nubar");	
 		TH1D * hSignal_Cos_nubar = (TH1D*)anaDir->Get("hSignalSignal_Cos_nubar");	
 
-		bound bound_ps191("../../data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
+		bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-		bound bound_peak("../../data/bounds/peak_um4.dat",0.00,128);
-		bound bound_babar("../../data/bounds/b1_babar2014.csv",0.00,128);
+		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
+		bound bound_babar("/home/mark/projects/miniboone2.0/data/bounds/b1_babar2014.csv",0.00,128);
 
-		bound bound_gm2("../../data/bounds/b1_mg2.csv",0.00,128);
-		bound bound_nutev("../../data/bounds/nutev_muon.csv",0.213,1450);
+		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_nutev("/home/mark/projects/miniboone2.0/data/bounds/nutev_muon.csv",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
 
@@ -909,7 +908,7 @@ int main(int argc, char* argv[])
 
 		std::cout<<"Norm nu: "<< statInstance.norm_nu<<std::endl;
 		std::cout<<"Norm nu_bar: "<< statInstance.norm_nubar<<std::endl;
-		statInstance.minimize();
+		double ans_chi = statInstance.minimize();
 
 		//Todo, get number correct using histogrammer from old LR.h file
 		//get bounds implemented..
@@ -920,11 +919,13 @@ int main(int argc, char* argv[])
 		std::cout<<"#: mS = "<<mS<<std::endl;
 		std::cout<<"#: Um4^2 = "<<2*(statInstance.bf_up)<<std::endl;
 		std::cout<<"#: chi^2 = "<<2*(statInstance.bf_chi)<<std::endl;
+		std::cout<<"#: ANS "<<mZ<<" "<<mS<<" "<<2*(statInstance.bf_up)<<" "<<2*(statInstance.bf_chi)<<" "<<ans_chi<<std::endl;
 //Peter changed ths 11/July
 //		double thisrate =bound_ps191.myRate( mS,mZ)*pow(pow(10,statInstance.bf_chi),2.0);
-		double thisrate =bound_ps191.myRate(pow(10,statInstance.bf_chi),mS,mZ);
-		std::cout<<"#: DecayRate = "<<thisrate<<std::endl;
-		std::cout<<"#: DecayLength = "<<bound_ps191.gev2meters(1.0/thisrate)<<std::endl;
+	//	double thisrate =bound_ps191.myRate(pow(10,statInstance.bf_chi),mS,mZ);
+		
+	//	std::cout<<"#: DecayRate = "<<thisrate<<std::endl;
+	//	std::cout<<"#: DecayLength = "<<bound_ps191.gev2meters(1.0/thisrate)<<std::endl;
 		std::cout<<"#: NumScatters (neutrino mode) = "<<statInstance.norm_nu*pow(pow(10,statInstance.bf_chi),2.0)*pow(pow(10,statInstance.bf_up),2.0)<<std::endl;
 		std::cout<<"#: NumScatters (antineutrino mode) = "<<statInstance.norm_nubar*pow(pow(10,statInstance.bf_chi),2.0)*pow(pow(10,statInstance.bf_up),2.0)<<std::endl;
 		std::cout<<"#: NumDecays (neutrino mode) = "<<statInstance.N_bf<<std::endl;

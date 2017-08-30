@@ -82,6 +82,9 @@ bool bound::ps191(double mS, double mZ, double Um, double chi){
 	double UtildeSq = 1;
 	if(mS > mymin){
 		UtildeSq = bound_file.getFlux(mS);	
+	}else{
+
+		return true;
 	}
 
 // THIS NEEDS TO BE CHECK FOR CONSISTENCY. WHEN FIXING THE DECAY RATES (1 Aug), I TRIED TO UPDATE IT BUT DID SO WITHOUT REALLY WORKING ON THIS PART OF THE CODE.
