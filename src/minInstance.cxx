@@ -434,7 +434,7 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 	params.chi=sqrt(ch2);
 	params.Ue4=0.0;
 	params.Um4=sqrt(u2);
-	params.Ut4=0.0;
+	params.Ut4=1.0;
 
 	decay_obj decayor(&params);	
 	double GT = decayor.Gamma_total;

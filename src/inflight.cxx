@@ -171,6 +171,8 @@ int main(int argc, char* argv[])
 	double COSBINWIDTH=fabs(COSMIN-COSMAX)/((double)COSBINS);
 
 
+	std::string core ="/home/mark/work/durham/zprime_lee_signal/forlorn-extremity/";
+
 	std::string filename = "zmass_" + std::to_string(mZ) + "_smass_" + std::to_string(mS)+"_sim.root";
 
 	if(false){//testing
@@ -392,7 +394,7 @@ int main(int argc, char* argv[])
 			params.mS = mS;
 			params.mZprime = mZ;
 			
-			params.chi = 0.1;
+			params.chi = 0.01;
 			params.Ue4 = 0.1;
 			params.Um4 = 0.1;
 			params.Ut4 = 0.1;
@@ -878,13 +880,13 @@ int main(int argc, char* argv[])
 		TH1D * hSignal_Evis_nubar = (TH1D*)anaDir->Get("hSignalSignal_Evis_nubar");	
 		TH1D * hSignal_Cos_nubar = (TH1D*)anaDir->Get("hSignalSignal_Cos_nubar");	
 
-		bound bound_ps191("/home/mark/projects/miniboone2.0/data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
+		bound bound_ps191(core+"data/bounds/PS191_UM4_EE_BOTH.dat",0.01,128);
 		bound_ps191.setTypicalEnergy(5.0);
-		bound bound_peak("/home/mark/projects/miniboone2.0/data/bounds/peak_um4.dat",0.00,128);
-		bound bound_babar("/home/mark/projects/miniboone2.0/data/bounds/b1_babar2014.csv",0.00,128);
+		bound bound_peak(core+"data/bounds/peak_um4.dat",0.00,128);
+		bound bound_babar(core+"data/bounds/b1_babar2014.csv",0.00,128);
 
-		bound bound_gm2("/home/mark/projects/miniboone2.0/data/bounds/b1_mg2.csv",0.00,128);
-		bound bound_nutev("/home/mark/projects/miniboone2.0/data/bounds/nutev_muon.csv",0.213,1450);
+		bound bound_gm2(core+"data/bounds/b1_mg2.csv",0.00,128);
+		bound bound_nutev(core+"data/bounds/nutev_muon.csv",0.213,1450);
 		bound_nutev.setTypicalEnergy(100);
 
 
