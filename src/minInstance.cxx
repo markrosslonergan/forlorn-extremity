@@ -293,7 +293,7 @@ double minInstance::minim_calc_chi(const double * x){
 	std::vector<double> vchi;
 	vchi = this->calc_chi(v_chi, v_up, v_ud, v_zeta_b_nu, v_zeta_b_nubar );	
 
-	double chi = vchi[0];//+vchi[1];//+vchi[2]+vchi[3];
+	double chi = vchi[0]+vchi[1];//+vchi[2]+vchi[3];
 
 
 
@@ -434,7 +434,7 @@ int minInstance::fill_signal_vecs(double inchi, double inUp, double inUd){
 	params.chi=sqrt(ch2);
 	params.Ue4=0.0;
 	params.Um4=sqrt(u2);
-	params.Ut4=1.0;
+	params.Ut4=0.5;
 
 	decay_obj decayor(&params);	
 	double GT = decayor.Gamma_total;
